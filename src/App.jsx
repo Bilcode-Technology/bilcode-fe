@@ -10,10 +10,12 @@ import CTA from "./components/CTA";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import TechStack from "./sections/TechStack";
+import SplashScreen from "./components/SplashScreen";
 
 function App() {
   return (
     <div className="App">
+      <SplashScreen />
       <Header />
       <Hero />
       <Services />
