@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -7,56 +7,67 @@ gsap.registerPlugin(ScrollTrigger);
 const Services = () => {
   const containerRef = useRef(null);
   const scrollContainerRef = useRef(null);
-  const [activeService, setActiveService] = useState(0);
+  const cardsRef = useRef([]);
 
   const serviceItems = [
     {
-      icon: "🎨",
-      category: "COLLECTING DATA",
-      title: "Every model starts with data",
+      icon: "📊",
+      title: "Collecting Data",
       description:
-        "Data is collected from diverse sources for any language we work on, such as web data, collected speech data, and identified video transcripts.",
-      steps: ["PREPARING DATA", "MODEL TRAINING"],
+        "Gathering comprehensive datasets from multiple sources to ensure robust model foundation and diverse training materials.",
     },
     {
-      icon: "💻",
-      category: "WEB DEVELOPMENT",
-      title: "Building responsive applications",
+      icon: "🔧",
+      title: "Preparing Data",
       description:
-        "Creating modern, scalable web applications using cutting-edge technologies and best practices for optimal performance.",
-      steps: ["DESIGN SYSTEM", "DEVELOPMENT", "TESTING"],
+        "Cleaning, processing, and structuring raw data to optimize quality and ensure compatibility with machine learning algorithms.",
     },
     {
-      icon: "📱",
-      category: "MOBILE DEVELOPMENT",
-      title: "Native mobile experiences",
+      icon: "🤖",
+      title: "Model Training",
       description:
-        "Developing intuitive mobile applications for iOS and Android platforms with seamless user experiences.",
-      steps: ["PROTOTYPING", "DEVELOPMENT", "DEPLOYMENT"],
+        "Training sophisticated AI models using prepared datasets with advanced algorithms and computational resources.",
     },
     {
-      icon: "☁️",
-      category: "CLOUD SOLUTIONS",
-      title: "Scalable infrastructure",
+      icon: "🧪",
+      title: "Model Testing",
       description:
-        "Leveraging cloud technologies to build robust, scalable, and secure infrastructure solutions.",
-      steps: ["ARCHITECTURE", "IMPLEMENTATION", "MONITORING"],
+        "Rigorous testing and validation of trained models to ensure accuracy, reliability, and performance standards.",
+    },
+    {
+      icon: "🚀",
+      title: "Product Rollout",
+      description:
+        "Deploying tested models into production environments with monitoring and continuous improvement processes.",
     },
   ];
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    const sections = container.children;
+    const cards = cardsRef.current;
 
-    // Set up horizontal scroll
-    const totalWidth = sections.length * window.innerWidth;
+    // Calculate total width for horizontal scroll
+    const cardWidth = 400; // Width of each card
+    const gap = 32; // Gap between cards
+    const totalWidth = (cardWidth + gap) * serviceItems.length;
 
-    gsap.set(container, { width: totalWidth });
-    gsap.set(sections, { width: window.innerWidth });
+    // Set up horizontal scroll container
+    gsap.set(container, {
+      width: totalWidth,
+      display: "flex",
+      gap: `${gap}px`,
+    });
+
+    // Set initial card states
+    gsap.set(cards, {
+      opacity: 0.6,
+      scale: 0.9,
+      width: cardWidth,
+    });
 
     // Create horizontal scroll animation
     const scrollTween = gsap.to(container, {
-      x: () => -(totalWidth - window.innerWidth),
+      x: () => -(totalWidth - window.innerWidth + 100),
       ease: "none",
       scrollTrigger: {
         trigger: containerRef.current,
@@ -65,12 +76,59 @@ const Services = () => {
         scrub: 1,
         pin: true,
         anticipatePin: 1,
+      },
+    });
+
+    // Individual card animations
+    cards.forEach((card, index) => {
+      // Active state when card is in center
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: () => `+=${totalWidth}`,
+        scrub: true,
         onUpdate: (self) => {
           const progress = self.progress;
-          const currentSection = Math.floor(progress * sections.length);
-          setActiveService(Math.min(currentSection, sections.length - 1));
+          const cardProgress = progress * serviceItems.length;
+          const cardIndex = Math.floor(cardProgress);
+          const cardOffset = cardProgress - cardIndex;
+
+          if (index === cardIndex) {
+            // Active card
+            const scale = 0.9 + (1 - Math.abs(cardOffset - 0.5) * 2) * 0.2;
+            const opacity = 0.6 + (1 - Math.abs(cardOffset - 0.5) * 2) * 0.4;
+
+            gsap.set(card, {
+              scale: scale,
+              opacity: opacity,
+            });
+
+            if (Math.abs(cardOffset - 0.5) < 0.3) {
+              card.classList.add("active");
+            } else {
+              card.classList.remove("active");
+            }
+          } else if (index === cardIndex + 1 && cardOffset > 0.5) {
+            // Next card coming into view
+            const nextProgress = (cardOffset - 0.5) * 2;
+            const scale = 0.9 + nextProgress * 0.1;
+            const opacity = 0.6 + nextProgress * 0.2;
+
+            gsap.set(card, {
+              scale: scale,
+              opacity: opacity,
+            });
+            card.classList.remove("active");
+          } else {
+            // Inactive cards
+            gsap.set(card, {
+              scale: 0.9,
+              opacity: 0.6,
+            });
+            card.classList.remove("active");
+          }
         },
-      },
+      });
     });
 
     return () => {
@@ -81,73 +139,66 @@ const Services = () => {
 
   return (
     <section ref={containerRef} className="relative overflow-hidden">
-      <div ref={scrollContainerRef} className="flex">
-        {serviceItems.map((service, index) => (
-          <div
-            key={index}
-            className="min-h-screen flex items-center justify-center px-8"
-            style={{ width: "100vw" }}
-          >
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Content */}
-              <div className="space-y-6">
-                <div className="text-6xl mb-4">{service.icon}</div>
+      {/* Header */}
+      {/* <div className="text-center py-16">
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Our Process
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto px-4">
+          From data collection to product rollout, we follow a systematic
+          approach to deliver exceptional AI solutions.
+        </p>
+      </div> */}
 
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-500 uppercase tracking-wide">
-                    {service.category}
-                  </p>
+      {/* Horizontal Scroll Container */}
+      <div className="relative h-screen flex items-center">
+        <div ref={scrollContainerRef} className="flex items-center pl-8">
+          {serviceItems.map((service, index) => (
+            <div
+              key={index}
+              ref={(el) => (cardsRef.current[index] = el)}
+              className="service-card bg-gray-50 rounded-2xl p-8 flex-shrink-0 transition-all duration-300"
+            >
+              <div className="flex flex-col items-center text-center h-full">
+                {/* Icon */}
+                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-4xl shadow-sm mb-6">
+                  {service.icon}
+                </div>
 
-                  <h2 className="text-4xl lg:text-5xl font-bold text-blue-600 leading-tight">
+                {/* Content */}
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     {service.title}
-                  </h2>
-
-                  <p className="text-lg text-gray-600 leading-relaxed max-w-lg">
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
                     {service.description}
                   </p>
                 </div>
-              </div>
 
-              {/* Right Content - Process Steps */}
-              <div className="space-y-8">
-                {service.steps.map((step, stepIndex) => (
-                  <div
-                    key={stepIndex}
-                    className={`flex items-center space-x-4 p-4 rounded-lg transition-all duration-300 ${
-                      activeService === index
-                        ? "bg-white shadow-lg transform scale-105"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold text-gray-600">
-                        {stepIndex + 1}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">{step}</h3>
-                    </div>
+                {/* Step Number */}
+                <div className="mt-6">
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold">
+                    {index + 1}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Progress Indicator */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex space-x-2">
-          {serviceItems.map((_, index) => (
-            <div
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                activeService === index ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            />
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        .service-card {
+          width: 400px;
+          height: 500px;
+        }
+
+        .service-card.active {
+          background-color: white;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          transform: translateY(-10px);
+        }
+      `}</style>
     </section>
   );
 };

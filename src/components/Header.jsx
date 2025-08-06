@@ -24,7 +24,7 @@ const Header = () => {
             Log in
           </a>
           <button className="bg-black text-lg font-medium text-white px-7 py-3 rounded-full hover:bg-gray-800">
-            Try for free
+            Contact Us
           </button>
         </div>
       </div>
