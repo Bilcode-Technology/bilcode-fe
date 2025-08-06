@@ -11,22 +11,23 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import TechStack from "./sections/TechStack";
 import SplashScreen from "./components/SplashScreen";
+import ScrollRevealSection from "./components/ScrollRevealSection";
 
 function App() {
   return (
     <div className="App">
       <SplashScreen />
       <Header />
-      <Hero />
+      <ScrollRevealSection><Hero /></ScrollRevealSection>
       <Services />
-      <Portfolio />
-      <AboutUs />
-      <TechStack />
-      <Process />
-      <OurTeam />
-      <Testimonials />
-      <CTA />
-      <Contact />
+      <ScrollRevealSection><Portfolio /></ScrollRevealSection>
+      <ScrollRevealSection><AboutUs /></ScrollRevealSection>
+      <ScrollRevealSection><TechStack /></ScrollRevealSection>
+      <ScrollRevealSection><Process /></ScrollRevealSection>
+      <ScrollRevealSection><OurTeam /></ScrollRevealSection>
+      <ScrollRevealSection><Testimonials /></ScrollRevealSection>
+      <ScrollRevealSection><CTA /></ScrollRevealSection>
+      <ScrollRevealSection><Contact /></ScrollRevealSection>
       <Footer />
     </div>
   );
