@@ -21,21 +21,45 @@ function App() {
   const textRef = useRef(null);
 
   useEffect(() => {
-    // Set the text content for the transition
-    if (textRef.current) {
-      textRef.current.textContent = '"Your Vision, Our Code"';
-    }
+    const textElement = textRef.current;
+    if (!textElement) return;
+
+    const text = "bilcode.id";
+    textElement.innerHTML = ""; 
+    text.split("").forEach((char) => {
+      const span = document.createElement("span");
+      span.textContent = char;
+      span.style.display = "inline-block";
+      textElement.appendChild(span);
+    });
+
+    const chars = textElement.children;
+    
+    // Set container opacity
+    gsap.set(textElement, { opacity: 1 });
 
     const tl = gsap.timeline({
       onComplete: () => {
         setShowContent(true);
+        gsap.set(transitionRef.current, { display: 'none' });
       },
     });
 
-    // Animation sequence
     tl.to(transitionRef.current, { y: "0%", duration: 1, ease: "power3.inOut" })
-      .to(textRef.current, { opacity: 1, duration: 0.5 }, "-=0.5")
-      .to(textRef.current, { opacity: 0, duration: 0.5, delay: 1.5 }) // Hold text
+      .from(chars, {
+        yPercent: 500, // Start far below the screen
+        opacity: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        stagger: 0.05,
+      }, "-=0.5")
+      .to(chars, {
+        yPercent: -500, // Exit far above the screen
+        opacity: 0,
+        duration: 0.5,
+        ease: "power3.in",
+        stagger: 0.05,
+      }, "+=1.5")
       .to(transitionRef.current, { y: "-100%", duration: 1, ease: "power3.inOut" });
   }, []);
 
@@ -44,7 +68,6 @@ function App() {
     <div className="App">
       <FullScreenTransition ref={{ transitionRef, textRef }} />
       
-      {/* Use opacity for a smooth fade-in of the main content */}
       <div style={{ opacity: showContent ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
         <Header />
         <main>

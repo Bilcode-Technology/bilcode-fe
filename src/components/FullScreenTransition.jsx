@@ -11,7 +11,7 @@ const FullScreenTransition = forwardRef((props, ref) => {
       // Start hidden off-screen (bottom)
       style={{ transform: 'translateY(100%)' }} 
     >
-      <h2 ref={textRef} className="text-5xl md:text-7xl font-bold text-black opacity-0">
+      <h2 ref={textRef} className="text-5xl md:text-7xl font-bold text-black">
         {/* Section name will be injected by GSAP */}
       </h2>
     </div>
