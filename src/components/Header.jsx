@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 
 const Header = () => {
   const [dropdowns, setDropdowns] = useState({
@@ -7,9 +8,34 @@ const Header = () => {
     templates: false
   });
 
+  const headerRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    tl.fromTo(headerRef.current, 
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.5, delay: 0.5 }
+    );
+
+    tl.fromTo('.nav-link', 
+      { y: -20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, stagger: 0.2 },
+      "-=1"
+    );
+
+    tl.fromTo('.auth-buttons > *', 
+      { y: -20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, stagger: 0.2 },
+      "-=1"
+    );
+  }, []);
+
   const toggleDropdown = (menu) => {
     setDropdowns(prev => ({
-      ...prev,
+      product: false,
+      customers: false,
+      templates: false,
       [menu]: !prev[menu]
     }));
   };
@@ -23,26 +49,23 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full bg-white relative">
-      <div className="max-w-7xl mx-auto px-8 py-6">
+    <header ref={headerRef} className="w-full bg-white relative opacity-0">
+      <div className="max-w-7xl mx-auto px-8 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="text-3xl font-bold text-black">
-            Bilcode
+          <div className="text-2xl font-bold text-black nav-link">
+            Jitter
           </div>
           
           {/* Navigation Menu */}
-          <nav className="hidden md:flex items-center gap-12 relative">
+          <nav className="hidden md:flex items-center gap-8 relative">
             {/* Product Dropdown */}
-            <div className="relative">
+            <div className="relative nav-link">
               <button 
                 onClick={() => toggleDropdown('product')}
-                className="text-black hover:text-gray-600 transition-colors font-medium text-lg flex items-center gap-1"
+                className="text-black hover:text-gray-600 transition-colors font-medium text-base flex items-center"
               >
                 Product
-                <svg className={`w-4 h-4 transition-transform ${dropdowns.product ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
               {dropdowns.product && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
@@ -55,15 +78,12 @@ const Header = () => {
             </div>
 
             {/* Customers Dropdown */}
-            <div className="relative">
+            <div className="relative nav-link">
               <button 
                 onClick={() => toggleDropdown('customers')}
-                className="text-gray-400 hover:text-black transition-colors font-medium text-lg flex items-center gap-1"
+                className="text-gray-500 hover:text-black transition-colors font-medium text-base flex items-center"
               >
                 Customers
-                <svg className={`w-4 h-4 transition-transform ${dropdowns.customers ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
               {dropdowns.customers && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
@@ -76,15 +96,12 @@ const Header = () => {
             </div>
 
             {/* Templates Dropdown */}
-            <div className="relative">
+            <div className="relative nav-link">
               <button 
                 onClick={() => toggleDropdown('templates')}
-                className="text-gray-400 hover:text-black transition-colors font-medium text-lg flex items-center gap-1"
+                className="text-gray-500 hover:text-black transition-colors font-medium text-base flex items-center"
               >
                 Templates
-                <svg className={`w-4 h-4 transition-transform ${dropdowns.templates ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
               {dropdowns.templates && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
@@ -96,17 +113,17 @@ const Header = () => {
               )}
             </div>
 
-            <a href="#" className="text-gray-400 hover:text-black transition-colors font-medium text-lg">
+            <a href="#" className="text-gray-500 hover:text-black transition-colors font-medium text-base nav-link">
               Pricing
             </a>
           </nav>
           
           {/* Right side buttons */}
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-black hover:text-gray-600 transition-colors font-medium text-lg">
+          <div className="flex items-center gap-6 auth-buttons">
+            <a href="#" className="text-black hover:text-gray-600 transition-colors font-medium text-base">
               Log in
             </a>
-            <button className="bg-black text-white px-7 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium text-lg">
+            <button className="bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition-colors font-medium text-base">
               Try for free
             </button>
           </div>
