@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useSplashAnimation } from "./hooks";
-import { gsap } from "gsap";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -18,36 +17,23 @@ import FullScreenTransition from "./components/FullScreenTransition";
 
 function App() {
   const [showContent, setShowContent] = useState(false);
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const transitionRef = useRef(null);
   const textRef = useRef(null);
-  const overlayRef = useRef(null);
 
-  useSplashAnimation({ transitionRef, textRef }, () => setShowContent(true));
+  // Menggunakan custom hook untuk splash animation
+  useSplashAnimation(
+    { transitionRef, textRef },
+    () => setShowContent(true)
+  );
 
-  useEffect(() => {
-    if (isDropdownVisible) {
-      gsap.to(overlayRef.current, { autoAlpha: 1, duration: 0.3 });
-    } else {
-      gsap.to(overlayRef.current, { autoAlpha: 0, duration: 0.3 });
-    }
-  }, [isDropdownVisible]);
 
   return (
     <div className="App">
       <FullScreenTransition ref={{ transitionRef, textRef }} />
       
       <div style={{ opacity: showContent ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
-        <Header 
-          isDropdownVisible={isDropdownVisible} 
-          onDropdownToggle={setDropdownVisible} 
-        />
-        <div 
-          ref={overlayRef} 
-          className="fixed inset-0 bg-black/30 z-30"
-          style={{ visibility: 'hidden', opacity: 0 }}
-        />
-        <main className="relative z-20">
+        <Header />
+        <main>
           <div id="hero" data-section-name="Hero" className="tracked-section"><Hero /></div>
           <div id="services" data-section-name="Services" className="tracked-section"><Services /></div>
           <div id="portfolio" data-section-name="Portfolio" className="tracked-section"><Portfolio /></div>
@@ -66,4 +52,3 @@ function App() {
 }
 
 export default App;
-''
