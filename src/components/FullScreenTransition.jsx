@@ -1,19 +1,31 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 const FullScreenTransition = forwardRef((props, ref) => {
+  const {
+    backgroundColor = 'bg-white',
+    textColor = 'text-black',
+    textSize = 'text-5xl md:text-7xl',
+    zIndex = 'z-50',
+    children,
+    className = '',
+    ...otherProps
+  } = props;
+
   // Use object destructuring for cleaner access to refs
   const { transitionRef, textRef } = ref;
 
   return (
-    <div 
+    <div
       ref={transitionRef}
-      className="fixed top-0 left-0 w-full h-full bg-white z-50 pointer-events-none flex items-center justify-center"
-      // Start hidden off-screen (bottom)
-      style={{ transform: 'translateY(100%)' }} 
+      className={`fixed top-0 left-0 w-full h-full ${backgroundColor} ${zIndex} pointer-events-none flex items-center justify-center ${className}`}
+      style={{ transform: 'translateY(100%)' }}
+      {...otherProps}
     >
-      <h2 ref={textRef} className="text-5xl md:text-7xl font-bold text-black">
-        {/* Section name will be injected by GSAP */}
-      </h2>
+      {children || (
+        <h2 ref={textRef} className={`${textSize} font-bold ${textColor}`}>
+          {/* Content will be injected by animation logic */}
+        </h2>
+      )}
     </div>
   );
 });

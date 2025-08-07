@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useState, useRef } from "react";
+import { useSplashAnimation } from "./hooks";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -20,48 +20,11 @@ function App() {
   const transitionRef = useRef(null);
   const textRef = useRef(null);
 
-  useEffect(() => {
-    const textElement = textRef.current;
-    if (!textElement) return;
-
-    const text = "bilcode.id";
-    textElement.innerHTML = ""; 
-    text.split("").forEach((char) => {
-      const span = document.createElement("span");
-      span.textContent = char;
-      span.style.display = "inline-block";
-      textElement.appendChild(span);
-    });
-
-    const chars = textElement.children;
-    
-    // Set container opacity
-    gsap.set(textElement, { opacity: 1 });
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setShowContent(true);
-        gsap.set(transitionRef.current, { display: 'none' });
-      },
-    });
-
-    tl.to(transitionRef.current, { y: "0%", duration: 1, ease: "power3.inOut" })
-      .from(chars, {
-        yPercent: 500, // Start far below the screen
-        opacity: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.05,
-      }, "-=0.5")
-      .to(chars, {
-        yPercent: -500, // Exit far above the screen
-        opacity: 0,
-        duration: 0.5,
-        ease: "power3.in",
-        stagger: 0.05,
-      }, "+=1.5")
-      .to(transitionRef.current, { y: "-100%", duration: 1, ease: "power3.inOut" });
-  }, []);
+  // Menggunakan custom hook untuk splash animation
+  useSplashAnimation(
+    { transitionRef, textRef },
+    () => setShowContent(true)
+  );
 
 
   return (
