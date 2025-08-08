@@ -1,249 +1,234 @@
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+
 import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+  Globe, Smartphone, Paintbrush, Cloud, CreditCard, HeartPulse, GraduationCap, Store, Landmark, Truck, Building2, 
+  Folder, Rocket, ShoppingCart, BarChart3, BookOpen, Users, Briefcase, Handshake, Award, FileText, 
+  Layers, Shield, PenTool, Server, BookMarked, FileSearch, Languages
+} from 'lucide-react';
+
+const navItems = [
+  { label: 'Home', href: '#hero', type: 'link' },
+
+  // Services: 4 items
+  {
+    label: 'Services',
+    href: '#services',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <Globe />, title: 'Web Development', description: 'End-to-end solutions for modern web apps.', bgColor: 'bg-blue-500', href: '#services' },
+        { icon: <Smartphone />, title: 'Mobile Development', description: 'Native and cross-platform mobile apps.', bgColor: 'bg-purple-500', href: '#services' },
+      ],
+      smallCards: [
+        { icon: <Paintbrush />, title: 'UI/UX Design', description: 'Intuitive and beautiful user interfaces.', href: '#services' },
+        { icon: <Cloud />, title: 'AI & Automation', description: 'Intelligent automation for business growth.', href: '#services' },
+      ],
+      whatsNew: { title: 'Our Process', items: ['Discovery & Strategy', 'Design & Development', 'Testing & Deployment'], buttonText: 'All Services', buttonHref: '#services' }
+    }
+  },
+
+  // Industries
+  {
+    label: 'Industries',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <CreditCard />, title: 'Fintech', description: 'Secure solutions for modern banking.', bgColor: 'bg-green-500', href: '#' },
+        { icon: <HeartPulse />, title: 'HealthTech', description: 'Innovative healthcare platforms.', bgColor: 'bg-red-500', href: '#' },
+      ],
+      smallCards: [
+        { icon: <GraduationCap />, title: 'EdTech', description: 'Next-gen digital learning platforms.', href: '#' },
+        { icon: <Store />, title: 'E-commerce', description: 'Scalable online retail solutions.', href: '#' },
+        { icon: <Truck />, title: 'Logistics', description: 'Efficient supply chain optimization.', href: '#' },
+        { icon: <Building2 />, title: 'Real Estate', description: 'PropTech innovations for real estate.', href: '#' },
+        { icon: <Landmark />, title: 'Government', description: 'Smart public sector solutions.', href: '#' },
+      ],
+      whatsNew: { title: 'Industry Insights', items: ['Latest trends in Fintech', 'AI in Healthcare', 'Future of E-commerce'], buttonText: 'Explore Industries', buttonHref: '#' }
+    }
+  },
+
+  // Portfolio
+  {
+    label: 'Portfolio',
+    href: '#portfolio',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <BarChart3 />, title: 'AI Analytics Dashboard', description: 'A data-driven dashboard for decision-making.', bgColor: 'bg-indigo-500', href: '#portfolio' },
+        { icon: <ShoppingCart />, title: 'Multi-vendor Marketplace', description: 'A scalable e-commerce ecosystem.', bgColor: 'bg-sky-500', href: '#portfolio' },
+      ],
+      smallCards: [
+        { icon: <Rocket />, title: 'Startup Solutions', description: 'Agile tech for fast-growing startups.', href: '#portfolio' },
+        { icon: <Building2 />, title: 'Enterprise Platforms', description: 'Robust systems for global enterprises.', href: '#portfolio' },
+        { icon: <Landmark />, title: 'Government Projects', description: 'Digital transformation for the public sector.', href: '#portfolio' },
+        { icon: <Folder />, title: 'All Projects', description: 'Browse our complete showcase.', href: '#portfolio' },
+      ],
+      whatsNew: { title: 'Client Success', items: ['40% increase in user engagement', '25% cost reduction'], buttonText: 'Explore Portfolio', buttonHref: '#portfolio' }
+    }
+  },
+
+  // Education
+  {
+    label: 'Education',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <GraduationCap />, title: 'Bootcamp', description: 'Intensive training for tech skills.', bgColor: 'bg-emerald-500', href: '#' },
+        { icon: <BookMarked />, title: 'Workshops', description: 'Hands-on skill-building sessions.', bgColor: 'bg-yellow-500', href: '#' },
+      ],
+      smallCards: [
+        { icon: <Users />, title: '1-on-1 Mentoring', description: 'Personalized learning with experts.', href: '#' },
+        { icon: <Award />, title: 'Certification', description: 'Recognized industry credentials.', href: '#' },
+        { icon: <Briefcase />, title: 'Corporate Training', description: 'Upskill your entire workforce.', href: '#' },
+        { icon: <FileText />, title: 'Scholarship Program', description: 'Opportunities for aspiring talent.', href: '#' },
+      ],
+      whatsNew: { title: 'Upcoming Programs', items: ['AI Bootcamp', 'UI/UX Design Sprint', 'Cloud Certification Prep'], buttonText: 'All Programs', buttonHref: '#' }
+    }
+  },
+
+  // Assisted Projects
+  {
+    label: 'Assisted Projects',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <Layers />, title: 'Student Assistance', description: 'Support for academic projects.', bgColor: 'bg-pink-500', href: '#' },
+        { icon: <Rocket />, title: 'MVP Build', description: 'Rapid prototype development.', bgColor: 'bg-cyan-500', href: '#' },
+      ],
+      smallCards: [
+        { icon: <PenTool />, title: 'Final Project Mentoring', description: 'Guidance for graduation projects.', href: '#' },
+        { icon: <Shield />, title: 'NDA-Secured Work', description: 'Confidential project development.', href: '#' },
+        { icon: <Server />, title: 'Debug & Optimization', description: 'Improve performance and stability.', href: '#' },
+      ],
+      whatsNew: { title: 'Collaboration Options', items: ['Remote Mentoring', 'On-site Support', 'Prototype Testing'], buttonText: 'Get Assistance', buttonHref: '#' }
+    }
+  },
+
+  // Resources
+  {
+    label: 'Resources',
+    type: 'mega-menu',
+    megaMenuContent: {
+      featuredCards: [
+        { icon: <BookOpen />, title: 'Blog', description: 'Insights and updates from our experts.', bgColor: 'bg-orange-500', href: '#' },
+        { icon: <FileSearch />, title: 'Whitepapers', description: 'In-depth research and industry reports.', bgColor: 'bg-lime-500', href: '#' },
+      ],
+      smallCards: [
+        { icon: <GraduationCap />, title: 'Tutorials', description: 'Step-by-step guides for developers.', href: '#' },
+        { icon: <Users />, title: 'Community Forum', description: 'Collaborate and learn together.', href: '#' },
+        { icon: <Layers />, title: 'Open Source Contributions', description: 'Our public code projects.', href: '#' },
+      ],
+      whatsNew: { title: 'Featured Content', items: ['Top 10 UI Trends', 'Scaling Your SaaS Globally'], buttonText: 'Explore Resources', buttonHref: '#' }
+    }
+  },
+
+  // Contact
+  { label: 'Contact', href: '#contact', type: 'link' },
+
+  // Language Switcher
+  {
+    label: 'Language',
+    type: 'dropdown',
+    items: [
+      { title: 'English', href: '#' },
+      { title: 'Español', href: '#' },
+      { title: '日本語', href: '#' },
+      { title: 'العربية', href: '#' },
+      { title: 'Français', href: '#' },
+    ],
+    icon: <Languages />
+  }
+];
 
 const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   // Refs
   const headerRef = useRef(null);
   const dropdownRef = useRef(null);
   const timeoutRef = useRef(null);
-  const animationFrameRef = useRef(null);
 
   // State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [gsapReady, setGsapReady] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(-1);
+  const [isLanguageDropdownOpen, setLanguageDropdownOpen] = useState(false);
 
-  // GSAP Dynamic Loading with Error Handling
+  // Simple scroll handler
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    if (window.gsap) {
-      setGsapReady(true);
-      return;
-    }
-
-    let script = null;
-    const loadGSAP = () => {
-      script = document.createElement("script");
-      script.src =
-        "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js";
-      script.async = true;
-
-      script.onload = () => {
-        setGsapReady(true);
-      };
-
-      script.onerror = () => {
-        console.warn("GSAP failed to load, animations will be disabled");
-      };
-
-      document.head.appendChild(script);
-    };
-
-    loadGSAP();
-
-    return () => {
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-
-  // Optimized Scroll Handler
-  useEffect(() => {
-    let ticking = false;
-
     const handleScroll = () => {
-      if (!ticking) {
-        animationFrameRef.current = requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          setScrolled(scrollY > 20);
-          ticking = false;
-        });
-        ticking = true;
-      }
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 20);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Initial Header Animation
-  useLayoutEffect(() => {
-    if (!gsapReady || !headerRef.current) return;
-
-    const tl = window.gsap.timeline();
-
-    tl.set(headerRef.current, { y: -100, opacity: 0 }).to(headerRef.current, {
-      y: 0,
-      opacity: 1,
-      duration: 1,
-      ease: "power3.out",
-      delay: 0.1,
-    });
-
-    return () => tl.kill();
-  }, [gsapReady]);
-
-  // Enhanced Dropdown Show Animation
+  // Simple dropdown show/hide
   const showDropdown = useCallback(() => {
-    if (!gsapReady || !dropdownRef.current || isAnimating) return;
-
-    setIsAnimating(true);
     onDropdownToggle(true);
+  }, [onDropdownToggle]);
 
-    const tl = window.gsap.timeline({
-      onComplete: () => setIsAnimating(false),
-    });
-
-    // Set initial state
-    tl.set(dropdownRef.current, {
-      autoAlpha: 0,
-      y: -20,
-      scale: 0.95,
-      transformOrigin: "top center",
-    });
-
-    // Animate container
-    tl.to(dropdownRef.current, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.3,
-      ease: "power3.out",
-    });
-
-    // Animate menu items with stagger
-    const menuItems = dropdownRef.current.querySelectorAll(".mega-menu-item");
-    if (menuItems.length) {
-      tl.fromTo(
-        menuItems,
-        {
-          y: 20,
-          opacity: 0,
-          scale: 0.9,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.4,
-          ease: "power3.out",
-          stagger: {
-            amount: 0.2,
-            from: "start",
-          },
-        },
-        "-=0.2"
-      );
-    }
-
-    return () => tl.kill();
-  }, [gsapReady, onDropdownToggle, isAnimating]);
-
-  // Enhanced Dropdown Hide Animation
   const hideDropdown = useCallback(() => {
-    if (!gsapReady || !dropdownRef.current || isAnimating) return;
+    setActiveSubmenu(null);
+    onDropdownToggle(false);
+  }, [onDropdownToggle]);
 
-    setIsAnimating(true);
-
-    const tl = window.gsap.timeline({
-      onComplete: () => {
-        setActiveSubmenu(null);
-        onDropdownToggle(false);
-        setIsAnimating(false);
-      },
-    });
-
-    // Animate menu items out first
-    const menuItems = dropdownRef.current.querySelectorAll(".mega-menu-item");
-    if (menuItems.length) {
-      tl.to(menuItems, {
-        y: -10,
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.2,
-        ease: "power3.in",
-        stagger: {
-          amount: 0.1,
-          from: "end",
-        },
-      });
+  // Simple mouse handlers
+  const handleMouseEnter = useCallback((submenuContent, index) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
 
-    // Then animate container
-    tl.to(
-      dropdownRef.current,
-      {
-        autoAlpha: 0,
-        y: -20,
-        scale: 0.95,
-        duration: 0.25,
-        ease: "power3.in",
-      },
-      "-=0.1"
-    );
+    setHoveredIndex(index);
 
-    return () => tl.kill();
-  }, [gsapReady, onDropdownToggle, isAnimating]);
-
-  // Improved Mouse Handlers with Debouncing
-  const handleMouseEnter = useCallback(
-    (submenuContent) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-
-      if (submenuContent) {
-        setActiveSubmenu(submenuContent);
-        showDropdown();
-      }
-    },
-    [showDropdown]
-  );
+    if (submenuContent) {
+      setActiveSubmenu(submenuContent);
+      showDropdown();
+    }
+  }, [showDropdown]);
 
   const handleMouseLeave = useCallback(() => {
+    setHoveredIndex(-1);
+    
     timeoutRef.current = setTimeout(() => {
       hideDropdown();
     }, 150);
   }, [hideDropdown]);
 
-  // Mobile Menu with Enhanced Animation
+  // Mobile menu toggle
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => {
+      const newState = !prev;
+      
+      if (newState) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+      
+      return newState;
+    });
+  }, []);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.width = "";
+    document.body.style.overflow = '';
   }, []);
 
-  // Enhanced Keyboard Navigation
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
-        case "Escape":
+        case 'Escape':
           if (isMobileMenuOpen) {
             closeMobileMenu();
           } else if (isDropdownVisible) {
             hideDropdown();
           }
           break;
-        case "Tab":
+        case 'Tab':
           if (isDropdownVisible && !dropdownRef.current?.contains(e.target)) {
             hideDropdown();
           }
@@ -251,484 +236,146 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isMobileMenuOpen, isDropdownVisible, closeMobileMenu, hideDropdown]);
 
-  // Cleanup on unmount
+  // Cleanup
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
     };
   }, []);
 
-  // Memoized Navigation Data
-  const navItems = useMemo(
-    () => [
-      {
-        label: "Services",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "Web Development",
-              description: "Full-stack modern web solutions",
-              icon: "🌐",
-              bgColor: "bg-gradient-to-br from-blue-500 to-blue-600",
-              href: "/services#web-development",
-            },
-            {
-              title: "Mobile App Development",
-              description: "Native iOS & Android applications",
-              icon: "📱",
-              bgColor: "bg-gradient-to-br from-emerald-500 to-emerald-600",
-              href: "/services#mobile-app",
-            },
-          ],
-          smallCards: [
-            {
-              title: "UI/UX Design",
-              description: "User-centered design approach",
-              icon: "🎨",
-              href: "/services#ui-ux-design",
-            },
-            {
-              title: "Backend & API",
-              description: "Robust server architecture",
-              icon: "⚙️",
-              href: "/services#backend-api",
-            },
-            {
-              title: "Maintenance & Support",
-              description: "24/7 technical assistance",
-              icon: "🛠️",
-              href: "/services#maintenance-support",
-            },
-            {
-              title: "AI Integration & Automation",
-              description: "Smart solutions integration",
-              icon: "🤖",
-              href: "/services#ai-integration",
-            },
-          ],
-          whatsNew: {
-            title: "Our Expertise",
-            items: [
-              "Cloud Infrastructure Setup",
-              "DevOps & CI/CD Pipeline",
-              "Performance Optimization",
-              "Security Implementation",
-            ],
-            buttonText: "View All Services",
-            buttonHref: "/services",
-          },
-        },
-      },
-      {
-        label: "Portfolio",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "All Projects",
-              description: "Comprehensive project showcase",
-              icon: "📂",
-              bgColor: "bg-gradient-to-br from-purple-500 to-purple-600",
-              href: "/portfolio",
-            },
-            {
-              title: "Case Studies",
-              description: "In-depth project analysis",
-              icon: "📊",
-              bgColor: "bg-gradient-to-br from-orange-500 to-orange-600",
-              href: "/portfolio/case-studies",
-            },
-          ],
-          smallCards: [
-            {
-              title: "Startups",
-              description: "Innovative startup solutions",
-              icon: "🚀",
-              href: "/portfolio#startups",
-            },
-            {
-              title: "Government Projects",
-              description: "Public sector solutions",
-              icon: "🏛️",
-              href: "/portfolio#government",
-            },
-            {
-              title: "E-commerce",
-              description: "Online retail platforms",
-              icon: "🛒",
-              href: "/portfolio#ecommerce",
-            },
-            {
-              title: "Fintech",
-              description: "Financial technology solutions",
-              icon: "💳",
-              href: "/portfolio#fintech",
-            },
-          ],
-          whatsNew: {
-            title: "Recent Projects",
-            items: [
-              "AI-powered Analytics Dashboard",
-              "Multi-vendor Marketplace Platform",
-              "Government Digital Services",
-              "Real-time Trading Application",
-            ],
-            buttonText: "Explore Portfolio",
-            buttonHref: "/portfolio",
-          },
-        },
-      },
-      {
-        label: "About",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "Our Story",
-              description: "Journey of innovation and growth",
-              icon: "📖",
-              bgColor: "bg-gradient-to-br from-indigo-500 to-indigo-600",
-              href: "/about#our-story",
-            },
-            {
-              title: "Our Team",
-              description: "Meet the talented professionals",
-              icon: "👥",
-              bgColor: "bg-gradient-to-br from-teal-500 to-teal-600",
-              href: "/about#our-team",
-            },
-          ],
-          smallCards: [
-            {
-              title: "Our Values",
-              description: "What drives our mission",
-              icon: "⭐",
-              href: "/about#our-values",
-            },
-            {
-              title: "Culture & Career",
-              description: "Join our growing team",
-              icon: "🌱",
-              href: "/careers",
-            },
-            {
-              title: "Testimonials",
-              description: "What our clients say",
-              icon: "💬",
-              href: "/about#testimonials",
-            },
-          ],
-          whatsNew: {
-            title: "Company Highlights",
-            items: [
-              "50+ Successful Projects Delivered",
-              "Award-winning Design Team",
-              "ISO 27001 Security Certified",
-              "24/7 Customer Support",
-            ],
-            buttonText: "Learn About Us",
-            buttonHref: "/about",
-          },
-        },
-      },
-      {
-        label: "Blog",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "All Articles",
-              description: "Latest insights and tutorials",
-              icon: "📝",
-              bgColor: "bg-gradient-to-br from-rose-500 to-rose-600",
-              href: "/blog",
-            },
-            {
-              title: "Engineering",
-              description: "Technical deep-dives and best practices",
-              icon: "⚡",
-              bgColor: "bg-gradient-to-br from-amber-500 to-amber-600",
-              href: "/blog/engineering",
-            },
-          ],
-          smallCards: [
-            {
-              title: "UI/UX & Design",
-              description: "Design trends and insights",
-              icon: "🎯",
-              href: "/blog/design",
-            },
-            {
-              title: "DevOps & Cloud",
-              description: "Infrastructure and deployment",
-              icon: "☁️",
-              href: "/blog/devops",
-            },
-            {
-              title: "Company Updates",
-              description: "Latest news and announcements",
-              icon: "📢",
-              href: "/blog/updates",
-            },
-            {
-              title: "Tutorials",
-              description: "Step-by-step guides",
-              icon: "🎓",
-              href: "/blog/tutorials",
-            },
-          ],
-          whatsNew: {
-            title: "Latest Posts",
-            items: [
-              "Building Scalable React Applications",
-              "AI Integration in Modern Development",
-              "Best Practices for API Design",
-              "Cloud Security Implementation",
-            ],
-            buttonText: "Read All Articles",
-            buttonHref: "/blog",
-          },
-        },
-      },
-      {
-        label: "Education",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "Bootcamp & Intensive Class",
-              description: "Accelerated tech skill development",
-              icon: "🎯",
-              bgColor: "bg-gradient-to-br from-green-500 to-green-600",
-              href: "/education#bootcamp",
-            },
-            {
-              title: "1-on-1 Mentoring",
-              description: "Personal guidance for career growth",
-              icon: "👨‍🏫",
-              bgColor: "bg-gradient-to-br from-blue-500 to-cyan-500",
-              href: "/education#mentoring",
-            },
-          ],
-          smallCards: [
-            {
-              title: "Workshops & Webinars",
-              description: "Community learning events",
-              icon: "🎤",
-              href: "/education#workshops",
-            },
-            {
-              title: "Tech for Students",
-              description: "Special programs for students",
-              icon: "🎓",
-              href: "/education#students",
-            },
-            {
-              title: "Digital Skill Certification",
-              description: "Professional tech certifications",
-              icon: "🏆",
-              href: "/education#certification",
-            },
-          ],
-          whatsNew: {
-            title: "Available Programs",
-            items: [
-              "React & Next.js Bootcamp",
-              "Mobile Development with Flutter",
-              "AI/ML Integration Workshop",
-              "Full-Stack Developer Certification",
-            ],
-            buttonText: "Explore Programs",
-            buttonHref: "/education",
-          },
-        },
-      },
-      {
-        label: "Assisted Project",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "Project Assistance for Students",
-              description: "Collaborative academic project support",
-              icon: "🤝",
-              bgColor: "bg-gradient-to-br from-violet-500 to-violet-600",
-              href: "/assisted-project#students",
-            },
-            {
-              title: "Final Project Mentoring",
-              description: "Thesis and capstone guidance",
-              icon: "📋",
-              bgColor: "bg-gradient-to-br from-pink-500 to-pink-600",
-              href: "/assisted-project#final-project",
-            },
-          ],
-          smallCards: [
-            {
-              title: "Prototype & MVP Build",
-              description: "From idea to working prototype",
-              icon: "🛠️",
-              href: "/assisted-project#prototype",
-            },
-            {
-              title: "NDA-based Development",
-              description: "Secure and confidential service",
-              icon: "🔒",
-              href: "/assisted-project#nda",
-            },
-            {
-              title: "Support & Revisions",
-              description: "Ongoing assistance and improvements",
-              icon: "🔄",
-              href: "/assisted-project#support",
-            },
-          ],
-          whatsNew: {
-            title: "Our Approach",
-            items: [
-              "Ethical collaboration principles",
-              "Educational value focused",
-              "Complete documentation provided",
-              "Post-delivery support included",
-            ],
-            buttonText: "Learn More",
-            buttonHref: "/assisted-project",
-          },
-        },
-      },
-      {
-        label: "Contact",
-        type: "mega-menu",
-        megaMenuContent: {
-          featuredCards: [
-            {
-              title: "Contact Form",
-              description: "Send us a detailed message",
-              icon: "📧",
-              bgColor: "bg-gradient-to-br from-slate-500 to-slate-600",
-              href: "/contact#form",
-            },
-            {
-              title: "Schedule a Call",
-              description: "Book a consultation meeting",
-              icon: "📞",
-              bgColor: "bg-gradient-to-br from-emerald-500 to-teal-600",
-              href: "/contact#schedule",
-            },
-          ],
-          smallCards: [
-            {
-              title: "Office Location",
-              description: "Visit our physical office",
-              icon: "📍",
-              href: "/contact#location",
-            },
-            {
-              title: "Request a Quote",
-              description: "Get project estimation",
-              icon: "💰",
-              href: "/contact#quote",
-            },
-          ],
-          whatsNew: {
-            title: "Get in Touch",
-            items: [
-              "Response within 24 hours",
-              "Free initial consultation",
-              "Multiple communication channels",
-              "Flexible meeting schedules",
-            ],
-            buttonText: "Contact Us Now",
-            buttonHref: "/contact",
-          },
-        },
-      },
-    ],
-    []
-  );
-
-  // Dynamic Header Classes
+  // Simple header classes
   const headerClasses = useMemo(() => {
-    const baseClasses =
-      "w-full fixed top-0 left-0 z-50 transition-all duration-500 ease-out";
-
+    const baseClasses = 'w-full fixed top-0 left-0 z-50 transition-all duration-300 border-b backdrop-blur-md';
+    
     if (isDropdownVisible) {
-      return `${baseClasses} bg-white/98 backdrop-blur-xl shadow-2xl shadow-black/10 border-b border-gray-200/60`;
+      return `${baseClasses} bg-white/95 shadow-lg border-gray-200`;
     }
-
+    
     if (scrolled) {
-      return `${baseClasses} bg-white/95 backdrop-blur-xl shadow-xl shadow-black/5 border-b border-gray-100/50`;
+      return `${baseClasses} bg-white/95 shadow-md border-gray-100`;
     }
-
-    return `${baseClasses} bg-white/80 backdrop-blur-md`;
+    
+    return `${baseClasses} bg-white/90 border-transparent`;
   }, [isDropdownVisible, scrolled]);
 
   return (
     <>
-      <header
-        ref={headerRef}
+      <header 
+        ref={headerRef} 
         className={headerClasses}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={() => {
+          if (hoveredIndex >= 0) {
+            handleMouseLeave(hoveredIndex);
+          }
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative flex items-center justify-between h-16 lg:h-18">
+          <div className="relative flex items-center justify-between h-16 lg:h-20">
+            
             {/* Logo */}
-            <div className="flex-shrink-0 group">
-              <a
-                href="#home"
-                className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20 rounded-lg p-1"
+            <div className="flex-shrink-0">
+              <a 
+                href="#home" 
+                className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2 -m-2"
               >
-                <div className="text-2xl lg:text-3xl font-black text-black transition-colors duration-300">
+                <div className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Bilcode
                 </div>
               </a>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex absolute inset-x-0 items-center justify-center space-x-1">
-              {navItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="relative group"
-                  onMouseEnter={() =>
-                    handleMouseEnter(
-                      item.type === "mega-menu" ? item.megaMenuContent : null
-                    )
-                  }
-                >
-                  <a
-                    href={item.href || "#"}
-                    className="relative px-4 py-3 text-sm font-semibold text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-xl hover:bg-blue-50/80 focus:outline-none focus:ring-2 focus:ring-blue-500/20 group"
-                    aria-haspopup={item.type === "mega-menu" ? "true" : "false"}
-                  >
-                    <span className="relative z-10">{item.label}</span>
-                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 group-hover:w-3/4 rounded-full"></div>
-                  </a>
-                </div>
-              ))}
+            <nav className="hidden lg:flex items-center justify-center space-x-1">
+              {navItems.map((item, idx) => {
+                if (item.type === 'link' || item.type === 'mega-menu') {
+                  return (
+                    <div
+                      key={idx}
+                      className="relative"
+                      onMouseEnter={() => handleMouseEnter(item.type === 'mega-menu' ? item.megaMenuContent : null, idx)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <a
+                        href={item.href || '#'}
+                        className={`px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg ${
+                          hoveredIndex === idx
+                            ? 'text-blue-600 bg-blue-50'
+                            : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                        }`}
+                        aria-haspopup={item.type === 'mega-menu' ? 'true' : 'false'}
+                      >
+                        {item.label}
+                      </a>
+                    </div>
+                  );
+                } else if (item.type === 'dropdown') {
+                  return (
+                    <div 
+                      key={idx} 
+                      className="relative"
+                      onMouseEnter={() => setLanguageDropdownOpen(true)}
+                      onMouseLeave={() => setLanguageDropdownOpen(false)}
+                    >
+                      <button
+                        className={`flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg ${
+                          isLanguageDropdownOpen
+                            ? 'text-blue-600 bg-blue-50'
+                            : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {item.icon && <span className="mr-2">{item.icon}</span>}
+                        {item.label}
+                      </button>
+                      {isLanguageDropdownOpen && (
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                          {item.items.map((lang, langIdx) => (
+                            <a
+                              key={langIdx}
+                              href={lang.href}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            >
+                              {lang.title}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })}
             </nav>
+
+            {/* Mobile Menu Button */}
+            <div className="flex items-center">
+              <button
+                onClick={toggleMobileMenu}
+                className="lg:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                aria-label="Toggle mobile menu"
+                aria-expanded={isMobileMenuOpen}
+              >
+                <div className="w-6 h-5 relative flex flex-col justify-center space-y-1">
+                  <span className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></span>
+                  <span className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                  <span className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mega Menu Dropdown */}
         <div
           ref={dropdownRef}
-          className="absolute left-0 w-full top-full z-40"
-          style={{
-            visibility: "hidden",
-            opacity: 0,
-            transform: "translateY(-20px) scale(0.95)",
-          }}
+          className={`absolute left-0 w-full top-full z-40 bg-white/95 backdrop-blur-md shadow-xl border-t border-gray-100 transition-all duration-300 ${
+            isDropdownVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
+          }`}
           onMouseEnter={() => {
             if (timeoutRef.current) {
               clearTimeout(timeoutRef.current);
@@ -736,174 +383,175 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             }
           }}
         >
-          <div className="bg-white/98 backdrop-blur-xl shadow-2xl shadow-black/10 border-2 border-gray-100/50 rounded-b-3xl">
-            {activeSubmenu && (
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                  {/* Featured Cards */}
-                  <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {activeSubmenu && (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                
+                {/* Main Content Area - 3 columns */}
+                <div className="lg:col-span-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    
+                    {/* Featured Cards */}
                     {activeSubmenu.featuredCards?.map((card, i) => (
                       <a
-                        key={i}
+                        key={`featured-${i}`}
                         href={card.href}
-                        className={`mega-menu-item group relative overflow-hidden ${card.bgColor} text-white p-8 rounded-2xl hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-2xl`}
+                        className={`group p-8 rounded-2xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor}`}
                       >
-                        <div className="relative z-10">
-                          <div className="text-4xl mb-4">{card.icon}</div>
-                          <h3 className="text-xl font-bold mb-2">
-                            {card.title}
-                          </h3>
-                          <p className="text-sm opacity-90 mb-4">
-                            {card.description}
-                          </p>
-                          <div className="flex items-center text-sm font-medium group-hover:translate-x-2 transition-transform duration-300">
-                            Learn more
-                            <svg
-                              className="w-4 h-4 ml-2"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M17 8l4 4m0 0l-4 4m4-4H3"
-                              />
-                            </svg>
-                          </div>
+                        <div className="w-14 h-14 mb-6 text-4xl flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                          {card.icon}
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <h3 className="font-bold text-xl mb-3 group-hover:text-white">{card.title}</h3>
+                        <p className="text-sm opacity-90 leading-relaxed mb-6">{card.description}</p>
+                        <div className="font-semibold text-sm flex items-center opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                          Learn more <span className="ml-2 transform group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+                        </div>
                       </a>
                     ))}
 
+                    {/* Small Cards */}
                     {activeSubmenu.smallCards?.map((card, i) => (
                       <a
-                        key={i}
+                        key={`small-${i}`}
                         href={card.href}
-                        className="mega-menu-item group bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300 hover:shadow-lg border border-gray-200/50 hover:border-blue-200/50"
+                        className="group bg-gray-50/80 backdrop-blur-sm hover:bg-white hover:shadow-lg p-6 rounded-2xl transition-all duration-300 hover:scale-105 border border-gray-100/50"
                       >
-                        <div className="text-2xl mb-3">{card.icon}</div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          {card.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-3">
-                          {card.description}
-                        </p>
-                        <div className="flex items-center text-sm font-medium text-blue-600 group-hover:translate-x-1 transition-transform duration-300">
-                          Explore
-                          <svg
-                            className="w-4 h-4 ml-1"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M17 8l4 4m0 0l-4 4m4-4H3"
-                            />
-                          </svg>
+                        <div className="flex items-start space-x-4">
+                          <div className="flex-shrink-0 w-12 h-12 text-2xl text-gray-600 group-hover:text-blue-600 transition-colors duration-300 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                            {card.icon}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-gray-800 group-hover:text-gray-900 mb-2">{card.title}</h3>
+                            <p className="text-sm text-gray-600 group-hover:text-gray-700 leading-relaxed">{card.description}</p>
+                          </div>
                         </div>
                       </a>
                     ))}
                   </div>
+                </div>
 
-                  {/* What's New Section */}
-                  <div className="lg:col-span-1 bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl border border-blue-100/50">
-                    <h4 className="text-lg font-bold text-gray-900 mb-6">
-                      {activeSubmenu.whatsNew?.title}
-                    </h4>
-                    <ul className="space-y-3 mb-8">
+                {/* Sidebar "What's New" - 1 column */}
+                <div className="lg:col-span-1">
+                  <div className="sticky top-8 p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg border border-gray-100/50">
+                    <h3 className="font-bold text-xl text-gray-900 mb-6">{activeSubmenu.whatsNew?.title}</h3>
+                    <ul className="space-y-4 mb-8">
                       {activeSubmenu.whatsNew?.items.map((item, i) => (
-                        <li
-                          key={i}
-                          className="mega-menu-item flex items-start text-sm text-gray-700"
-                        >
-                          <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                          <span>{item}</span>
+                        <li key={`new-${i}`} className="flex items-start space-x-3">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 cursor-pointer text-sm leading-relaxed">
+                            {item}
+                          </span>
                         </li>
                       ))}
                     </ul>
-                    <a
-                      href={activeSubmenu.whatsNew?.buttonHref}
-                      className="mega-menu-item inline-flex items-center justify-center w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 group"
+                    <a 
+                      href={activeSubmenu.whatsNew?.buttonHref} 
+                      className="inline-flex items-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                     >
-                      {activeSubmenu.whatsNew?.buttonText}
-                      <svg
-                        className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
+                      {activeSubmenu.whatsNew?.buttonText} 
+                      <span className="ml-2 transform group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
                     </a>
                   </div>
                 </div>
+
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Mobile Menu */}
-      <div
-        className={`lg:hidden fixed inset-0 z-40 transform transition-all duration-500 ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+      <div 
+        className={`lg:hidden fixed inset-0 z-40 transform transition-transform duration-300 ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-xl">
-          <div className="flex flex-col h-full pt-20 pb-6 overflow-y-auto">
+        <div className="absolute inset-0 bg-white">
+          <div className="flex flex-col h-full pt-20 pb-8 overflow-y-auto">
             <div className="px-6 flex-1">
               <nav className="space-y-8">
-                {navItems.map((item, idx) => (
-                  <div key={idx} className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-8 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
-                      <h3 className="text-xl font-bold text-gray-900">
+                {navItems.map((item, idx) => {
+                  if (item.type === 'link') {
+                    return (
+                      <a
+                        key={idx}
+                        href={item.href}
+                        onClick={closeMobileMenu}
+                        className="block text-xl font-bold text-gray-900 hover:text-blue-600"
+                      >
                         {item.label}
-                      </h3>
-                    </div>
-
-                    {item.megaMenuContent && (
-                      <div className="ml-12 space-y-3">
-                        {[
-                          ...item.megaMenuContent.featuredCards,
-                          ...item.megaMenuContent.smallCards,
-                        ].map((card, i) => (
-                          <a
-                            key={i}
-                            href={card.href}
-                            onClick={closeMobileMenu}
-                            className="group flex items-center space-x-4 p-4 rounded-xl hover:bg-blue-50/80 transition-all duration-300 border border-transparent hover:border-blue-200/50"
-                          >
-                            <span className="text-2xl group-hover:scale-110 transition-transform duration-300">
-                              {card.icon}
-                            </span>
-                            <div>
-                              <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
-                                {card.title}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {card.description}
-                              </div>
-                            </div>
-                          </a>
-                        ))}
+                      </a>
+                    );
+                  } else if (item.type === 'mega-menu') {
+                    return (
+                      <div key={idx} className="space-y-4">
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {item.label}
+                        </h3>
+                        {item.megaMenuContent && (
+                          <div className="ml-4 space-y-4">
+                            {item.megaMenuContent.featuredCards?.map((card, i) => (
+                              <a
+                                key={`mobile-featured-${i}`}
+                                href={card.href}
+                                onClick={closeMobileMenu}
+                                className="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+                              >
+                                <div className={`w-12 h-12 ${card.bgColor} rounded-lg flex items-center justify-center text-white text-xl`}>
+                                  {card.icon}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-gray-900">{card.title}</div>
+                                  <div className="text-sm text-gray-600">{card.description}</div>
+                                </div>
+                              </a>
+                            ))}
+                            {item.megaMenuContent.smallCards?.map((card, i) => (
+                              <a
+                                key={`mobile-small-${i}`}
+                                href={card.href}
+                                onClick={closeMobileMenu}
+                                className="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
+                              >
+                                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 text-xl">
+                                  {card.icon}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-gray-900">{card.title}</div>
+                                  <div className="text-sm text-gray-600">{card.description}</div>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    );
+                  } else if (item.type === 'dropdown') {
+                    return (
+                      <div key={idx} className="space-y-4">
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {item.label}
+                        </h3>
+                        <div className="ml-4 space-y-2">
+                          {item.items.map((lang, langIdx) => (
+                            <a
+                              key={langIdx}
+                              href={lang.href}
+                              onClick={closeMobileMenu}
+                              className="block p-2 rounded-md text-gray-700 hover:bg-gray-100"
+                            >
+                              {lang.title}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
               </nav>
             </div>
           </div>
@@ -913,7 +561,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/20 z-30 lg:hidden"
           onClick={closeMobileMenu}
           aria-hidden="true"
         />
