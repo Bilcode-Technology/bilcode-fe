@@ -9,23 +9,26 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   // Refs
   const headerRef = useRef(null);
   const megaMenuRef = useRef(null);
   const timeoutRef = useRef(null);
 
-  // Simple CSS animations instead of GSAP
+  // Enhanced animations for mega menu
   useEffect(() => {
     if (megaMenuRef.current) {
       if (isDropdownVisible) {
         megaMenuRef.current.style.visibility = "visible";
         megaMenuRef.current.style.opacity = "1";
         megaMenuRef.current.style.transform = "translateY(0)";
+        megaMenuRef.current.style.backdropFilter = "blur(20px)";
       } else {
         megaMenuRef.current.style.visibility = "hidden";
         megaMenuRef.current.style.opacity = "0";
-        megaMenuRef.current.style.transform = "translateY(-10px)";
+        megaMenuRef.current.style.transform = "translateY(-20px)";
+        megaMenuRef.current.style.backdropFilter = "blur(0px)";
       }
     }
   }, [isDropdownVisible]);
@@ -235,20 +238,35 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             <a
               key={`card-${i}`}
               href={card.href}
-              className={`group p-5 rounded-xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor} flex flex-col`}
+              onMouseEnter={() => setHoveredCard(`services-${i}`)}
+              onMouseLeave={() => setHoveredCard(null)}
+              className={`group relative p-6 rounded-2xl text-white transition-all duration-500 transform ${card.bgColor} flex flex-col overflow-hidden ${
+                hoveredCard === `services-${i}` 
+                  ? 'scale-105 shadow-2xl rotate-1' 
+                  : 'hover:scale-102 hover:shadow-xl'
+              }`}
             >
-              <div className="w-10 h-10 mb-3 text-2xl flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300 flex-shrink-0">
+              {/* Background gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              {/* Animated background particles */}
+              <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-white/5 rounded-full blur-lg group-hover:scale-125 transition-transform duration-500"></div>
+              
+              <div className="relative z-10 flex flex-col h-full">
+              <div className="w-12 h-12 mb-4 text-2xl flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 flex-shrink-0">
                 {card.icon}
               </div>
               <div className="flex-grow">
-                <h3 className="font-semibold text-md mb-1">{card.title}</h3>
-                <p className="text-xs opacity-90">{card.description}</p>
+                <h3 className="font-bold text-lg mb-2 group-hover:text-white transition-colors duration-300">{card.title}</h3>
+                <p className="text-sm opacity-90 group-hover:opacity-100 leading-relaxed transition-all duration-300">{card.description}</p>
               </div>
-              <div className="font-medium text-xs flex items-center opacity-80 group-hover:opacity-100 transition-opacity duration-300 mt-3">
+              <div className="font-semibold text-sm flex items-center opacity-80 group-hover:opacity-100 transition-all duration-300 mt-4 group-hover:translate-x-2">
                 Learn more
-                <span className="ml-1.5 transform group-hover:translate-x-1 transition-transform duration-300">
+                <span className="ml-2 transform group-hover:translate-x-2 group-hover:scale-110 transition-transform duration-300">
                   &rarr;
                 </span>
+              </div>
               </div>
             </a>
           ))}
@@ -262,15 +280,24 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               <a
                 key={`left-card-${i}`}
                 href={card.href}
-                className={`group p-4 rounded-xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor} flex flex-col flex-1`}
+                onMouseEnter={() => setHoveredCard(`left-${i}`)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={`group relative p-5 rounded-xl text-white transition-all duration-400 transform ${card.bgColor} flex flex-col flex-1 overflow-hidden ${
+                  hoveredCard === `left-${i}` 
+                    ? 'scale-105 shadow-2xl -rotate-1' 
+                    : 'hover:scale-102 hover:shadow-lg'
+                }`}
               >
+                {/* Animated background elements */}
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full blur-lg group-hover:scale-150 group-hover:translate-x-2 group-hover:-translate-y-2 transition-all duration-500"></div>
+                
                 <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-10 h-10 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-400">
                     {card.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-md mb-1">{card.title}</h3>
-                    <p className="text-xs text-white/80">{card.description}</p>
+                    <h3 className="font-bold text-base mb-1 group-hover:text-white transition-colors duration-300">{card.title}</h3>
+                    <p className="text-sm text-white/80 group-hover:text-white/90 transition-colors duration-300">{card.description}</p>
                   </div>
                 </div>
               </a>
@@ -281,15 +308,25 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               <a
                 key={`middle-card-${i}`}
                 href={card.href}
-                className={`group p-4 rounded-xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor} flex flex-col flex-1`}
+                onMouseEnter={() => setHoveredCard(`middle-${i}`)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={`group relative p-5 rounded-xl text-white transition-all duration-400 transform ${card.bgColor} flex flex-col flex-1 overflow-hidden ${
+                  hoveredCard === `middle-${i}` 
+                    ? 'scale-105 shadow-2xl rotate-1' 
+                    : 'hover:scale-102 hover:shadow-lg'
+                }`}
               >
+                {/* Different background pattern for middle column */}
+                <div className="absolute -bottom-2 -left-2 w-12 h-12 bg-white/10 rounded-full blur-md group-hover:scale-200 transition-transform duration-600"></div>
+                <div className="absolute top-2 right-2 w-8 h-8 bg-white/5 rounded-full blur-sm group-hover:scale-150 transition-transform duration-400"></div>
+                
                 <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-10 h-10 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-400">
                     {card.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-md mb-1">{card.title}</h3>
-                    <p className="text-xs text-white/80">{card.description}</p>
+                    <h3 className="font-bold text-base mb-1 group-hover:text-white transition-colors duration-300">{card.title}</h3>
+                    <p className="text-sm text-white/80 group-hover:text-white/90 transition-colors duration-300">{card.description}</p>
                   </div>
                 </div>
               </a>
@@ -300,15 +337,25 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               <a
                 key={`right-card-${i}`}
                 href={card.href}
-                className={`group p-4 rounded-xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor} flex flex-col flex-1`}
+                onMouseEnter={() => setHoveredCard(`right-${i}`)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={`group relative p-5 rounded-xl text-white transition-all duration-400 transform ${card.bgColor} flex flex-col flex-1 overflow-hidden ${
+                  hoveredCard === `right-${i}` 
+                    ? 'scale-105 shadow-2xl rotate-2' 
+                    : 'hover:scale-102 hover:shadow-lg'
+                }`}
               >
+                {/* Unique pattern for right column */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-white/20 to-transparent group-hover:h-2 transition-all duration-500"></div>
+                <div className="absolute -top-3 -right-3 w-14 h-14 bg-white/10 rounded-full blur-lg group-hover:scale-125 group-hover:rotate-45 transition-all duration-500"></div>
+                
                 <div className="flex items-center space-x-4">
-                  <div className="flex-shrink-0 w-10 h-10 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-400">
                     {card.icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-md mb-1">{card.title}</h3>
-                    <p className="text-xs text-white/80">{card.description}</p>
+                    <h3 className="font-bold text-base mb-1 group-hover:text-white transition-colors duration-300">{card.title}</h3>
+                    <p className="text-sm text-white/80 group-hover:text-white/90 transition-colors duration-300">{card.description}</p>
                   </div>
                 </div>
               </a>
@@ -324,15 +371,25 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             <a
               key={`card-${i}`}
               href={card.href}
-              className={`group p-4 rounded-xl text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 transform ${card.bgColor} flex flex-col`}
+              onMouseEnter={() => setHoveredCard(`default-${i}`)}
+              onMouseLeave={() => setHoveredCard(null)}
+              className={`group relative p-6 rounded-2xl text-white transition-all duration-500 transform ${card.bgColor} flex flex-col overflow-hidden ${
+                hoveredCard === `default-${i}` 
+                  ? 'scale-105 shadow-2xl -rotate-1' 
+                  : 'hover:scale-102 hover:shadow-xl'
+              }`}
             >
+              {/* Enhanced background effects */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              
               <div className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all duration-300">
+                <div className="flex-shrink-0 w-14 h-14 text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 relative z-10">
                   {card.icon}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-md mb-1">{card.title}</h3>
-                  <p className="text-xs text-white/80">{card.description}</p>
+                <div className="flex-1 min-w-0 relative z-10">
+                  <h3 className="font-bold text-lg mb-2 group-hover:text-white transition-colors duration-300">{card.title}</h3>
+                  <p className="text-sm text-white/80 group-hover:text-white/90 leading-relaxed transition-colors duration-300">{card.description}</p>
                 </div>
               </div>
             </a>
@@ -346,15 +403,16 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full">
           <div className="lg:col-span-3">{content}</div>
           <div className="lg:col-span-1 flex flex-col">
-            <div className="sticky top-8 p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg border border-gray-100/50 h-full flex flex-col">
-              <h3 className="font-bold text-xl text-gray-900 mb-6">
+            <div className="sticky top-8 p-8 bg-gradient-to-br from-gray-50 via-white to-gray-50/50 rounded-3xl shadow-xl border border-gray-100/50 h-full flex flex-col backdrop-blur-sm hover:shadow-2xl transition-all duration-500">
+              <div className="absolute -top-2 -right-2 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl"></div>
+              <h3 className="font-bold text-xl text-gray-900 mb-6 relative z-10">
                 {activeMenu.whatsNew?.title}
               </h3>
-              <ul className="space-y-4 mb-8 flex-grow">
+              <ul className="space-y-4 mb-8 flex-grow relative z-10">
                 {activeMenu.whatsNew?.items.map((item, i) => (
-                  <li key={`new-${i}`} className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700 hover:text-blue-600 transition-colors duration-200 cursor-pointer text-sm leading-relaxed">
+                  <li key={`new-${i}`} className="flex items-start space-x-3 group cursor-pointer">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0 group-hover:scale-150 group-hover:bg-purple-500 transition-all duration-300"></div>
+                    <span className="text-gray-700 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 text-sm leading-relaxed">
                       {item}
                     </span>
                   </li>
@@ -362,10 +420,13 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               </ul>
               <a
                 href={activeMenu.whatsNew?.buttonHref}
-                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg mt-auto"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-4 rounded-2xl text-sm transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-1 mt-auto relative z-10 group overflow-hidden"
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <span className="relative z-10">
                 {activeMenu.whatsNew?.buttonText}
-                <span className="ml-2 transform group-hover:translate-x-1 transition-transform duration-300">
+                </span>
+                <span className="ml-2 transform group-hover:translate-x-2 group-hover:scale-110 transition-transform duration-500 relative z-10">
                   &rarr;
                 </span>
               </a>
@@ -434,14 +495,22 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
           style={{
             visibility: "hidden",
             opacity: 0,
-            transform: "translateY(-10px)",
-            transition: "all 0.3s ease-out",
+            transform: "translateY(-20px)",
+            transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+            backdropFilter: "blur(0px)",
           }}
-          className="absolute left-0 w-full top-full z-40 bg-white/95 backdrop-blur-md shadow-xl border-t border-gray-100 h-[480px] rounded-b-3xl"
+          className="absolute left-0 w-full top-full z-40 bg-white/95 backdrop-blur-xl shadow-2xl border-t border-gray-100/50 h-[480px] rounded-b-3xl overflow-hidden"
           onMouseEnter={keepMegaMenuOpen}
           onMouseLeave={hideMegaMenu}
         >
+          {/* Enhanced background effects */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-white/80"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-to-tl from-purple-100/20 to-pink-100/20 rounded-full blur-2xl"></div>
+          
+          <div className="relative z-10">
           {renderMegaMenu()}
+          </div>
         </div>
       </header>
 
