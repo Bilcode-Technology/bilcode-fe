@@ -145,42 +145,42 @@ const Services = () => {
     };
   }, []);
 
-  const containerRef = useRef(null);
-  const scrollContainerRef = useRef(null);
-  const cardsRef = useRef([]);
+  // const containerRef = useRef(null);
+  // const scrollContainerRef = useRef(null);
+  // const cardsRef = useRef([]);
 
-  const serviceItems = [
-    {
-      icon: <Monitor size={40} />,
-      title: "Collecting Data",
-      description:
-        "Data is collected from diverse sources for any language we work on, such as web data, collected speech data, and identified video transcripts.",
-    },
-    {
-      icon: <Smartphone size={40} />,
-      title: "Preparing Data",
-      description:
-        "Once enough data has been collected for a specific language, we process and validate the data for optimal performance.",
-    },
-    {
-      icon: <Component size={40} />,
-      title: "Model Training",
-      description:
-        "Data patterns are identified by machine learning models in training. They can then spot them in unseen data or generate novel data.",
-    },
-    {
-      icon: <ChartPie size={40} />,
-      title: "Model Testing",
-      description:
-        "We rigorously test and validate trained models to ensure accuracy, reliability, and performance standards.",
-    },
-    {
-      icon: <GraduationCap size={40} />,
-      title: "Product Rollout",
-      description:
-        "Once it’s ready, the model is launched on products like Gboard, YouTube, or updated in services like Gemini and Translate.",
-    },
-  ];
+  // const serviceItems = [
+  //   {
+  //     icon: <Monitor size={40} />,
+  //     title: "Collecting Data",
+  //     description:
+  //       "Data is collected from diverse sources for any language we work on, such as web data, collected speech data, and identified video transcripts.",
+  //   },
+  //   {
+  //     icon: <Smartphone size={40} />,
+  //     title: "Preparing Data",
+  //     description:
+  //       "Once enough data has been collected for a specific language, we process and validate the data for optimal performance.",
+  //   },
+  //   {
+  //     icon: <Component size={40} />,
+  //     title: "Model Training",
+  //     description:
+  //       "Data patterns are identified by machine learning models in training. They can then spot them in unseen data or generate novel data.",
+  //   },
+  //   {
+  //     icon: <ChartPie size={40} />,
+  //     title: "Model Testing",
+  //     description:
+  //       "We rigorously test and validate trained models to ensure accuracy, reliability, and performance standards.",
+  //   },
+  //   {
+  //     icon: <GraduationCap size={40} />,
+  //     title: "Product Rollout",
+  //     description:
+  //       "Once it’s ready, the model is launched on products like Gboard, YouTube, or updated in services like Gemini and Translate.",
+  //   },
+  // ];
 
   // useEffect(() => {
   //   const container = scrollContainerRef.current;

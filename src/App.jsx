@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSplashAnimation } from "./hooks";
+import { gsap } from "gsap";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -17,79 +18,46 @@ import FullScreenTransition from "./components/FullScreenTransition";
 
 function App() {
   const [showContent, setShowContent] = useState(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const transitionRef = useRef(null);
   const textRef = useRef(null);
+  const overlayRef = useRef(null);
 
-  // Menggunakan custom hook untuk splash animation
   useSplashAnimation({ transitionRef, textRef }, () => setShowContent(true));
+
+  useEffect(() => {
+    if (isDropdownVisible) {
+      gsap.to(overlayRef.current, { autoAlpha: 1, duration: 0.3 });
+    } else {
+      gsap.to(overlayRef.current, { autoAlpha: 0, duration: 0.3 });
+    }
+  }, [isDropdownVisible]);
 
   return (
     <div className="App">
       <FullScreenTransition ref={{ transitionRef, textRef }} />
-
-      {/* Use opacity for a smooth fade-in of the main content */}
-      <div
-        style={{
-          opacity: showContent ? 1 : 0,
-          transition: "opacity 0.5s ease-in-out",
-        }}
-      >
-        <Header />
-        <main>
-          <div id="hero" data-section-name="Hero" className="tracked-section">
-            <Hero />
-          </div>
-          <div
-            id="services"
-            data-section-name="Services"
-            className="tracked-section"
-          >
-            <Services />
-          </div>
-          <div
-            id="portfolio"
-            data-section-name="Portfolio"
-            className="tracked-section"
-          >
-            <Portfolio />
-          </div>
-          <div id="about" data-section-name="About" className="tracked-section">
-            <AboutUs />
-          </div>
-          <div
-            id="techstack"
-            data-section-name="Tech"
-            className="tracked-section"
-          >
-            <TechStack />
-          </div>
-          <div
-            id="process"
-            data-section-name="Process"
-            className="tracked-section"
-          >
-            <Process />
-          </div>
-          <div id="team" data-section-name="Team" className="tracked-section">
-            <OurTeam />
-          </div>
-          <div
-            id="testimonials"
-            data-section-name="Testimonials"
-            className="tracked-section"
-          >
-            <Testimonials />
-          </div>
-          <div id="cta" data-section-name="CTA" className="tracked-section">
-            <CTA />
-          </div>
-          <div
-            id="contact"
-            data-section-name="Contact"
-            className="tracked-section"
-          >
-            <Contact />
-          </div>
+      
+      <div style={{ opacity: showContent ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+        <Header 
+          isDropdownVisible={isDropdownVisible} 
+          onDropdownToggle={setDropdownVisible} 
+        />
+        <div 
+          ref={overlayRef} 
+          className="fixed inset-0 bg-black/30 z-30"
+          style={{ visibility: 'hidden', opacity: 0 }}
+        />
+        <main className="relative z-20">
+          <div id="hero" data-section-name="Hero" className="tracked-section"><Hero /></div>
+          <div id="services" data-section-name="Services" className="tracked-section"><Services /></div>
+          <div id="portfolio" data-section-name="Portfolio" className="tracked-section"><Portfolio /></div>
+          <div id="about" data-section-name="About" className="tracked-section"><AboutUs /></div>
+          <div id="techstack" data-section-name="Tech" className="tracked-section"><TechStack /></div>
+          <div id="process" data-section-name="Process" className="tracked-section"><Process /></div>
+          <div id="team" data-section-name="Team" className="tracked-section"><OurTeam /></div>
+          <div id="testimonials" data-section-name="Testimonials" className="tracked-section"><Testimonials /></div>
+          <div id="cta" data-section-name="CTA" className="tracked-section"><CTA /></div>
+          <div id="contact" data-section-name="Contact" className="tracked-section"><Contact /></div>
         </main>
         <Footer />
       </div>
@@ -98,3 +66,4 @@ function App() {
 }
 
 export default App;
+''
