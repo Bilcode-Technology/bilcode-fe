@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useState, useRef } from "react";
+import { useSplashAnimation } from "./hooks";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -20,28 +20,8 @@ function App() {
   const transitionRef = useRef(null);
   const textRef = useRef(null);
 
-  // useEffect(() => {
-  //   // Set the text content for the transition
-  //   if (textRef.current) {
-  //     textRef.current.textContent = '"Your Vision, Our Code"';
-  //   }
-
-  //   const tl = gsap.timeline({
-  //     onComplete: () => {
-  //       setShowContent(true);
-  //     },
-  //   });
-
-  //   // Animation sequence
-  //   tl.to(transitionRef.current, { y: "0%", duration: 1, ease: "power3.inOut" })
-  //     .to(textRef.current, { opacity: 1, duration: 0.5 }, "-=0.5")
-  //     .to(textRef.current, { opacity: 0, duration: 0.5, delay: 1.5 }) // Hold text
-  //     .to(transitionRef.current, {
-  //       y: "-100%",
-  //       duration: 1,
-  //       ease: "power3.inOut",
-  //     });
-  // }, []);
+  // Menggunakan custom hook untuk splash animation
+  useSplashAnimation({ transitionRef, textRef }, () => setShowContent(true));
 
   return (
     <div className="App">
@@ -49,10 +29,10 @@ function App() {
 
       {/* Use opacity for a smooth fade-in of the main content */}
       <div
-      // style={{
-      //   opacity: showContent ? 1 : 0,
-      //   transition: "opacity 0.5s ease-in-out",
-      // }}
+        style={{
+          opacity: showContent ? 1 : 0,
+          transition: "opacity 0.5s ease-in-out",
+        }}
       >
         <Header />
         <main>

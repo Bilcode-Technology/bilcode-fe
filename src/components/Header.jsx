@@ -3,9 +3,10 @@ import { gsap } from 'gsap';
 
 const Header = () => {
   const [dropdowns, setDropdowns] = useState({
-    product: false,
-    customers: false,
-    templates: false
+    services: false,
+    portfolio: false,
+    about: false,
+    blog: false,
   });
 
   const headerRef = useRef(null);
@@ -33,18 +34,20 @@ const Header = () => {
 
   const toggleDropdown = (menu) => {
     setDropdowns(prev => ({
-      product: false,
-      customers: false,
-      templates: false,
+      services: false,
+      portfolio: false,
+      about: false,
+      blog: false,
       [menu]: !prev[menu]
     }));
   };
 
   const closeAllDropdowns = () => {
     setDropdowns({
-      product: false,
-      customers: false,
-      templates: false
+      services: false,
+      portfolio: false,
+      about: false,
+      blog: false,
     });
   };
 
@@ -54,84 +57,103 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="text-2xl font-bold text-black nav-link">
-            Jitter
+            Bilcode
           </div>
           
           {/* Navigation Menu */}
           <nav className="hidden md:flex items-center gap-8 relative">
-            {/* Product Dropdown */}
+            <a href="#home" className="text-black hover:text-gray-600 transition-colors font-medium text-base nav-link">
+              Home
+            </a>
+            {/* Services Dropdown */}
             <div className="relative nav-link">
               <button 
-                onClick={() => toggleDropdown('product')}
+                onClick={() => toggleDropdown('services')}
                 className="text-black hover:text-gray-600 transition-colors font-medium text-base flex items-center"
               >
-                Product
+                Services
               </button>
-              {dropdowns.product && (
+              {dropdowns.services && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Features</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Integrations</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">API</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Desktop App</a>
+                  <a href="#web-development" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Web Development</a>
+                  <a href="#mobile-app-development" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Mobile App Development</a>
+                  <a href="#ui-ux-design" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">UI/UX Design</a>
+                  <a href="#ai-integration" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">AI Integration</a>
                 </div>
               )}
             </div>
-
-            {/* Customers Dropdown */}
+            {/* Portfolio Dropdown */}
             <div className="relative nav-link">
               <button 
-                onClick={() => toggleDropdown('customers')}
-                className="text-gray-500 hover:text-black transition-colors font-medium text-base flex items-center"
+                onClick={() => toggleDropdown('portfolio')}
+                className="text-black hover:text-gray-600 transition-colors font-medium text-base flex items-center"
               >
-                Customers
+                Portfolio
               </button>
-              {dropdowns.customers && (
+              {dropdowns.portfolio && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Creative Teams</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Agencies</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Studios</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Case Studies</a>
+                  <a href="#all-projects" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">All Projects</a>
+                  <a href="#startups" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Startups</a>
+                  <a href="#government-projects" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Government Projects</a>
+                  <a href="#e-commerce" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">E-commerce</a>
+                  <a href="#fintech" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Fintech</a>
+                  <a href="#case-studies" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Case Studies</a>
                 </div>
               )}
             </div>
-
-            {/* Templates Dropdown */}
+            {/* About Dropdown */}
             <div className="relative nav-link">
               <button 
-                onClick={() => toggleDropdown('templates')}
-                className="text-gray-500 hover:text-black transition-colors font-medium text-base flex items-center"
+                onClick={() => toggleDropdown('about')}
+                className="text-black hover:text-gray-600 transition-colors font-medium text-base flex items-center"
               >
-                Templates
+                About
               </button>
-              {dropdowns.templates && (
+              {dropdowns.about && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Animation Templates</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Logo Animations</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Social Media</a>
-                  <a href="#" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Presentations</a>
+                  <a href="#our-story" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Our Story</a>
+                  <a href="#our-team" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Our Team</a>
+                  <a href="#our-values" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Our Values</a>
+                  <a href="/careers" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Culture & Career</a>
+                  <a href="#testimonials" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Testimonials / Clients Say</a>
                 </div>
               )}
             </div>
-
-            <a href="#" className="text-gray-500 hover:text-black transition-colors font-medium text-base nav-link">
-              Pricing
+            {/* Blog Dropdown */}
+            <div className="relative nav-link">
+              <button 
+                onClick={() => toggleDropdown('blog')}
+                className="text-black hover:text-gray-600 transition-colors font-medium text-base flex items-center"
+              >
+                Blog
+              </button>
+              {dropdowns.blog && (
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
+                  <a href="#all-articles" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">All Articles</a>
+                  <a href="#engineering" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Engineering</a>
+                  <a href="#ui-ux-design" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">UI/UX & Design</a>
+                  <a href="#devops-cloud" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">DevOps & Cloud</a>
+                  <a href="#company-updates" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Company Updates</a>
+                  <a href="#tutorials" className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-black">Tutorials</a>
+                </div>
+              )}
+            </div>
+            <a href="#contact" className="text-black hover:text-gray-600 transition-colors font-medium text-base nav-link">
+              Contact
             </a>
           </nav>
           
           {/* Right side buttons */}
           <div className="flex items-center gap-6 auth-buttons">
-            <a href="#" className="text-black hover:text-gray-600 transition-colors font-medium text-base">
-              Log in
-            </a>
             <button className="bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition-colors font-medium text-base">
-              Try for free
+              Get a Quote
             </button>
           </div>
         </div>
       </div>
       
       {/* Overlay to close dropdowns */}
-      {(dropdowns.product || dropdowns.customers || dropdowns.templates) && (
+      {(dropdowns.services || dropdowns.portfolio || dropdowns.about || dropdowns.blog) && (
         <div 
           className="fixed inset-0 z-40" 
           onClick={closeAllDropdowns}
