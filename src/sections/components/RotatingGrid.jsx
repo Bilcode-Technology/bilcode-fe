@@ -39,13 +39,13 @@ export default function RotatingGrid({ items, rows = 2, cols = 5, intervalMs = 3
   if (!windowItems.length) return null;
 
   return (
-    <div className="grid grid-rows-2 grid-flow-col auto-cols-[minmax(160px,1fr)] gap-4 md:gap-6 overflow-x-auto md:grid-rows-none md:grid-flow-row md:grid-cols-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6 place-items-center justify-items-center w-full">
       {windowItems.map((frontTech, i) => {
         const backTech = windowNextItems[i];
         return (
           <div
             key={`${frontTech.name}-${i}-${start}`}
-            className="relative group h-28 md:h-36 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-xl overflow-hidden transition-all duration-300"
+            className="relative group w-full h-24 sm:h-28 md:h-36 rounded-2xl sm:rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-xl overflow-hidden transition-all duration-300"
             style={{ perspective: "1000px" }}
             onClick={(e) => {
               const ripple = document.createElement('span');
@@ -67,14 +67,14 @@ export default function RotatingGrid({ items, rows = 2, cols = 5, intervalMs = 3
                 className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white to-[#f1f5fb] group-hover:from-[#eef5ff] group-hover:to-[#f0fcfc] transition-colors"
                 style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(0deg)" }}
               >
-                <img src={frontTech.logo} alt={frontTech.name} className="h-12 md:h-14 object-contain grayscale group-hover:grayscale-0 transition" />
+                <img src={frontTech.logo} alt={frontTech.name} className="h-8 sm:h-10 md:h-12 object-contain grayscale group-hover:grayscale-0 transition" />
               </div>
               <div
                 className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white to-[#f1f5fb] group-hover:from-[#eef5ff] group-hover:to-[#f0fcfc] transition-colors"
                 style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
               >
                 {backTech ? (
-                  <img src={backTech.logo} alt={backTech.name} className="h-12 md:h-14 object-contain grayscale group-hover:grayscale-0 transition" />
+                  <img src={backTech.logo} alt={backTech.name} className="h-8 sm:h-10 md:h-12 object-contain grayscale group-hover:grayscale-0 transition" />
                 ) : null}
               </div>
             </div>
