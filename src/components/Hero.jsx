@@ -2,7 +2,7 @@ import SponsorsRotator from "./SponsorsRotator";
 
 const Hero = () => {
   return (
-    <section className="flex flex-col items-center justify-center bg-white pb-10 text-center pt-14 md:pt-20 lg:pt-24">
+    <section className="flex flex-col items-center justify-center bg-white pb-16 text-center pt-14 md:pt-20 lg:pt-24">
       {/* Announcement Banner */}
       <div className="bg-gray-100 px-4 py-1 rounded-full mb-6">
         <span className=" text-gray-700">

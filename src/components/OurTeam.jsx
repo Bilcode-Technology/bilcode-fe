@@ -1,6 +1,6 @@
 const OurTeam = () => {
   return (
-    <section className="min-h-screen bg-gray-100 py-20 flex flex-col items-center justify-center">
+    <section className="min-h-[90vh] bg-gray-100 py-16 md:py-24 flex flex-col items-center justify-center">
       <div className="container mx-auto px-4 text-center">
         {/* Header */}
         <div className="mb-16">
