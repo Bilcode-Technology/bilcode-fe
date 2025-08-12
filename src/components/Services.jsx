@@ -1,6 +1,3 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   ChartPie,
   Component,
@@ -8,302 +5,200 @@ import {
   Monitor,
   Smartphone,
 } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const serviceItems = [
+  {
+    icon: <Monitor size={32} />,
+    title: "Web Development",
+    description: "Gathering comprehensive datasets...",
+  },
+  {
+    icon: <Smartphone size={32} />,
+    title: "Mobile Development",
+    description: "Cleaning, processing...",
+  },
+  {
+    icon: <Component size={32} />,
+    title: "UI UX Design",
+    description: "Training sophisticated AI models...",
+  },
+  {
+    icon: <ChartPie size={32} />,
+    title: "Data Analyst",
+    description: "Rigorous testing and validation...",
+  },
+  {
+    icon: <GraduationCap size={32} />,
+    title: "IT Academy",
+    description: "Rigorous testing and validation...",
+  },
+];
+
+const COLLAPSED_WIDTH = 200;
+const EXPANDED_WIDTH = 600;
+
 const Services = () => {
-  const containerRef = useRef(null);
+  const sectionRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const cardsRef = useRef([]);
+  const cardPositionsRef = useRef([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const serviceItems = [
-    {
-      icon: <Monitor size={32} />,
-      title: "Web Development",
-      description:
-        "Gathering comprehensive datasets from multiple sources to ensure robust model foundation and diverse training materials.",
-    },
-    {
-      icon: <Smartphone size={32} />,
-      title: "Mobile Development",
-      description:
-        "Cleaning, processing, and structuring raw data to optimize quality and ensure compatibility with machine learning algorithms.",
-    },
-    {
-      icon: <Component size={32} />,
-      title: "UI UX Design",
-      description:
-        "Training sophisticated AI models using prepared datasets with advanced algorithms and computational resources.",
-    },
-    {
-      icon: <ChartPie size={32} />,
-      title: "data analyst",
-      description:
-        "Rigorous testing and validation of trained models to ensure accuracy, reliability, and performance standards.",
-    },
-    {
-      icon: <GraduationCap size={32} />,
-      title: "IT Academy",
-      description:
-        "Rigorous testing and validation of trained models to ensure accuracy, reliability, and performance standards.",
-    },
-  ];
+  // Tambah padding supaya card pertama & terakhir bisa center
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const updatePadding = () => {
+      const basePad = window.innerWidth / 2 - EXPANDED_WIDTH / 2;
+      const padLeft = basePad; // untuk card pertama
+      const padRight = basePad + window.innerWidth * 0.2; // extra 20% untuk card terakhir
+      container.style.paddingLeft = `${padLeft}px`;
+      container.style.paddingRight = `${padRight}px`;
+    };
+
+    updatePadding();
+    window.addEventListener("resize", updatePadding);
+    return () => window.removeEventListener("resize", updatePadding);
+  }, []);
+
+  // Hitung posisi target center tiap card
+  const calculateCardPositions = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const scrollLeft = container.scrollLeft;
+
+    cardPositionsRef.current = cardsRef.current.map((card, i) => {
+      if (!card) return 0;
+      const rect = card.getBoundingClientRect();
+      const cardCenter =
+        rect.left - containerRect.left + scrollLeft + rect.width / 2;
+      const viewportCenter = window.innerWidth / 2;
+      let delta = cardCenter - viewportCenter;
+
+      // offset khusus untuk card terakhir: geser 10% setelah tengah
+      if (i === cardsRef.current.length - 1) {
+        delta -= window.innerWidth * 0.1;
+      }
+      return delta;
+    });
+  };
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    const cards = cardsRef.current;
+    const section = sectionRef.current;
+    if (!container || !section) return;
 
-    // Calculate total width for horizontal scroll
-    const cardWidth = 200; // Width of each card
-    const gap = 20; // Gap between cards
-    const totalWidth = (cardWidth + gap) * serviceItems.length;
+    calculateCardPositions();
+    window.addEventListener("resize", calculateCardPositions);
 
-    // Set up horizontal scroll container
-    gsap.set(container, {
-      width: totalWidth,
-      display: "flex",
-      gap: `${gap}px`,
-      x: -(totalWidth - window.innerWidth + 100),
-    });
-
-    // Set initial card states
-    gsap.set(cards, {
-      opacity: 0.6,
-      scale: 0.9,
-      width: cardWidth,
-    });
-
-    // Create horizontal scroll animation
-    const scrollTween = gsap.to(container, {
-      x: () => totalWidth - window.innerWidth + 100,
+    gsap.to(container, {
+      x: () => -cardPositionsRef.current[0],
       ease: "none",
       scrollTrigger: {
-        trigger: containerRef.current,
+        trigger: section,
         start: "top top",
-        end: () => `+=${totalWidth}`,
-        scrub: 1,
+        end: () => cardPositionsRef.current.at(-1) + window.innerWidth, // total scroll panjang
+        scrub: false,
         pin: true,
         anticipatePin: 1,
+        snap: {
+          snapTo: (value) => {
+            // Pilih index card terdekat berdasarkan posisi scroll
+            const scrollPos = value * (cardPositionsRef.current.at(-1) || 0);
+            let closestIndex = 0;
+            let minDist = Infinity;
+            cardPositionsRef.current.forEach((pos, i) => {
+              const dist = Math.abs(scrollPos - pos);
+              if (dist < minDist) {
+                minDist = dist;
+                closestIndex = i;
+              }
+            });
+            setActiveIndex(closestIndex);
+            return (
+              cardPositionsRef.current[closestIndex] /
+              (cardPositionsRef.current.at(-1) || 1)
+            );
+          },
+          duration: 0.5,
+          ease: "power2.inOut",
+        },
+        onUpdate: (self) => {
+          const scrollPos =
+            self.progress * (cardPositionsRef.current.at(-1) || 0);
+          let closestIndex = 0;
+          let minDist = Infinity;
+          cardPositionsRef.current.forEach((pos, i) => {
+            const dist = Math.abs(scrollPos - pos);
+            if (dist < minDist) {
+              minDist = dist;
+              closestIndex = i;
+            }
+          });
+          gsap.to(container, {
+            x: -cardPositionsRef.current[closestIndex],
+            duration: 0.5,
+            ease: "power2.inOut",
+          });
+        },
+        invalidateOnRefresh: true,
+        onRefresh: calculateCardPositions,
       },
     });
 
-    // Individual card animations
-    cards.forEach((card, index) => {
-      // Active state when card is in center
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top top",
-        end: () => `+=${totalWidth}`,
-        scrub: true,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const cardProgress = progress * serviceItems.length;
-          const cardIndex = Math.floor(cardProgress);
-          const cardOffset = cardProgress - cardIndex;
-
-          if (index === cardIndex) {
-            // Active card
-            const scale = 0.9 + (1 - Math.abs(cardOffset - 0.5) * 2) * 0.2;
-            const opacity = 0.6 + (1 - Math.abs(cardOffset - 0.5) * 2) * 0.4;
-
-            gsap.set(card, {
-              scale: scale,
-              opacity: opacity,
-            });
-
-            if (Math.abs(cardOffset - 0.5) < 0.3) {
-              card.classList.add("active");
-            } else {
-              card.classList.remove("active");
-            }
-          } else if (index === cardIndex + 1 && cardOffset > 0.5) {
-            // Next card coming into view
-            const nextProgress = (cardOffset - 0.5) * 2;
-            const scale = 0.9 + nextProgress * 0.1;
-            const opacity = 0.6 + nextProgress * 0.2;
-
-            gsap.set(card, {
-              scale: scale,
-              opacity: opacity,
-            });
-            card.classList.remove("active");
-          } else {
-            // Inactive cards
-            gsap.set(card, {
-              scale: 0.9,
-              opacity: 0.6,
-            });
-            card.classList.remove("active");
-          }
-        },
-      });
-    });
-
     return () => {
-      scrollTween.kill();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      window.removeEventListener("resize", calculateCardPositions);
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+      gsap.killTweensOf(container);
     };
   }, []);
 
-  // const containerRef = useRef(null);
-  // const scrollContainerRef = useRef(null);
-  // const cardsRef = useRef([]);
-
-  // const serviceItems = [
-  //   {
-  //     icon: <Monitor size={40} />,
-  //     title: "Collecting Data",
-  //     description:
-  //       "Data is collected from diverse sources for any language we work on, such as web data, collected speech data, and identified video transcripts.",
-  //   },
-  //   {
-  //     icon: <Smartphone size={40} />,
-  //     title: "Preparing Data",
-  //     description:
-  //       "Once enough data has been collected for a specific language, we process and validate the data for optimal performance.",
-  //   },
-  //   {
-  //     icon: <Component size={40} />,
-  //     title: "Model Training",
-  //     description:
-  //       "Data patterns are identified by machine learning models in training. They can then spot them in unseen data or generate novel data.",
-  //   },
-  //   {
-  //     icon: <ChartPie size={40} />,
-  //     title: "Model Testing",
-  //     description:
-  //       "We rigorously test and validate trained models to ensure accuracy, reliability, and performance standards.",
-  //   },
-  //   {
-  //     icon: <GraduationCap size={40} />,
-  //     title: "Product Rollout",
-  //     description:
-  //       "Once it’s ready, the model is launched on products like Gboard, YouTube, or updated in services like Gemini and Translate.",
-  //   },
-  // ];
-
-  // useEffect(() => {
-  //   const container = scrollContainerRef.current;
-  //   const cards = cardsRef.current;
-
-  //   const baseWidth = 240;
-  //   const expandedWidth = 420;
-  //   const gap = 40;
-
-  //   // Styling awal
-  //   gsap.set(container, {
-  //     display: "flex",
-  //     gap: `${gap}px`,
-  //     padding: `0px`,
-  //   });
-
-  //   gsap.set(cards, {
-  //     opacity: 0.4,
-  //     scale: 0.9,
-  //     width: baseWidth,
-  //     flexShrink: 0,
-  //   });
-
-  //   // Scroll horizontal
-  //   gsap.to(container, {
-  //     x: () => {
-  //       // Total lebar semua card
-  //       const totalWidth = (baseWidth + gap) * cards.length;
-
-  //       // Posisi yang diperlukan agar card terakhir ada di tengah layar
-  //       const scrollDistance =
-  //         totalWidth - window.innerWidth / 2 - baseWidth / 2;
-
-  //       return -scrollDistance;
-  //     },
-  //     ease: "none",
-  //     scrollTrigger: {
-  //       trigger: containerRef.current,
-  //       start: "top top",
-  //       end: () => {
-  //         // Scroll panjang = total lebar - setengah layar + setengah lebar card
-  //         const totalWidth = (baseWidth + gap) * cards.length;
-  //         return totalWidth;
-  //       },
-  //       scrub: 1,
-  //       pin: true,
-  //     },
-  //   });
-
-  //   // Animasi aktif saat di tengah viewport
-  //   ScrollTrigger.create({
-  //     trigger: containerRef.current,
-  //     start: "top top",
-  //     end: `+=${(baseWidth + gap) * cards.length}`,
-  //     scrub: 1,
-  //     onUpdate: () => {
-  //       const centerX = window.innerWidth / 2;
-
-  //       cards.forEach((card, i) => {
-  //         const rect = card.getBoundingClientRect();
-  //         const cardCenter = rect.left + rect.width / 2;
-  //         const distance = Math.abs(centerX - cardCenter);
-
-  //         const isActive = distance < 100;
-
-  //         gsap.to(card, {
-  //           width: isActive ? expandedWidth : baseWidth,
-  //           scale: isActive ? 1 : 0.9,
-  //           opacity: isActive ? 1 : 0.4,
-  //           duration: 0.4,
-  //           ease: "power2.out",
-  //         });
-
-  //         if (isActive) {
-  //           card.classList.add("active");
-  //         } else {
-  //           card.classList.remove("active");
-  //         }
-  //       });
-  //     },
-  //   });
-
-  //   return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-  // }, []);
+  const handleCardClick = (index) => {
+    setActiveIndex(index);
+    gsap.to(scrollContainerRef.current, {
+      x: -cardPositionsRef.current[index],
+      duration: 0.5,
+      ease: "power2.inOut",
+    });
+  };
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden">
-      {/* Header */}
-      {/* <div className="text-center py-16">
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Our Process
-        </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto px-4">
-          From data collection to product rollout, we follow a systematic
-          approach to deliver exceptional AI solutions.
-        </p>
-      </div> */}
-
-      {/* Horizontal Scroll Container */}
-      <div className="relative h-screen flex items-center  justify-center">
-        <div ref={scrollContainerRef} className="flex items-center">
+    <section ref={sectionRef} className="relative h-screen overflow-hidden">
+      <div className="relative h-full flex items-center">
+        <div
+          ref={scrollContainerRef}
+          className={`scroll-container flex items-center gap-5 ${
+            activeIndex !== null ? "has-active" : ""
+          }`}
+          style={{ width: "max-content", willChange: "transform" }}
+        >
           {serviceItems.map((service, index) => (
             <div
               key={index}
               ref={(el) => (cardsRef.current[index] = el)}
-              className="service-card bg-gray-50 rounded-2xl p-8 flex-shrink-0 transition-all duration-500 overflow-hidden"
+              onClick={() => handleCardClick(index)}
+              className={`service-card ${
+                activeIndex === index ? "active" : ""
+              }`}
             >
               <div className="flex flex-col justify-between h-full">
-                {/* Icon */}
                 <div className="mb-4">{service.icon}</div>
-
-                {/* Title */}
                 <h3 className="uppercase text-gray-900 text-lg font-semibold">
                   {service.title}
                 </h3>
-
-                {/* Description & Video — hanya muncul saat aktif */}
-                <div className="card-content mt-4 opacity-0 max-h-0 transition-all duration-500">
+                <div className="card-content mt-4">
                   <p className="text-gray-600 leading-relaxed text-sm mb-4">
                     {service.description}
                   </p>
                   <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                    {/* Contoh video dummy */}
                     <video
                       autoPlay
                       muted
@@ -322,22 +217,36 @@ const Services = () => {
 
       <style jsx>{`
         .service-card {
-          transition: all 0.4s ease-in-out;
-          width: 200px;
+          width: ${COLLAPSED_WIDTH}px;
           flex-shrink: 0;
+          transition: width 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 900ms ease;
+          background: #f8fafb;
+          border-radius: 18px;
+          padding: 24px;
+          cursor: pointer;
+          user-select: none;
         }
-
+        .has-active .service-card:not(.active) {
+          width: 180px;
+          opacity: 0.75;
+        }
         .service-card.active {
-          width: 600px !important;
-          margin: 0 20px;
-          background-color: white;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          width: ${EXPANDED_WIDTH}px !important;
           transform: translateY(-10px);
+          background: #fff;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          z-index: 50;
         }
-
+        .service-card .card-content {
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transition: opacity 350ms ease, max-height 450ms ease;
+        }
         .service-card.active .card-content {
-          opacity: 1 !important;
-          max-height: 1000px !important;
+          opacity: 1;
+          max-height: 1000px;
         }
       `}</style>
     </section>
