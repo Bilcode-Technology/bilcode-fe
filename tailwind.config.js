@@ -7,7 +7,11 @@ export default {
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        marker: ['"Permanent Marker"', 'cursive'],
+      },
+    },
   },
   plugins: [
     lineClamp,

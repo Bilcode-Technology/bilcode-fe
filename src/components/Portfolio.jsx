@@ -1,154 +1,198 @@
-import React, { useEffect, useRef } from "react";
+import PortfolioCard from "./PortfolioCard";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const Portfolio = () => {
   const projects = [
     {
-      image: "https://via.placeholder.com/300",
-      title: "Project Alpha",
-      description: "A cutting-edge web application for a fintech startup.",
+      image:
+        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop",
+      partnerLabel: "WE PARTNERED WITH",
+      title: "MARIAH CAREY TO CREATE",
+      subtitle: "CONTENT WITH KAY JEWELERS",
+      tag: "#jewelry",
     },
     {
-      image: "https://via.placeholder.com/300",
-      title: "Project Beta",
-      description: "Mobile e-commerce solution with seamless user experience.",
+      image:
+        "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
+      partnerLabel: "WE PARTNERED WITH",
+      title: "GLOBAL COFFEE CAMPAIGN",
+      subtitle: "WITH PREMIUM ROASTS",
+      tag: "#beverage",
     },
     {
-      image: "https://via.placeholder.com/300",
-      title: "Project Gamma",
-      description: "Enterprise-level data visualization dashboard.",
+      image:
+        "https://images.unsplash.com/photo-1520975922284-7b6830f25a1b?q=80&w=1200&auto=format&fit=crop",
+      partnerLabel: "WE PARTNERED WITH",
+      title: "WINTER APPAREL LAUNCH",
+      subtitle: "FOR OUTDOOR BRAND",
+      tag: "#fashion",
     },
-    // tambah item sesuai kebutuhan...
   ];
-
   const sectionRef = useRef(null);
-  const trackRef = useRef(null);
-  const cardsRef = useRef([]); // akan berisi DOM nodes kartu
+  const descRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  // reset refs sebelum render ulang
-  cardsRef.current = [];
+  const handleCTAClick = () => {
+    const next = document.querySelector("#about");
+    gsap.to(sectionRef.current, {
+      yPercent: -100,
+      autoAlpha: 0,
+      duration: 0.6,
+      ease: "power2.out",
+      onComplete: () => {
+        next?.scrollIntoView({ behavior: "smooth" });
+        gsap.set(sectionRef.current, {
+          clearProps: "all",
+          autoAlpha: 1,
+          yPercent: 0,
+        });
+      },
+    });
+  };
+
+  const rowRef = useRef(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    const cards = cardsRef.current;
+    gsap.registerPlugin(ScrollTrigger);
 
-    if (!section || !track || cards.length === 0) return;
+    const cards = rowRef.current?.querySelectorAll("[data-portfolio-card]");
+    if (!cards || cards.length === 0) {
+      return;
+    }
 
-    // gunakan gsap.context supaya cleanup otomatis pada unmount
-    const ctx = gsap.context(() => {
-      // berapa jauh track perlu digeser (px)
-      const totalScroll = Math.max(0, track.scrollWidth - window.innerWidth);
-      if (totalScroll === 0) return; // tidak perlu animasi kalau muat penuh
+    cards.forEach((card, idx) => {
+      gsap.fromTo(
+        card,
+        { x: 120, opacity: 0, scale: 0.98 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: Math.min(1.2, 0.9 + idx * 0.05),
+          ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            toggleActions: "play none none none",
+            once: true,
+          },
+          onComplete: () => {
+            gsap.to(card, {
+              scale: 1.03,
+              duration: 0.2,
+              ease: "power2.out",
+              yoyo: true,
+              repeat: 1,
+            });
+          },
+        }
+      );
+    });
 
-      // inisialisasi: sembunyikan semua description
-      cards.forEach((card) => {
-        const desc = card.querySelector(".project-desc");
-        gsap.set(desc, { autoAlpha: 0, y: 10 });
-        card.classList.remove("is-active");
-        gsap.set(card, { scale: 1 });
-      });
-
-      // update active card berdasarkan posisi center relatif ke viewport center
-      const updateActive = () => {
-        const viewportCenter = window.innerWidth / 2;
-        const showThreshold = window.innerWidth * 0.02; // ~2% => sangat dekat tengah untuk "aktif"
-        const hideThreshold = window.innerWidth * 0.1; // 10% dari lebar viewport => sesuai permintaan
-
-        cards.forEach((card) => {
-          const desc = card.querySelector(".project-desc");
-          const rect = card.getBoundingClientRect();
-          const cardCenter = rect.left + rect.width / 2;
-          const delta = Math.abs(cardCenter - viewportCenter);
-
-          // masuk zona aktif
-          if (delta <= showThreshold) {
-            if (!card.classList.contains("is-active")) {
-              card.classList.add("is-active");
-              gsap.to(desc, { autoAlpha: 1, y: 0, duration: 0.25 });
-              gsap.to(card, { scale: 1.03, duration: 0.25 }); // sedikit zoom saat aktif
-            }
-          }
-          // sudah melewati zona hide (10%)
-          else if (delta > hideThreshold) {
-            if (card.classList.contains("is-active")) {
-              card.classList.remove("is-active");
-              gsap.to(desc, { autoAlpha: 0, y: 10, duration: 0.18 });
-              gsap.to(card, { scale: 1, duration: 0.18 });
-            }
-          }
-          // jika di antara showThreshold dan hideThreshold -> biarkan keadaan sebelumnya (hysteresis)
-        });
-      };
-
-      // tween horizontal: geser track dari kanan ke kiri saat scroll
-      gsap.to(track, {
-        x: () => `-${totalScroll}px`,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: `+=${totalScroll}`, // panjang scroll vertikal yang memetakan pergerakan horizontal
-          scrub: 0.8,
-          pin: true,
-          anticipatePin: 1,
-          onUpdate: updateActive,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      // cek awal (jika section sudah setengah di viewport)
-      updateActive();
-
-      // saat refresh (resize), sembunyikan dulu semua desc agar kalkulasi ulang bersih
-      ScrollTrigger.addEventListener("refreshInit", () => {
-        cards.forEach((card) => {
-          const desc = card.querySelector(".project-desc");
-          gsap.set(desc, { autoAlpha: 0, y: 10 });
-          card.classList.remove("is-active");
-        });
-      });
-    }, sectionRef);
-
-    window.addEventListener("resize", ScrollTrigger.refresh);
     return () => {
-      ctx.revert(); // hapus semua tween & scrolltrigger yang dibuat di context ini
-      window.removeEventListener("resize", ScrollTrigger.refresh);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, [projects.length]);
+  }, []);
+
+  // Cursor-driven scroll and focus state
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!row) return;
+
+    const onMouseMove = (e) => {
+      const rect = row.getBoundingClientRect();
+      const pos = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
+      const t = pos / rect.width;
+      const max = row.scrollWidth - row.clientWidth;
+      gsap.to(row, { scrollLeft: t * max, duration: 0.4, ease: "power2.out" });
+    };
+
+    const updateActive = () => {
+      const center = row.scrollLeft + row.clientWidth / 2;
+      const cards = Array.from(row.querySelectorAll("[data-portfolio-card]"));
+      let best = 0,
+        bestDist = Infinity;
+      cards.forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const baseLeft = row.getBoundingClientRect().left;
+        const cardCenter = r.left - baseLeft + row.scrollLeft + r.width / 2;
+        const d = Math.abs(center - cardCenter);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      });
+      setActiveIndex(best);
+      cards.forEach((el, i) => {
+        gsap.to(el, {
+          scale: i === best ? 1 : 0.92,
+          opacity: i === best ? 1 : 0.6,
+          duration: 0.25,
+          ease: "power2.out",
+        });
+      });
+    };
+
+    const supportsFine = window.matchMedia("(pointer: fine)").matches;
+    if (supportsFine) row.addEventListener("mousemove", onMouseMove);
+    row.addEventListener("scroll", updateActive, { passive: true });
+    window.addEventListener("resize", updateActive);
+    updateActive();
+
+    return () => {
+      if (supportsFine) row.removeEventListener("mousemove", onMouseMove);
+      row.removeEventListener("scroll", updateActive);
+      window.removeEventListener("resize", updateActive);
+    };
+  }, []);
+
+  // Fade description when activeIndex changes
+  useEffect(() => {
+    if (!descRef.current) return;
+    gsap.fromTo(
+      descRef.current,
+      { autoAlpha: 0, y: 8 },
+      { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" }
+    );
+  }, [activeIndex]);
 
   return (
-    <section ref={sectionRef} className="py-12 bg-white">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-6">Our Portfolio</h2>
-      </div>
-
-      {/* viewport area: overflow-hidden supaya hanya bagian tengah terlihat */}
-      <div className="relative overflow-hidden">
-        {/* track yang akan digeser secara horizontal */}
-        <div ref={trackRef} className="flex gap-8 px-8 py-12">
-          {projects.map((project, idx) => (
-            <div
-              key={idx}
-              ref={(el) => (cardsRef.current[idx] = el)}
-              className="project-card min-w-[320px] w-80 bg-gray-100 p-6 rounded-lg shadow-md transform"
-            >
+        <h2 className="text-4xl font-bold text-center mb-12">Our Portfolio</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project, index) => (
+            <div key={index} className="bg-gray-100 p-6 rounded-lg shadow-md">
               <img
                 src={project.image}
                 alt={project.title}
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
               <h3 className="text-2xl font-semibold mb-2">{project.title}</h3>
-
-              {/* description disembunyikan/ditampilkan via GSAP */}
-              <div className="project-desc mt-3 text-gray-600">
-                {project.description}
-              </div>
+              <p className="text-gray-600">{project.description}</p>
             </div>
           ))}
+        </div>
+
+        {/* Focused description */}
+        <div ref={descRef} className="mt-4 min-h-[56px]">
+          {projects[activeIndex] && !projects[activeIndex].cta && (
+            <div className="text-gray-900">
+              <div className="text-xs tracking-widest uppercase text-gray-500">
+                {projects[activeIndex].partnerLabel}
+              </div>
+              <div className="font-extrabold">
+                {projects[activeIndex].title}{" "}
+                <span className="text-gray-700">
+                  {projects[activeIndex].subtitle}
+                </span>
+              </div>
+              <div className="text-xs text-gray-500">
+                {projects[activeIndex].tag}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+
+/* Custom font utility only for the main hero heading */
+.font-fascinate {
+  font-family: 'Fascinate', cursive;
+}
