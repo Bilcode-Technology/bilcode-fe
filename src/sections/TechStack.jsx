@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import RotatingGrid from './components/RotatingGrid';
 
 const TechStack = () => {
