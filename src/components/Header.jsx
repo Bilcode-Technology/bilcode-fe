@@ -454,7 +454,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 href="#home"
                 className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2 -m-2"
               >
-                <div className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="text-2xl lg:text-3xl font-bold text-black">
                   Bilcode
                 </div>
               </a>

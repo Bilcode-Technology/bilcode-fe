@@ -166,34 +166,14 @@ const Portfolio = () => {
             <div key={index} className="bg-gray-100 p-6 rounded-lg shadow-md">
               <img
                 src={project.image}
-                alt={project.title}
+                alt="Portfolio image"
                 className="w-full h-48 object-cover rounded-md mb-4"
               />
-              <h3 className="text-2xl font-semibold mb-2">{project.title}</h3>
-              <p className="text-gray-600">{project.description}</p>
             </div>
           ))}
         </div>
 
-        {/* Focused description */}
-        <div ref={descRef} className="mt-4 min-h-[56px]">
-          {projects[activeIndex] && !projects[activeIndex].cta && (
-            <div className="text-gray-900">
-              <div className="text-xs tracking-widest uppercase text-gray-500">
-                {projects[activeIndex].partnerLabel}
-              </div>
-              <div className="font-extrabold">
-                {projects[activeIndex].title}{" "}
-                <span className="text-gray-700">
-                  {projects[activeIndex].subtitle}
-                </span>
-              </div>
-              <div className="text-xs text-gray-500">
-                {projects[activeIndex].tag}
-              </div>
-            </div>
-          )}
-        </div>
+
       </div>
     </section>
   );

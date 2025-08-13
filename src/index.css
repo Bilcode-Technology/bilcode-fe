@@ -1,7 +1,12 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
+/* Custom font utility for hero headings */
+.font-anton {
+  font-family: 'Anton', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
 
-/* Custom font utility only for the main hero heading */
-.font-fascinate {
-  font-family: 'Fascinate', cursive;
+/* Optional: slight letter squeezing mimic */
+.tracking-tightest {
+  letter-spacing: -0.02em;
 }

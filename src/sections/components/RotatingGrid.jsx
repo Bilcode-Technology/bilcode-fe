@@ -92,4 +92,3 @@ export default function RotatingGrid({ items, rows = 2, cols = 5, intervalMs = 3
     </div>
   );
 }
-
