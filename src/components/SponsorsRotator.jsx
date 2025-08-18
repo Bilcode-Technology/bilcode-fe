@@ -1,13 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 
-// Crossfade rotator: a single row of fixed slots. Logos in each slot
-// crossfade (fade + scale + slight rotate) to the next brand periodically.
-// - No horizontal movement; purely visual transitions
-// - Pauses on hover; resumes on leave
-// - Responsive visible slot count (mobile/tablet/desktop)
-// - Uses two layers per slot to crossfade without reflow
-
 const getVisibleCount = () => {
   const w = window.innerWidth;
   if (w < 640) return 3; // mobile
@@ -28,7 +21,10 @@ const SponsorsRotator = ({
   const tickerRef = useRef(null);
   const pausedRef = useRef(false);
 
-  const pool = useMemo(() => (items.length ? [...items] : [{ name: "Your Brand" }]), [items]);
+  const pool = useMemo(
+    () => (items.length ? [...items] : [{ name: "Your Brand" }]),
+    [items]
+  );
 
   // Ensure list long enough
   const atLeast = (n) => {
@@ -42,38 +38,54 @@ const SponsorsRotator = ({
     return dup;
   };
   // Helper to set logo + label into a layer without relying on Tailwind runtime class scanning
+  // const setLayerContent = (layer, item) => {
+  //   if (!layer || !item) {
+  //     return;
+  //   }
+  //   layer.innerHTML = "";
+  //   const wrap = document.createElement("div");
+  //   wrap.style.display = "flex";
+  //   wrap.style.alignItems = "center";
+  //   wrap.style.gap = "8px"; // 0.5rem
+
+  //   if (item.logo) {
+  //     const img = document.createElement("img");
+  //     img.src = item.logo;
+  //     img.alt = item.name || "Logo";
+  //     img.loading = "lazy";
+  //     img.style.height = "24px"; // ~h-6
+  //     img.style.width = "auto";
+  //     img.style.objectFit = "contain";
+  //     wrap.appendChild(img);
+  //   }
+
+  //   const text = document.createElement("span");
+  //   text.textContent = item.name || "";
+  //   text.style.fontWeight = 600;
+  //   text.style.fontSize = "1rem"; // text-base
+  //   text.style.letterSpacing = "-0.01em";
+  //   text.style.color = "#111827"; // gray-900
+  //   wrap.appendChild(text);
+
+  //   layer.appendChild(wrap);
+  // };
+
+  // Helper untuk isi logo saja tanpa text
   const setLayerContent = (layer, item) => {
-    if (!layer || !item) {
-      return;
-    }
+    if (!layer || !item) return;
     layer.innerHTML = "";
-    const wrap = document.createElement("div");
-    wrap.style.display = "flex";
-    wrap.style.alignItems = "center";
-    wrap.style.gap = "8px"; // 0.5rem
 
     if (item.logo) {
       const img = document.createElement("img");
       img.src = item.logo;
       img.alt = item.name || "Logo";
       img.loading = "lazy";
-      img.style.height = "24px"; // ~h-6
+      img.style.height = "32px"; // atur ukuran logo (h-8)
       img.style.width = "auto";
       img.style.objectFit = "contain";
-      wrap.appendChild(img);
+      layer.appendChild(img);
     }
-
-    const text = document.createElement("span");
-    text.textContent = item.name || "";
-    text.style.fontWeight = 600;
-    text.style.fontSize = "1rem"; // text-base
-    text.style.letterSpacing = "-0.01em";
-    text.style.color = "#111827"; // gray-900
-    wrap.appendChild(text);
-
-    layer.appendChild(wrap);
   };
-
 
   const renderSlots = (count) => {
     const filled = atLeast(count);
@@ -93,33 +105,66 @@ const SponsorsRotator = ({
   };
 
   // Switch to next set (advance startIndexRef by 1); crossfade each slot
+  // const advance = () => {
+  //   const count = visibleCountRef.current;
+  //   const filled = atLeast(count + 1);
+  //   startIndexRef.current = (startIndexRef.current + 1) % filled.length;
+
+  //   for (let i = 0; i < count; i++) {
+  //     const slot = slotsRef.current[i];
+  //     if (!slot) {
+  //       continue;
+  //     }
+  //     const [layerA, layerB] = slot.children;
+  //     const nextLabel = filled[(startIndexRef.current + i) % filled.length];
+  //     const active = activeLayerRef.current[i] || 0;
+  //     const showEl = active === 0 ? layerB : layerA;
+  //     const hideEl = active === 0 ? layerA : layerB;
+
+  //     const nextItem =
+  //       typeof nextLabel === "string" ? { name: nextLabel } : nextLabel;
+  //     setLayerContent(showEl, nextItem);
+  //     // crossfade only
+  //     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+  //     tl.to(hideEl, { autoAlpha: 0, duration: 0.35 }, 0).fromTo(
+  //       showEl,
+  //       { autoAlpha: 0 },
+  //       { autoAlpha: 1, duration: 0.45 },
+  //       0.05
+  //     );
+
+  //     activeLayerRef.current[i] = active === 0 ? 1 : 0;
+  //   }
+  // };
+
+  // Switch to next set (advance by visibleCount at once)
   const advance = () => {
     const count = visibleCountRef.current;
-    const filled = atLeast(count + 1);
-    startIndexRef.current = (startIndexRef.current + 1) % filled.length;
+    const filled = atLeast(count * 2); // biar ada stok logo
+    startIndexRef.current = (startIndexRef.current + count) % filled.length; // lompat per 6
 
     for (let i = 0; i < count; i++) {
       const slot = slotsRef.current[i];
-      if (!slot) {
-        continue;
-      }
+      if (!slot) continue;
+
       const [layerA, layerB] = slot.children;
       const nextLabel = filled[(startIndexRef.current + i) % filled.length];
       const active = activeLayerRef.current[i] || 0;
       const showEl = active === 0 ? layerB : layerA;
       const hideEl = active === 0 ? layerA : layerB;
 
-      const nextItem = typeof nextLabel === "string" ? { name: nextLabel } : nextLabel;
+      const nextItem =
+        typeof nextLabel === "string" ? { name: nextLabel } : nextLabel;
       setLayerContent(showEl, nextItem);
-      // crossfade only
+
+      // ANIMASI SCALE
       const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-      tl.to(hideEl, { autoAlpha: 0, duration: 0.35 }, 0)
-        .fromTo(
-          showEl,
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 0.45 },
-          0.05
-        );
+      tl.to(hideEl, { autoAlpha: 0, scale: 0, duration: 0.35 }, 0).fromTo(
+        showEl,
+        { autoAlpha: 0, scale: 0 },
+        { autoAlpha: 1, scale: 1, duration: 0.45 },
+        0.05
+      );
 
       activeLayerRef.current[i] = active === 0 ? 1 : 0;
     }
@@ -188,8 +233,14 @@ const SponsorsRotator = ({
             className="relative h-8 flex items-center gap-2 select-none will-change-transform"
             style={{ width: "auto" }}
           >
-            <div className="absolute inset-0 flex items-center gap-2" style={{ willChange: "opacity" }}></div>
-            <div className="relative flex items-center gap-2" style={{ willChange: "opacity" }}></div>
+            <div
+              className="absolute inset-0 flex items-center gap-2"
+              style={{ willChange: "opacity" }}
+            ></div>
+            <div
+              className="relative flex items-center gap-2"
+              style={{ willChange: "opacity" }}
+            ></div>
           </div>
         ))}
       </div>
@@ -198,4 +249,3 @@ const SponsorsRotator = ({
 };
 
 export default SponsorsRotator;
-
