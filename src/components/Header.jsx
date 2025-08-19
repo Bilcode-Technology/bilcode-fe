@@ -374,7 +374,8 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 className={`mm-card group relative rounded-xl text-white ${card.bgColor} flex flex-col overflow-hidden shadow-md p-4 lg:p-6 w-full max-w-full h-40 lg:h-44 ${
                   card.fullWidth || isLastOdd ? 'sm:col-span-2' : 'sm:col-span-1'
                 }`}
-              >
+                            >
+                <div className="absolute inset-0 pointer-events-none bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.03),rgba(255,255,255,0.03)_1px,transparent_0,transparent_10px)]"></div>
                 {/* Enhanced background effects */}
                 <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-0 pointer-events-none"></div>
 <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div>
@@ -382,7 +383,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
                 <div className="relative z-10 flex flex-col h-full justify-center">
                   <div className="flex items-center justify-center mb-3">
-                    <div className="mm-icon flex-shrink-0 w-10 h-10 lg:w-14 lg:h-14 text-xl lg:text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-2xl">
+                    <div className="mm-icon flex-shrink-0 w-10 h-10 lg:w-14 lg:h-14 text-xl lg:text-2xl text-white flex items-center justify-center bg-white/10 backdrop-blur-md rounded-2xl border border-white/10">
                       {card.icon}
                     </div>
                   </div>

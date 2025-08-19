@@ -9,9 +9,14 @@ const Contact = () => {
         <div className="flex items-center gap-1">
           <a
             href="mailto:info@bilcode.id"
-            className="inline-flex items-center bg-blue-600 text-white font-semibold text-sm px-5 py-3 rounded-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="relative inline-flex items-center justify-center px-5 py-3 rounded-sm font-semibold text-sm bg-blue-600 hover:bg-black text-white transition-colors duration-300 group overflow-hidden"
           >
-            Contact Us
+            <span className="block transition-transform duration-300 ease-in-out group-hover:-translate-y-[150%]">
+              Contact Us
+            </span>
+            <span className="absolute translate-y-[150%] transition-transform duration-300 ease-in-out group-hover:translate-y-0">
+              Contact Us
+            </span>
           </a>
           <a
             href="https://api.whatsapp.com/send/?phone=6285128004772&text&type=phone_number&app_absent=0"
