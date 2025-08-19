@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useSplashAnimation } from "./hooks";
+import { useSplashAnimation, useFullScreenSectionTransition } from "./hooks";
 import { gsap } from "gsap";
 
 import Header from "./components/Header";
@@ -22,6 +22,7 @@ function App() {
   const overlayRef = useRef(null);
 
   useSplashAnimation({ transitionRef, textRef }, () => setShowContent(true));
+  useFullScreenSectionTransition(transitionRef, textRef);
 
   useEffect(() => {
     if (isDropdownVisible) {
