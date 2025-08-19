@@ -80,6 +80,7 @@ class AnimationEngine {
       textComplete: false,
       cardsStarted: false
     };
+    this.isPaused = false;
   }
 
   init() {
@@ -197,10 +198,11 @@ class AnimationEngine {
       
       setTimeout(() => {
         topRowElement.style.opacity = '1';
-        this.createInfiniteScroll(topRowElement, {
+        const topScrollAnimation = this.createInfiniteScroll(topRowElement, {
           speed: 60,
           direction: 'normal'
         });
+        this.registerAnimation('topRow', topScrollAnimation);
       }, 2000);
     }
     
@@ -211,10 +213,11 @@ class AnimationEngine {
         
         setTimeout(() => {
           bottomRowElement.style.opacity = '1';
-          this.createInfiniteScroll(bottomRowElement, {
+          const bottomScrollAnimation = this.createInfiniteScroll(bottomRowElement, {
             speed: 55,
             direction: 'reverse'
           });
+          this.registerAnimation('bottomRow', bottomScrollAnimation);
         }, 2000);
       }, 700);
     }
@@ -255,8 +258,12 @@ class AnimationEngine {
     container.style.width = `${totalWidth * 2}px`;
 
     return {
-      pause: () => container.style.animationPlayState = 'paused',
-      resume: () => container.style.animationPlayState = 'running',
+      pause: () => {
+        container.style.animationPlayState = 'paused';
+      },
+      resume: () => {
+        container.style.animationPlayState = 'running';
+      },
       destroy: () => {
         container.style.animation = '';
         duplicates.forEach(duplicate => duplicate.remove());
@@ -269,21 +276,32 @@ class AnimationEngine {
   }
 
   pauseAll() {
-    this.animations.forEach(animation => animation.pause && animation.pause());
+    this.isPaused = true;
+    this.animations.forEach(animation => {
+      if (animation && animation.pause) {
+        animation.pause();
+      }
+    });
   }
 
   resumeAll() {
-    this.animations.forEach(animation => animation.resume && animation.resume());
+    this.isPaused = false;
+    this.animations.forEach(animation => {
+      if (animation && animation.resume) {
+        animation.resume();
+      }
+    });
   }
 
   destroy() {
     this.animations.forEach(animation => animation.destroy && animation.destroy());
     this.animations.clear();
     this.isInitialized = false;
+    this.isPaused = false;
   }
 }
 
-const Card = ({ data, onHover }) => {
+const Card = ({ data, onVideoHover }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -294,7 +312,11 @@ const Card = ({ data, onHover }) => {
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
-    onHover(true);
+    
+    // Only trigger pause for video cards
+    if (type === 'video' && onVideoHover) {
+      onVideoHover(true);
+    }
     
     if (cardRef.current) {
       cardRef.current.style.transform = 'scale(1.05) translateZ(0) rotateY(5deg)';
@@ -309,11 +331,15 @@ const Card = ({ data, onHover }) => {
         console.log('Video play failed:', error);
       });
     }
-  }, [onHover, type, isVideoLoaded]);
+  }, [onVideoHover, type, isVideoLoaded]);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-    onHover(false);
+    
+    // Only trigger resume for video cards
+    if (type === 'video' && onVideoHover) {
+      onVideoHover(false);
+    }
     
     if (cardRef.current) {
       cardRef.current.style.transform = 'scale(1) translateZ(0) rotateY(0deg)';
@@ -326,7 +352,7 @@ const Card = ({ data, onHover }) => {
       videoRef.current.currentTime = 0;
       setIsVideoPlaying(false);
     }
-  }, [onHover, type]);
+  }, [onVideoHover, type]);
 
   const handleVideoClick = useCallback(() => {
     if (type === 'video') {
@@ -350,7 +376,7 @@ const Card = ({ data, onHover }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleVideoClick}
-        style={{ 
+        style={{
           backfaceVisibility: 'hidden', 
           willChange: 'transform',
           background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)'
@@ -360,7 +386,7 @@ const Card = ({ data, onHover }) => {
           <video
             ref={videoRef}
             className="w-full h-full object-cover transition-all duration-700 ease-out"
-            style={{ 
+            style={{
               transform: isHovered ? 'scale(1.1)' : 'scale(1)',
               opacity: isVideoLoaded ? (isVideoPlaying ? 1 : 0.85) : 0
             }}
@@ -377,7 +403,7 @@ const Card = ({ data, onHover }) => {
             src={avatar} 
             alt={name} 
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out"
-            style={{ 
+            style={{
               transform: isHovered ? 'scale(1.1)' : 'scale(1)',
               opacity: isVideoLoaded && isVideoPlaying ? 0 : 1,
               zIndex: isVideoLoaded && isVideoPlaying ? 1 : 2
@@ -437,10 +463,10 @@ const Card = ({ data, onHover }) => {
   return (
     <div 
       ref={cardRef}
-              className="testimonial-card w-60 h-80 md:w-72 md:h-96 rounded-3xl overflow-hidden flex-shrink-0 mx-4 shadow-xl cursor-pointer transition-all duration-700 ease-out group border border-gray-200/30 backdrop-blur-sm"
+      className="testimonial-card w-60 h-80 md:w-72 md:h-96 rounded-3xl overflow-hidden flex-shrink-0 mx-4 shadow-xl cursor-pointer transition-all duration-700 ease-out group border border-gray-200/30 backdrop-blur-sm"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ 
+      style={{
         backfaceVisibility: 'hidden', 
         willChange: 'transform',
         background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)'
@@ -493,26 +519,30 @@ const Testimonials = () => {
   const bottomRowRef = useRef(null);
   const engineRef = useRef(null);
   const sectionRef = useRef(null);
-  const [isGloballyPaused, setIsGloballyPaused] = useState(false);
+  const [hoveredVideoCount, setHoveredVideoCount] = useState(0);
   const [isInViewport, setIsInViewport] = useState(false);
   
   const mid = Math.ceil(testimonialsData.length / 2);
   const topRowData = [...testimonialsData.slice(0, mid), ...testimonialsData.slice(0, mid)];
   const bottomRowData = [...testimonialsData.slice(mid), ...testimonialsData.slice(mid)];
 
-  const handleCardHover = useCallback((isPaused) => {
-    if (engineRef.current) {
-      if (isPaused && !isGloballyPaused) {
-        engineRef.current.pauseAll();
-        setIsGloballyPaused(true);
-      } else if (!isPaused && isGloballyPaused) {
-        setTimeout(() => {
-          engineRef.current.resumeAll();
-          setIsGloballyPaused(false);
-        }, 100);
-      }
+  const handleVideoHover = useCallback((isHovering) => {
+    setHoveredVideoCount(prevCount => {
+      const newCount = isHovering ? prevCount + 1 : Math.max(prevCount - 1, 0);
+      return newCount;
+    });
+  }, []);
+
+  // Effect to handle pause/resume based on video hover count
+  useEffect(() => {
+    if (!engineRef.current) return;
+    
+    if (hoveredVideoCount > 0) {
+      engineRef.current.pauseAll();
+    } else {
+      engineRef.current.resumeAll();
     }
-  }, [isGloballyPaused]);
+  }, [hoveredVideoCount]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -564,16 +594,8 @@ const Testimonials = () => {
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen flex items-center justify-center overflow-hidden bg-white"
+      className="relative h-screen flex items-center justify-center bg-white overflow-hidden"
     >
-      {/* Subtle background elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full mix-blend-multiply filter blur-3xl floating-element"></div>
-        <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-purple-100 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl floating-element" style={{animationDelay: '2s'}}></div>
-        <div className="absolute -bottom-20 left-1/4 w-96 h-96 bg-gradient-to-br from-emerald-100 to-cyan-200 rounded-full mix-blend-multiply filter blur-3xl floating-element" style={{animationDelay: '4s'}}></div>
-        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-gradient-to-br from-orange-100 to-yellow-200 rounded-full mix-blend-multiply filter blur-3xl floating-element" style={{animationDelay: '6s'}}></div>
-      </div>
-
       {/* Enhanced title section */}
       <div className="absolute z-10 text-center pointer-events-none select-none">
         <h1 className="title-text text-[4rem] md:text-[6rem] font-bold text-gray-200 tracking-wider">WELLNESS</h1>
@@ -583,17 +605,22 @@ const Testimonials = () => {
 
       {/* Card carousel */}
       <div className="absolute inset-0 z-20 flex flex-col justify-center space-y-12 py-8">
-        <div ref={topRowRef} className="w-full flex items-center top-row overflow-hidden" style={{ willChange: 'transform' }}>
+        <div ref={topRowRef} className="w-full flex items-center top-row" style={{ willChange: 'transform' }}>
           {topRowData.map((card, index) => (
-            <Card key={`top-${index}`} data={card} onHover={handleCardHover} />
+            <Card key={`top-${index}`} data={card} onVideoHover={handleVideoHover} />
           ))}
         </div>
-        <div ref={bottomRowRef} className="w-full flex items-center bottom-row overflow-hidden" style={{ willChange: 'transform' }}>
+        <div ref={bottomRowRef} className="w-full flex items-center bottom-row" style={{ willChange: 'transform' }}>
           {bottomRowData.map((card, index) => (
-            <Card key={`bottom-${index}`} data={card} onHover={handleCardHover} />
+            <Card key={`bottom-${index}`} data={card} onVideoHover={handleVideoHover} />
           ))}
         </div>
       </div>
+
+      {/* Debug info (optional - you can remove this) */}
+      {/* <div className="absolute bottom-4 right-4 z-30 bg-black/20 text-white p-2 rounded text-sm pointer-events-none">
+        Video Cards Hovered: {hoveredVideoCount}
+      </div> */}
     </section>
   );
 };
