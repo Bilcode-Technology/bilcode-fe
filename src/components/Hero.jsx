@@ -4,11 +4,11 @@ const Hero = () => {
   return (
     <section className=" min-h-screen flex flex-col items-center justify-center bg-white text-center">
       {/* Announcement Banner */}
-      <div className="bg-gray-100 px-4 py-1 rounded-full mb-6">
+      <div className="bg-gray-100 px-4 py-1 rounded-full mb-6 md:mt-[120px]">
         <span className=" text-gray-700">
           <span className="font-semibold">Featured:</span> End-to-End Web & App
           Solutions{" "}
-          <a href="#" className="text-blue-600 hover:underline font-medium">
+          <a href="#" className="text-[#3852F7] hover:underline font-medium">
             Learn more
           </a>
         </span>
@@ -22,7 +22,7 @@ const Hero = () => {
       </h1>
 
       {/* CTA Button */}
-      <button className="bg-blue-400 hover:bg-blue-500 text-white font-semibold text-lg px-8 py-4 rounded-full mb-16 cursor-pointer">
+      <button className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-lg px-8 py-4 rounded-full mb-16 cursor-pointer transition-all duration-300">
         Get a Free Consultation
       </button>
 
