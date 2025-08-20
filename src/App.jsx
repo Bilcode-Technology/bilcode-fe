@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { useSplashAnimation, useFullScreenSectionTransition } from "./hooks";
+import { useSplashAnimation } from "./hooks";
 import { gsap } from "gsap";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
 import Portfolio from "./components/Portfolio";
-import Process from "./components/Process";
 import OurTeam from "./components/OurTeam";
 import Testimonials from "./components/Testimonials";
-import CTA from "./components/CTA";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import FullScreenTransition from "./components/FullScreenTransition";
@@ -22,7 +20,6 @@ function App() {
   const overlayRef = useRef(null);
 
   useSplashAnimation({ transitionRef, textRef }, () => setShowContent(true));
-  useFullScreenSectionTransition(transitionRef, textRef);
 
   useEffect(() => {
     if (isDropdownVisible) {
@@ -34,7 +31,7 @@ function App() {
 
   return (
     <div className="App">
-      <FullScreenTransition ref={{ transitionRef, textRef }} />
+      <FullScreenTransition transitionRef={transitionRef} textRef={textRef} />
 
       <div
         style={{
