@@ -1,32 +1,24 @@
-const FullScreenTransition = (
-    {
-      backgroundColor = 'bg-white',
-      textColor = 'text-black',
-      textSize = 'text-5xl md:text-7xl',
-      zIndex = 'z-50',
-      children,
-      className = '',
-      transitionRef,
-      textRef,
-      ...otherProps
-    },
-) => {
-    return (
-      <div
-        ref={transitionRef}
-        className={`fixed top-0 left-0 w-full h-full ${backgroundColor} ${zIndex} pointer-events-none flex items-center justify-center transition-transform duration-700 ease-in-out ${className}`}
-        style={{ transform: 'translateY(100%)' }}
-        {...otherProps}
-      >
-        {children || (
-          <h2 ref={textRef} className={`${textSize} font-bold ${textColor}`}>
-            {/* Text will be injected dynamically */}
-          </h2>
-        )}
-      </div>
-    );
-};
+import { forwardRef } from "react";
 
-FullScreenTransition.displayName = 'FullScreenTransition';
+const FullScreenTransition = forwardRef(({ textRefs, text = "bilcode.id" }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className="fixed inset-0 bg-white flex justify-center items-center z-50"
+    >
+      <h1 className="text-4xl font-bold text-black">
+        {text.split("").map((char, i) => (
+          <span
+            key={i}
+            ref={textRefs[i]}
+            style={{ display: "inline-block", opacity: 1 }}
+          >
+            {char}
+          </span>
+        ))}
+      </h1>
+    </div>
+  );
+});
 
 export default FullScreenTransition;
