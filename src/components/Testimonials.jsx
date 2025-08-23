@@ -698,13 +698,13 @@ const Testimonials = () => {
         {/* Enhanced title section */}
         <div className="absolute z-10 text-center pointer-events-none select-none">
           <h1 className="title-text text-[4rem] md:text-[6rem] font-bold text-gray-200 tracking-wider">
-            
+            Test
           </h1>
           <h1 className="title-text text-[6rem] md:text-[10rem] font-black text-gray-800 tracking-tighter bg-gradient-to-r from-gray-800 via-gray-900 to-gray-700 bg-clip-text text-transparent drop-shadow-sm">
-            
+            Test
           </h1>
           <h1 className="title-text text-[4rem] md:text-[6rem] font-bold text-gray-200 tracking-wider">
-            
+            Test
           </h1>
         </div>
 

@@ -22,9 +22,12 @@ const Hero = () => {
       </h1>
 
       {/* CTA Button */}
-      <button className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-lg px-8 py-4 rounded-full mb-16 cursor-pointer transition-all duration-300">
+      <a
+        href="http://wa.me/6285128004772"
+        className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-lg px-8 py-4 rounded-full mb-16 cursor-pointer transition-all duration-300"
+      >
         Get a Free Consultation
-      </button>
+      </a>
 
       {/* Stats Text */}
       <p className=" mb-12 max-w-2xl">

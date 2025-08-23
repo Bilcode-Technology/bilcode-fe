@@ -372,8 +372,8 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 className={`mm-card group relative rounded-xl text-white ${card.bgColor} flex flex-col overflow-hidden p-4 lg:p-6 w-full max-w-full h-40 lg:h-44`}
               >
                 {/* Background gradient overlay */}
-                <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
-                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div>
+                {/* <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
+                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div> */}
 
                 {/* Animated background particles */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
@@ -450,40 +450,27 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       content = (
         <div className="grid grid-cols-2 gap-4 w-full ">
           {activeMenu.cards?.map((card, i) => {
-            const isLastOdd =
-              activeMenu.cards &&
-              activeMenu.cards.length % 2 === 1 &&
-              i === activeMenu.cards.length - 1 &&
-              !card.fullWidth;
             return (
               <a
                 key={`card-${i}`}
                 href={card.href}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
-                className={`mm-card group relative rounded-xl text-white ${card.bgColor} flex flex-col overflow-hidden shadow-md p-4 lg:p-6 w-full max-w-full h-40 lg:h-44`}
+                className={`mm-card group relative rounded-xl ${card.bgColor} flex flex-col overflow-hidden p-4 lg:p-6 w-full max-w-full h-40 lg:h-44 hover:bg-black hover:text-white`}
               >
                 {/* Background gradient overlay */}
-                <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
-                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div>
+                {/* <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
+                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div> */}
 
                 {/* Animated background particles */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
                 <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-white/5 rounded-full blur-lg"></div>
 
                 <div className="relative z-10 flex flex-col gap-2 h-full justify-center">
-                  {/* <div className="flex items-center justify-center mb-3">
-                    <div className="mm-icon w-10 h-10 lg:w-12 lg:h-12 text-xl lg:text-2xl flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl flex-shrink-0">
-                      {card.icon}
-                    </div>
-                  </div> */}
                   <div className="flex-grow flex flex-col justify-end">
                     <h3 className="font-bold text-base lg:text-xl line-clamp-2">
                       {card.title}
                     </h3>
-                    {/* <p className="text-xs lg:text-sm opacity-90 leading-relaxed line-clamp-2">
-                      {card.description}
-                    </p> */}
                   </div>
                   <div className="font-medium text-xs lg:text-sm flex opacity-80">
                     Learn more
