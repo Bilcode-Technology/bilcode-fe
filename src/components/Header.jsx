@@ -14,6 +14,8 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   // State management
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState(null);
+  const [scrollY, setScrollY] = useState(0);
   const [activeMenu, setActiveMenu] = useState(null);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [hoveredItem2, setHoveredItem2] = useState(null);
@@ -71,6 +73,28 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const updateScrollDirection = () => {
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setScrollDirection("down"); // scroll ke bawah
+      } else if (currentScrollY < lastScrollY) {
+        setScrollDirection("up"); // scroll ke atas
+      }
+
+      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+    };
+
+    window.addEventListener("scroll", updateScrollDirection);
+    return () => {
+      window.removeEventListener("scroll", updateScrollDirection);
+    };
   }, []);
 
   // Menu handlers
@@ -236,14 +260,23 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   };
 
   const getNavClasses = () => {
-    const baseClasses = "flex items-center justify-between h-16 lg:h-22 px-8";
+    const baseClasses =
+      "flex items-center justify-between h-16 lg:h-22 px-8 transition-transform duration-500";
 
     if (isDropdownVisible) {
       return `${baseClasses}`;
     }
 
-    if (scrolled) {
-      return `${baseClasses} bg-white shadow-xl rounded-2xl `;
+    if (scrollY === 0) {
+      return `${baseClasses} translate-y-0`;
+    }
+
+    if (scrollDirection === "down") {
+      return `${baseClasses} bg-white shadow-xl rounded-2xl -translate-y-100`;
+    }
+
+    if (scrollDirection === "up") {
+      return `${baseClasses} bg-white shadow-xl rounded-2xl -translate-y-0`;
     }
 
     return `${baseClasses}  `;
@@ -546,13 +579,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               </nav>
             </div>
 
-            <a
-              href="http://wa.me/6285128004772"
-              className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
-            >
-              Chat Now
-            </a>
-
             {/* Mobile Menu Button */}
             {/* <div className="flex items-center">
               <button
@@ -582,6 +608,13 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             </div> */}
           </div>
         </div>
+
+        <a
+          href="http://wa.me/6285128004772"
+          className="fixed top-14 right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
+        >
+          Chat Now
+        </a>
 
         {/* Mega Menu Dropdown */}
         <div
