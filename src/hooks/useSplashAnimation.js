@@ -1,167 +1,70 @@
-import { useEffect, useMemo, useState, createRef } from "react";
+import { useLayoutEffect, useState, createRef } from "react";
 import { gsap } from "gsap";
 
-export const useSplashAnimation = (
-  refs,
-  onComplete,
-  text = "bilcode.id",
-  config = {}
-) => {
+export const useSplashAnimation = (refs, onComplete, text = "bilcode.id") => {
   const { transitionRef, contentWrapperRef } = refs || {};
   const [textRefs] = useState(() =>
     (text || "").split("").map(() => createRef())
   );
-  const [isMinTimePassed, setMinTimePassed] = useState(false);
-  const [isContentLoaded, setContentLoaded] = useState(false);
 
-  const defaultConfig = useMemo(
-    () => ({
-      charset: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-      decryptCycles: 15,
-      decryptSpeed: 0.05,
-      entranceDuration: 1.2,
-      exitDuration: 2.0,
-      minDisplayTime: 2500,
-      entranceEase: "power2.out",
-      exitEase: "power2.inOut",
-      ...config,
-    }),
-    [config]
-  );
+  useLayoutEffect(() => {
+    if (!transitionRef?.current || !contentWrapperRef?.current) return;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinTimePassed(true);
-    }, defaultConfig.minDisplayTime);
-    return () => clearTimeout(timer);
-  }, [defaultConfig.minDisplayTime]);
-
-  useEffect(() => {
-    const handleLoad = () => setContentLoaded(true);
-
-    if (document.readyState === "complete") {
-      handleLoad();
-    } else {
-      window.addEventListener("load", handleLoad);
-      return () => window.removeEventListener("load", handleLoad);
-    }
-  }, []);
-
-  useEffect(() => {
-    const container = transitionRef?.current;
-    if (!container || !textRefs?.length) return;
-
-    gsap.set(container, {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      scale: 1,
-      opacity: 0,
-      transformOrigin: "center center",
+    const masterTimeline = gsap.timeline({
+      onComplete: () => {
+        onComplete?.();
+      },
     });
 
-    textRefs.forEach((spanRef) => {
-      const span = spanRef.current;
-      if (span) {
-        gsap.set(span, {
-          display: "inline-block",
-          opacity: 0,
-        });
-      }
-    });
+    const container = transitionRef.current;
+    const content = contentWrapperRef.current;
+    const chars = textRefs.map((ref) => ref.current).filter(Boolean);
 
-    const tl = gsap.timeline();
+    // Initial setup
+    gsap.set(container, { autoAlpha: 1 });
+    gsap.set(content, { autoAlpha: 0 });
+    gsap.set(chars, { autoAlpha: 0 });
 
-    tl.to(container, {
-      opacity: 1,
-      duration: defaultConfig.entranceDuration,
-      ease: defaultConfig.entranceEase,
-    });
-
-    textRefs.forEach((spanRef, index) => {
-      const span = spanRef.current;
-      if (!span) return;
-
+    // Decrypt animation
+    const decryptTimeline = gsap.timeline();
+    chars.forEach((char, index) => {
       const charData = { cycle: 0 };
-
-      const charTl = gsap.timeline();
-      charTl
-        .to(span, {
-          opacity: 1,
-          duration: 0.3,
-          ease: "power2.out",
-        })
-        .to(
-          charData,
-          {
-            cycle: defaultConfig.decryptCycles,
-            duration: defaultConfig.decryptCycles * defaultConfig.decryptSpeed,
-            ease: "none",
-            onUpdate: () => {
-              if (span) {
-                span.textContent =
-                  defaultConfig.charset[
-                    Math.floor(Math.random() * defaultConfig.charset.length)
-                  ];
-              }
-            },
-          },
-          "+=0.1"
-        )
-        .to(span, {
-          textContent: text[index] || "",
-          duration: defaultConfig.decryptSpeed,
+      decryptTimeline.to(
+        char,
+        { autoAlpha: 1, duration: 0.1 },
+        index * 0.05
+      );
+      decryptTimeline.to(
+        charData,
+        {
+          cycle: 10,
+          duration: 0.5,
           ease: "none",
-        });
-
-      tl.add(charTl, 0.2 + index * 0.1);
+          onUpdate: () => {
+            char.textContent = String.fromCharCode(Math.floor(Math.random() * 94) + 33);
+          },
+        },
+        index * 0.05
+      );
+      decryptTimeline.to(
+        char,
+        { textContent: text[index], duration: 0 },
+        index * 0.05 + 0.5
+      );
     });
 
-    return () => tl.kill();
-  }, [text, textRefs, transitionRef, defaultConfig]);
+    masterTimeline
+      .add(decryptTimeline) // Add decrypt animation
+      .to(container, { autoAlpha: 0, duration: 0.8, delay: 1.5 }) // Fade out splash screen after a delay
+      .set(container, { display: "none" })
+      .to(content, { autoAlpha: 1, duration: 0.8 }, "-=.5"); // Fade in main content
 
-  useEffect(() => {
-    if (isMinTimePassed && isContentLoaded) {
-      const container = transitionRef?.current;
-      if (!container) return;
+    return () => {
+      masterTimeline.kill();
+    };
+  }, [text, transitionRef, contentWrapperRef, onComplete, textRefs]);
 
-      gsap.killTweensOf(container);
-
-      const exitTl = gsap.timeline({
-        onComplete: () => {
-          gsap.set(container, { display: "none" });
-          if (contentWrapperRef?.current) {
-            gsap.to(contentWrapperRef.current, {
-              opacity: 1,
-              duration: 0.8,
-              ease: "ease-in-out",
-            });
-          }
-          onComplete?.();
-        },
-      });
-
-      exitTl.to(container, {
-        opacity: 0,
-        duration: defaultConfig.exitDuration,
-        ease: defaultConfig.exitEase,
-      });
-    }
-  }, [
-    isMinTimePassed,
-    isContentLoaded,
-    transitionRef,
-    contentWrapperRef,
-    defaultConfig,
-    onComplete,
-  ]);
-
-  return {
-    textRefs,
-    isMinTimePassed,
-    isContentLoaded,
-    isReady: isMinTimePassed && isContentLoaded,
-  };
+  return { textRefs };
 };
 
 export default useSplashAnimation;

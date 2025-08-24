@@ -11,7 +11,7 @@ const FullScreenTransition = forwardRef(({ textRefs, text = "bilcode.id" }, ref)
           <span
             key={i}
             ref={textRefs[i]}
-            style={{ display: "inline-block", opacity: 1 }}
+            style={{ display: "inline-block", opacity: 0 }}
           >
             {char}
           </span>
