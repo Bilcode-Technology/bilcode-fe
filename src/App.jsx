@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSplashAnimation } from "./hooks/useSplashAnimation";
@@ -26,22 +26,31 @@ const SECTION_NAMES = {
 const TEXT = "bilcode.id";
 
 function App() {
-  const [showContent, setShowContent] = useState(false);
+  const [isSplashing, setIsSplashing] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
+  // Refs
   const transitionRef = useRef(null);
-  const overlayRef = useRef(null);
-  const whiteOverlayRef = useRef(null);
+  const overlayRef = useRef(null); // dropdown overlay
+  const whiteOverlayRef = useRef(null); // scroll overlay
   const contentWrapperRef = useRef(null);
 
+  const onSplashComplete = useCallback(() => {
+    setIsSplashing(false);
+  }, []);
+
+  // Splash screen
   const { textRefs } = useSplashAnimation(
     { transitionRef, contentWrapperRef },
-    () => setShowContent(true),
+    onSplashComplete,
     TEXT
   );
 
-  // Dropdown overlay
-  useEffect(() => {
+  /**
+   * Dropdown overlay animation
+   */
+  useLayoutEffect(() => {
+    if (!overlayRef.current) return;
     const ctx = gsap.context(() => {
       gsap.to(overlayRef.current, {
         autoAlpha: isDropdownVisible ? 1 : 0,
@@ -52,60 +61,65 @@ function App() {
     return () => ctx.revert();
   }, [isDropdownVisible]);
 
-  // Scroll animation untuk overlay text
-  useEffect(() => {
-    if (!showContent) return;
+  /**
+   * Scroll overlay animation (section transition text)
+   */
+  useLayoutEffect(() => {
+    if (isSplashing) return;
+    if (!whiteOverlayRef.current) return;
 
     const ctx = gsap.context(() => {
       const whiteOverlay = whiteOverlayRef.current;
-      const overlayText = whiteOverlay?.querySelector(".overlay-text");
-      if (!whiteOverlay || !overlayText) return;
+      const overlayText = whiteOverlay.querySelector(".overlay-text");
 
-      gsap.set([whiteOverlay, overlayText], { autoAlpha: 0 });
-
-      const createScrollTransition = (section, nextSection) => {
-        const nextName = SECTION_NAMES[nextSection.dataset.section];
-
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "bottom center",
-            end: "bottom top",
-            scrub: true,
-          },
-        })
-          .set(overlayText, { textContent: nextName })
-          // Fade in
-          .to(whiteOverlay, { autoAlpha: 1, duration: 0.3 })
-          .fromTo(
-            overlayText,
-            { autoAlpha: 0 },
-            { autoAlpha: 1, duration: 0.4, ease: "power2.out" },
-            "<"
-          )
-          // Fade out
-          .to(
-            overlayText,
-            { autoAlpha: 0, duration: 0.4, ease: "power2.in" },
-            "+=0.1"
-          )
-          .to(whiteOverlay, { autoAlpha: 0, duration: 0.3 }, "<");
-      };
+      gsap.set(whiteOverlay, { autoAlpha: 0 });
+      let activeTween = null;
 
       const sections = gsap.utils.toArray(".scroll-section");
-      sections.forEach((section, i) => {
-        if (i === sections.length - 1) return;
-        const next = sections[i + 1];
-        createScrollTransition(section, next);
+
+      sections.forEach((section) => {
+        const sectionName = SECTION_NAMES[section.dataset.section];
+        if (!sectionName) {
+          return; // No transition for sections without a name
+        }
+
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 70%",
+          end: "bottom 30%",
+          onToggle: (self) => {
+            if (self.isActive) {
+              // Entered the zone, from top or bottom
+              if (activeTween) {
+                activeTween.kill();
+              }
+              overlayText.textContent = sectionName;
+              activeTween = gsap.to(whiteOverlay, {
+                autoAlpha: 1,
+                duration: 0.3,
+              });
+            } else {
+              // Left the zone, from top or bottom
+              if (activeTween) {
+                activeTween.kill();
+              }
+              activeTween = gsap.to(whiteOverlay, {
+                autoAlpha: 0,
+                duration: 0.3,
+              });
+            }
+          },
+        });
       });
     });
 
     return () => ctx.revert();
-  }, [showContent]);
+  }, [isSplashing]);
 
   return (
     <div className="App">
-      {textRefs && (
+      {/* Splash Transition */}
+      {isSplashing && textRefs && (
         <FullScreenTransition
           ref={transitionRef}
           textRefs={textRefs}
@@ -113,6 +127,7 @@ function App() {
         />
       )}
 
+      {/* Scroll Overlay */}
       <div
         ref={whiteOverlayRef}
         className="fixed inset-0 bg-white pointer-events-none flex items-center justify-center z-40"
@@ -120,12 +135,14 @@ function App() {
         <div className="overlay-text text-4xl md:text-6xl font-bold text-gray-800 tracking-wider uppercase"></div>
       </div>
 
+      {/* Content */}
       <div ref={contentWrapperRef} style={{ opacity: 0 }}>
         <Header
           isDropdownVisible={isDropdownVisible}
           onDropdownToggle={setDropdownVisible}
         />
 
+        {/* Dropdown Overlay */}
         <div ref={overlayRef} className="fixed inset-0 bg-black/30 z-30" />
 
         <main className="relative z-20">
