@@ -419,7 +419,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                     </h3>
                   </div>
                   <div className="font-medium text-xs lg:text-sm flex opacity-80">
-                    Learn more
+                    Pelajari Lebih Lanjut
                     <span className="mm-arrow ml-2 inline-block">&rarr;</span>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                     {card.description}
                   </p>
                   <div className="font-semibold text-xs lg:text-sm flex items-center justify-center opacity-80 mt-3">
-                    Learn more
+                    Pelajari Lebih Lanjut
                     <span className="mm-arrow ml-2 inline-block">&rarr;</span>
                   </div>
                 </div>
@@ -506,7 +506,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                     </h3>
                   </div>
                   <div className="font-medium text-xs lg:text-sm flex opacity-80">
-                    Learn more
+                    Pelajari Lebih Lanjut
                     <span className="mm-arrow ml-2 inline-block">&rarr;</span>
                   </div>
                 </div>
@@ -611,9 +611,9 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
         <a
           href="http://wa.me/6285128004772"
-          className="fixed top-14 right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
+          className="fixed top-11 md:top-14 right-[5%] md:right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
         >
-          Chat Now
+          Chat Sekarang
         </a>
 
         {/* Mega Menu Dropdown */}

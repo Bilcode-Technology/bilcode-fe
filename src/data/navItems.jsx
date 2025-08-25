@@ -40,7 +40,7 @@ import {
 
 export const navItems = [
   {
-    label: "Services",
+    label: "Layanan",
     type: "mega-menu",
     megaMenuContent: {
       layout: "services-layout",
@@ -77,9 +77,9 @@ export const navItems = [
         },
       ],
       whatsNew: {
-        title: "Our Products",
+        title: "Produk Kami",
         items: ["Bilcode Academy", "Bilcode Joki", "Kandidat Pro"],
-        buttonText: "All Services",
+        buttonText: "Semua Layanan",
         buttonHref: "#services",
       },
     },
@@ -121,9 +121,9 @@ export const navItems = [
         },
       ],
       whatsNew: {
-        title: "All Clients",
+        title: "Semua Klien",
         items: ["Goverments", "Corporates", "Agencies", "Students"],
-        buttonText: "See All Clients",
+        buttonText: "Lihat Semua Klien",
         buttonHref: "#portfolio",
       },
     },
@@ -176,11 +176,11 @@ export const navItems = [
   //   },
   // },
   {
-    label: "Careers",
+    label: "Karir",
     type: "link",
   },
   {
-    label: "Pricing",
+    label: "Harga",
     type: "link",
   },
   // {

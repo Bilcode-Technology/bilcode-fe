@@ -24,7 +24,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-5 pt-6 pb-8 border-t border-gray-200">
           <div>
             <h3 className="text-xs text-gray-500 uppercase tracking-wide mb-4">
-              Service
+              Layanan
             </h3>
             <ul className="space-y-3">
               <li>
@@ -57,7 +57,7 @@ const Footer = () => {
 
           <div>
             <h3 className="text-xs text-gray-500 uppercase tracking-wide mb-4">
-              Our Product
+              Produk Kami
             </h3>
             <ul className="space-y-3">
               <li>
@@ -76,12 +76,12 @@ const Footer = () => {
 
           <div>
             <h3 className="text-xs text-gray-500 uppercase tracking-wide mb-4">
-              News
+              Terbaru
             </h3>
             <ul className="space-y-3">
               <li>
                 <a href="#" className="hover:underline">
-                  Event and Training
+                  Acara dan Pelatihan
                 </a>
               </li>
               <li>
@@ -91,7 +91,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="#" className="hover:underline">
-                  Speaker
+                  Pembicara
                 </a>
               </li>
             </ul>
@@ -99,17 +99,17 @@ const Footer = () => {
 
           <div>
             <h3 className="text-xs text-gray-500 uppercase tracking-wide mb-4">
-              About
+              Tentang
             </h3>
             <ul className="space-y-3">
               <li>
                 <a href="#" className="hover:underline">
-                  About
+                  Tentang
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:underline">
-                  Career
+                  Karir
                 </a>
               </li>
             </ul>
@@ -117,14 +117,14 @@ const Footer = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-6 pb-8 border-t border-gray-200">
-          <div className="border-r border-gray-200 flex flex-col justify-between gap-3">
+          <div className="md:border-r md:border-gray-200 flex flex-col justify-between gap-3">
             <div>
               <h3 className=" text-sm font-medium uppercase tracking-wide mb-3">
-                Subscribe to our newsletter
+                Berlangganan Newsletter Kami
               </h3>
               <p className="text-gray-500 text-xs mb-4 leading-relaxed max-w-md">
-                Articles, case studies, webinars, events, and more — don’t miss
-                an opportunity to grow your knowledge.
+                Artikel, studi kasus, webinar, event, dan banyak lagi — jangan
+                lewatkan kesempatan untuk menambah wawasan Anda.
               </p>
             </div>
             <form
@@ -133,12 +133,12 @@ const Footer = () => {
             >
               <input
                 type="email"
-                placeholder="Your email address"
+                placeholder="Email Anda"
                 className="flex-1 outline-none focus:ring-0"
                 required
               />
               <button className="bg-blue-600 text-white p-4 rounded-sm hover:bg-blue-700 text-xs font-medium">
-                SUBSCRIBE
+                LANGGANAN
               </button>
             </form>
           </div>
@@ -159,7 +159,7 @@ const Footer = () => {
                 </a>
               </p>
             </div>
-            <div>
+            <div className="col-span-2 md:col-span-1">
               {/* Social Media */}
               <div className="flex flex-wrap gap-4 items-center">
                 <a

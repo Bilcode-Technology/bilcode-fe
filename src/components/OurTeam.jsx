@@ -44,14 +44,14 @@ const OurTeam = () => {
   const images = [
     {
       src: "https://picsum.photos/400/500?random=1",
-      w: "w-64",
-      h: "h-96",
+      w: "w-[30vw] md:w-[20vw]",
+      h: "h-[20vh] md:h-[45vh]",
       align: "items-end",
     }, // kiri
     {
       src: "https://picsum.photos/500/400?random=2",
-      w: "w-80",
-      h: "h-[28rem]",
+      w: "w-[40vw] md:w-[30vw]",
+      h: "h-[30vh] md:h-[65vh]",
       align: "items-start",
     }, // kanan
   ];
@@ -59,13 +59,13 @@ const OurTeam = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-white py-24 md:py-28 overflow-hidden"
+      className="relative min-h-screen md:mb-20 flex items-center bg-white py-24 md:py-28 overflow-hidden"
     >
       {/* Background tetap */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center">
           <p className="text-[11px] md:text-xs tracking-[0.25em] uppercase text-blue-500 mb-10">
-            [ Meet the players ]
+            [ Kenali para pemainnya ]
           </p>
           <div className="mb-6">
             <span className="text-xl md:text-2xl font-extrabold text-black font-anta">
@@ -79,25 +79,25 @@ const OurTeam = () => {
             </span>
           </div>
           <h2 className="font-anton tracking-tightest leading-none text-[18vw] md:text-[9rem] lg:text-[12rem]">
-            OUR LINEUP
+            LINEUP KAMI
           </h2>
         </div>
         <div className="text-center mt-14 mb-10">
-          <p className="text-sky-700 font-semibold text-2xl">
-            Calling all Freelancers
+          <p className="text-blue-700 font-semibold text-2xl">
+            Panggilan untuk Semua Freelancer
           </p>
-          <p className="text-gray-900 text-2xl font-space-grotesk font-medium">
-            Join The Lab
+          <p className="text-gray-900 text-2xl font-medium">
+            Bergabunglah dengan Kami
           </p>
           <p className="text-[10px] text-gray-500 mt-4">
-            We'd love to hear from you.{" "}
-            <span className="text-blue-600">[ Let's go ]</span>
+            Kami ingin mendengar dari Anda.{" "}
+            <span className="text-blue-600">[ Ayo mulai ]</span>
           </p>
         </div>
       </div>
 
       {/* Images muncul dari bawah */}
-      <div className="absolute inset-0 flex items-center justify-between px-48 z-20">
+      <div className="absolute inset-0 flex items-center justify-between px-8 md:px-48 z-20">
         {images.map((img, i) => (
           <div key={i} className={`${img.w} ${img.h} flex ${img.align}`}>
             <img

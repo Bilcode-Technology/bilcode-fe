@@ -4,41 +4,41 @@ const Hero = () => {
   return (
     <section className=" min-h-screen flex flex-col items-center justify-center bg-white text-center">
       {/* Announcement Banner */}
-      <div className="bg-gray-100 px-4 py-1 rounded-full mb-6 md:mt-[120px]">
+      <div className="bg-gray-100 px-4 py-1 rounded-full mb-4 text-xs md:text-base md:mb-6 md:mt-[120px]">
         <span className=" text-gray-700">
-          <span className="font-semibold">Featured:</span> End-to-End Web & App
-          Solutions{" "}
-          <a href="#" className="text-[#3852F7] hover:underline font-medium">
-            Learn more
-          </a>
+          <span className="font-semibold">Unggulan:</span> Solusi Web & Aplikasi
+          End-to-End{" "}
+          {/* <a href="#" className="text-[#3852F7] hover:underline font-medium">
+            Pelajari lebih lanjut
+          </a> */}
         </span>
       </div>
 
       {/* Main Heading */}
-      <h1 className="font-marker text-5xl sm:text-6xl md:text-[80px] font-bold leading-tight md:leading-[70px] text-black mb-8 max-w-4xl">
-        Fast & Reliable Solutions
+      <h1 className="font-marker text-4xl md:text-[80px] font-bold leading-tight md:leading-[70px] text-black mb-4 md:mb-8 max-w-4xl">
+        Solusi Cepat & Handal
         <br />
-        for Your Business
+        untuk Bisnis Anda
       </h1>
 
       {/* CTA Button */}
       <a
         href="http://wa.me/6285128004772"
-        className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-lg px-8 py-4 rounded-full mb-16 cursor-pointer transition-all duration-300"
+        className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-sm md:text-lg px-4 py-2 md:px-8 md:py-4 rounded-full mb-6 md:mb-10 cursor-pointer transition-all duration-300"
       >
-        Get a Free Consultation
+        Dapatkan Konsultasi Gratis
       </a>
 
       {/* Stats Text */}
-      <p className=" mb-12 max-w-2xl">
+      <p className="mb-8 md:mb-12 max-w-2xl">
         <span className="font-medium">
-          Over 20+ clients trust Bilcode Technology
+          Lebih dari 20+ klien mempercayai Bilcode
         </span>{" "}
-        to build their digital products.
+        untuk membangun produk digital mereka.
       </p>
 
       {/* Sponsors Rotator (crossfade, no shifting) */}
-      <div className="w-full max-w-5xl mt-6">
+      <div className="w-full px-5 md:px-0 md:max-w-5xl">
         <SponsorsRotator
           items={[
             { name: "Spotify", logo: "https://logo.clearbit.com/spotify.com" },

@@ -24,9 +24,9 @@ const Portfolio = () => {
   ];
 
   return (
-    <section className="min-h-screen flex items-center bg-white">
+    <section className="min-h-screen md:mb-20 flex items-center bg-white">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-end flex-wrap gap-4 md:gap-6">
+        <div className="flex items-end justify-center md:justify-start flex-wrap gap-4 md:gap-6">
           {projects.map((project, index) => (
             <div
               key={index}
