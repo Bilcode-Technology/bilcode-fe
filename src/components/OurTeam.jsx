@@ -43,13 +43,13 @@ const OurTeam = () => {
 
   const images = [
     {
-      src: "https://picsum.photos/400/500?random=1",
+      src: "/member1.jpg",
       w: "w-[30vw] md:w-[20vw]",
       h: "h-[20vh] md:h-[45vh]",
       align: "items-end",
     }, // kiri
     {
-      src: "https://picsum.photos/500/400?random=2",
+      src: "/member1.jpg",
       w: "w-[40vw] md:w-[30vw]",
       h: "h-[30vh] md:h-[65vh]",
       align: "items-start",
