@@ -164,13 +164,13 @@ const Portfolio = () => {
                 decoding="async"
               />
               <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center">
-                <div className="container mx-auto px-6 max-w-7xl flex items-start justify-between">
-                  <div className="w-1/2">
+                <div className="container mx-auto px-6 max-w-7xl flex flex-col md:flex-row items-start md:justify-between gap-4 md:gap-0">
+                  <div className="md:w-1/2">
                     <h2 className="text-white text-5xl font-bold">
                       {slide.title}
                     </h2>
                   </div>
-                  <div className="text-end w-1/3">
+                  <div className="md:text-end md:w-1/3">
                     <p className="text-white text-xl font-medium">
                       {slide.description}
                     </p>

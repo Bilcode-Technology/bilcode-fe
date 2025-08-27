@@ -1,249 +1,91 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-const getVisibleCount = () => {
-  const w = window.innerWidth;
-  if (w < 640) return 3; // mobile
-  if (w < 1024) return 4; // tablet
-  return 6; // desktop
-};
-
-const SponsorsRotator = ({
-  items = [],
-  interval = 1.8, // seconds between switches
-  className = "",
-}) => {
+const SponsorsRotator = ({ items = [], interval = 1.8, className = "" }) => {
   const wrapperRef = useRef(null);
-  const slotsRef = useRef([]); // array of slot refs (each slot contains layerA, layerB)
-  const activeLayerRef = useRef([]); // 0 or 1 per slot
-  const startIndexRef = useRef(0);
-  const visibleCountRef = useRef(6);
-  const tickerRef = useRef(null);
-  const pausedRef = useRef(false);
+  const animationContextRef = useRef(null);
+  const timelineRef = useRef(null);
+  const [currentLogos, setCurrentLogos] = useState(items);
 
-  const pool = useMemo(
-    () => (items.length ? [...items] : [{ name: "Your Brand" }]),
-    [items]
-  );
-
-  // Ensure list long enough
-  const atLeast = (n) => {
-    if (pool.length >= n) {
-      return pool;
-    }
-    const dup = [];
-    for (let i = 0; i < n; i++) {
-      dup.push(pool[i % pool.length]);
-    }
-    return dup;
-  };
-  // Helper to set logo + label into a layer without relying on Tailwind runtime class scanning
-  // const setLayerContent = (layer, item) => {
-  //   if (!layer || !item) {
-  //     return;
-  //   }
-  //   layer.innerHTML = "";
-  //   const wrap = document.createElement("div");
-  //   wrap.style.display = "flex";
-  //   wrap.style.alignItems = "center";
-  //   wrap.style.gap = "8px"; // 0.5rem
-
-  //   if (item.logo) {
-  //     const img = document.createElement("img");
-  //     img.src = item.logo;
-  //     img.alt = item.name || "Logo";
-  //     img.loading = "lazy";
-  //     img.style.height = "24px"; // ~h-6
-  //     img.style.width = "auto";
-  //     img.style.objectFit = "contain";
-  //     wrap.appendChild(img);
-  //   }
-
-  //   const text = document.createElement("span");
-  //   text.textContent = item.name || "";
-  //   text.style.fontWeight = 600;
-  //   text.style.fontSize = "1rem"; // text-base
-  //   text.style.letterSpacing = "-0.01em";
-  //   text.style.color = "#111827"; // gray-900
-  //   wrap.appendChild(text);
-
-  //   layer.appendChild(wrap);
-  // };
-
-  // Helper untuk isi logo saja tanpa text
-  const setLayerContent = (layer, item) => {
-    if (!layer || !item) return;
-    layer.innerHTML = "";
-
-    if (item.logo) {
-      const img = document.createElement("img");
-      img.src = item.logo;
-      img.alt = item.name || "Logo";
-      img.loading = "lazy";
-      img.style.height = "32px"; // atur ukuran logo (h-8)
-      img.style.width = "auto";
-      img.style.objectFit = "contain";
-      layer.appendChild(img);
-    }
-  };
-
-  const renderSlots = (count) => {
-    const filled = atLeast(count);
-    // initialize DOM content for both layers in each slot
-    slotsRef.current.forEach((slot, idx) => {
-      if (!slot) return;
-      const [layerA, layerB] = slot.children;
-      const label = filled[idx % filled.length];
-      const item = typeof label === "string" ? { name: label } : label;
-      setLayerContent(layerA, item);
-      setLayerContent(layerB, item);
-      // layerA visible; layerB hidden initially
-      gsap.set(layerA, { autoAlpha: 1 });
-      gsap.set(layerB, { autoAlpha: 0 });
-      activeLayerRef.current[idx] = 0;
-    });
-  };
-
-  // Switch to next set (advance startIndexRef by 1); crossfade each slot
-  // const advance = () => {
-  //   const count = visibleCountRef.current;
-  //   const filled = atLeast(count + 1);
-  //   startIndexRef.current = (startIndexRef.current + 1) % filled.length;
-
-  //   for (let i = 0; i < count; i++) {
-  //     const slot = slotsRef.current[i];
-  //     if (!slot) {
-  //       continue;
-  //     }
-  //     const [layerA, layerB] = slot.children;
-  //     const nextLabel = filled[(startIndexRef.current + i) % filled.length];
-  //     const active = activeLayerRef.current[i] || 0;
-  //     const showEl = active === 0 ? layerB : layerA;
-  //     const hideEl = active === 0 ? layerA : layerB;
-
-  //     const nextItem =
-  //       typeof nextLabel === "string" ? { name: nextLabel } : nextLabel;
-  //     setLayerContent(showEl, nextItem);
-  //     // crossfade only
-  //     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-  //     tl.to(hideEl, { autoAlpha: 0, duration: 0.35 }, 0).fromTo(
-  //       showEl,
-  //       { autoAlpha: 0 },
-  //       { autoAlpha: 1, duration: 0.45 },
-  //       0.05
-  //     );
-
-  //     activeLayerRef.current[i] = active === 0 ? 1 : 0;
-  //   }
-  // };
-
-  // Switch to next set (advance by visibleCount at once)
-  const advance = () => {
-    const count = visibleCountRef.current;
-    const filled = atLeast(count * 2); // biar ada stok logo
-    startIndexRef.current = (startIndexRef.current + count) % filled.length; // lompat per 6
-
-    for (let i = 0; i < count; i++) {
-      const slot = slotsRef.current[i];
-      if (!slot) continue;
-
-      const [layerA, layerB] = slot.children;
-      const nextLabel = filled[(startIndexRef.current + i) % filled.length];
-      const active = activeLayerRef.current[i] || 0;
-      const showEl = active === 0 ? layerB : layerA;
-      const hideEl = active === 0 ? layerA : layerB;
-
-      const nextItem =
-        typeof nextLabel === "string" ? { name: nextLabel } : nextLabel;
-      setLayerContent(showEl, nextItem);
-
-      // ANIMASI SCALE
-      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-      tl.to(hideEl, { autoAlpha: 0, scale: 0, duration: 0.35 }, 0).fromTo(
-        showEl,
-        { autoAlpha: 0, scale: 0 },
-        { autoAlpha: 1, scale: 1, duration: 0.45 },
-        0.05
-      );
-
-      activeLayerRef.current[i] = active === 0 ? 1 : 0;
-    }
+  const shuffleLogos = () => {
+    const shuffled = [...items].sort(() => Math.random() - 0.5);
+    setCurrentLogos(shuffled);
   };
 
   useLayoutEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) {
-      return;
-    }
+    animationContextRef.current = gsap.context(() => {
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
 
-    const onEnter = () => {
-      pausedRef.current = true;
-    };
-    const onLeave = () => {
-      pausedRef.current = false;
-    };
-    wrapper.addEventListener("mouseenter", onEnter);
-    wrapper.addEventListener("mouseleave", onLeave);
-
-    // create slots count
-    const updateCount = () => {
-      visibleCountRef.current = getVisibleCount();
-      // (Re)render initial content
-      renderSlots(visibleCountRef.current);
-    };
-
-    updateCount();
-    const onResize = () => {
-      updateCount();
-    };
-    window.addEventListener("resize", onResize);
-
-    // ticker that advances every interval seconds
-    let acc = 0;
-    const tick = (_time, delta) => {
-      if (pausedRef.current) {
-        return;
+      if (timelineRef.current) {
+        timelineRef.current.kill();
       }
-      acc += delta / 1000; // ms → s
-      if (acc >= interval) {
-        acc = 0;
-        advance();
-      }
-    };
-    gsap.ticker.add(tick);
-    tickerRef.current = tick;
+
+      const logoElements = wrapper.querySelectorAll(".sponsor-logo");
+
+      // Set initial states
+      gsap.set(logoElements, {
+        autoAlpha: 0,
+        scale: 0,
+      });
+
+      // Create main timeline
+      timelineRef.current = gsap.timeline({
+        id: "sponsors-rotator",
+        repeat: -1,
+        onRepeat: shuffleLogos, // Shuffle logos when animation repeats
+      });
+
+      // Single animation cycle
+      const tl = gsap.timeline();
+
+      // Animate all logos in
+      tl.to(logoElements, {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 0.3,
+        // stagger: 0.2,
+        ease: "back.out(1.7)",
+      })
+        // Hold state
+        .to({}, { duration: interval })
+        // Animate all logos out
+        .to(logoElements, {
+          autoAlpha: 0,
+          scale: 0,
+          duration: 0.3,
+          // stagger: 0.2,
+          ease: "back.in(1.7)",
+        });
+
+      // Add to main timeline
+      timelineRef.current.add(tl);
+    }, wrapperRef.current);
 
     return () => {
-      window.removeEventListener("resize", onResize);
-      wrapper.removeEventListener("mouseenter", onEnter);
-      wrapper.removeEventListener("mouseleave", onLeave);
-      if (tickerRef.current) {
-        gsap.ticker.remove(tickerRef.current);
+      if (animationContextRef.current) {
+        animationContextRef.current.revert();
       }
     };
-  }, [interval, pool]);
+  }, [interval, currentLogos]); // Changed dependency to currentLogos
 
   return (
-    <div ref={wrapperRef} className={`w-full opacity-80 ${className}`}>
-      <div className="flex items-center justify-center gap-x-10 flex-nowrap">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            ref={(el) => (slotsRef.current[i] = el)}
-            className="relative h-8 flex items-center gap-2 select-none will-change-transform"
-            style={{ width: "auto" }}
-          >
-            <div
-              className="absolute inset-0 flex items-center gap-2"
-              style={{ willChange: "opacity" }}
-            ></div>
-            <div
-              className="relative flex items-center gap-2"
-              style={{ willChange: "opacity" }}
-            ></div>
-          </div>
-        ))}
-      </div>
+    <div
+      ref={wrapperRef}
+      className={`flex items-center justify-center gap-10 ${className}`}
+    >
+      {currentLogos.map((item, index) => (
+        <div
+          key={`${item.name}-${index}`}
+          className="sponsor-logo h-10 flex items-center justify-center"
+        >
+          <img
+            src={item.logo}
+            alt={item.name}
+            className="h-10 w-auto object-contain"
+          />
+        </div>
+      ))}
     </div>
   );
 };

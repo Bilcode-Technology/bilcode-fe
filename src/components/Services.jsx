@@ -92,12 +92,14 @@ const serviceItems = [
 
 const Services = () => {
   return (
-    <section className="min-h-screen md:mb-20 flex items-center bg-white">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className={`flex items-center md:justify-center gap-4 md:gap-6`}>
+    <section className="min-h-screen mb-16 md:mb-20 flex items-center bg-white">
+      <div className="container mx-auto px-6">
+        <div
+          className={`flex flex-col md:flex-row items-center md:justify-center gap-4 md:gap-6`}
+        >
           {serviceItems.map((service, index) => (
             <div key={index}>
-              <div className="group flex flex-col gap-4 justify-end text-gray-500 bg-[#f8f9fa] p-8 rounded-2xl w-[180px] h-[400px] hover:w-[452px] hover:h-[75vh] transition-all duration-300 ease-in-out overflow-hidden cursor-pointer">
+              <div className="group flex flex-col gap-4 justify-end text-gray-500 bg-[#f8f9fa] p-8 rounded-2xl w-[200px] h-[400px] hover:w-[350px] hover:h-[75vh] md:w-[180px] md:h-[400px] md:hover:w-[452px] md:hover:h-[75vh] transition-all duration-300 ease-in-out overflow-hidden cursor-pointer">
                 <div className="block group-hover:hidden transition-opacity duration-300">
                   {service.icon}
                 </div>

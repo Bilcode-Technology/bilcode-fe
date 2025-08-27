@@ -101,6 +101,7 @@ const OurTeam = () => {
         {images.map((img, i) => (
           <div key={i} className={`${img.w} ${img.h} flex ${img.align}`}>
             <img
+              alt={`Anggota-${i}`}
               ref={(el) => (imagesRef.current[i] = el)}
               src={img.src}
               className="w-full h-full object-cover shadow-lg"

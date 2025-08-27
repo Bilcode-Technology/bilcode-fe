@@ -5,9 +5,7 @@ import {
   useCallback,
   useLayoutEffect,
 } from "react";
-
 import { navItems } from "../data/navItems";
-import { ChevronDown, Languages } from "lucide-react";
 import gsap from "gsap";
 
 const Header = ({ isDropdownVisible, onDropdownToggle }) => {
@@ -32,37 +30,45 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
     if (!megaMenuRef.current) return;
     const panel = megaMenuRef.current;
 
-    if (isDropdownVisible) {
-      // animasi masuk
-      gsap.killTweensOf(panel);
-      gsap.set(panel, { visibility: "visible" });
-      const tl = gsap.timeline();
-      tl.to(panel, {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out",
-      }).from(
-        panel.querySelectorAll(".mm-card"),
-        {
+    // Create unique context for header animations
+    const ctx = gsap.context(() => {
+      if (isDropdownVisible) {
+        // Kill any existing tweens for this panel
+        gsap.killTweensOf(panel);
+        gsap.set(panel, { visibility: "visible" });
+
+        // Create unique timeline for mega menu
+        const tl = gsap.timeline({
+          id: "header-mega-menu",
+          defaults: { ease: "power2.out" },
+        });
+
+        tl.to(panel, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.3,
+        }).from(
+          panel.querySelectorAll(".mm-card"),
+          {
+            autoAlpha: 0,
+            y: 12,
+            scale: 0.98,
+            stagger: 0.05,
+            duration: 0.25,
+          },
+          "-=0.1"
+        );
+      } else {
+        gsap.killTweensOf(panel);
+        gsap.set(panel, {
           autoAlpha: 0,
-          y: 12,
-          scale: 0.98,
-          stagger: 0.05,
-          duration: 0.25,
-          ease: "power2.out",
-        },
-        "-=0.1"
-      );
-    } else {
-      // langsung hilang (tanpa transisi)
-      gsap.killTweensOf(panel);
-      gsap.set(panel, {
-        autoAlpha: 0,
-        y: -16,
-        visibility: "hidden",
-      });
-    }
+          y: -16,
+          visibility: "hidden",
+        });
+      }
+    }, megaMenuRef.current); // Scope to mega menu
+
+    return () => ctx.revert(); // Cleanup context
   }, [isDropdownVisible]);
 
   // Scroll handler
@@ -133,41 +139,53 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
   // Card hover animations with GSAP (bounded and loop background only while hovered)
   const onCardEnter = useCallback((el) => {
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-    tl.to(el, {
-      scale: 0.92,
-      // y: -4,
-      duration: 0.2,
-      // boxShadow: "0 25px 35px -12px rgba(0,0,0,0.25)",
-    })
-      .to(el.querySelector(".mm-overlay"), { autoAlpha: 1, duration: 0.2 }, "<")
-      .to(
-        el.querySelector(".mm-bg"),
-        { x: 12, y: -12, scale: 1.05, duration: 0.4 },
-        "<"
-      )
-      .to(
-        el.querySelector(".mm-icon"),
-        { scale: 1.08, rotate: 6, duration: 0.25 },
-        "<"
-      )
-      .to(
-        el.querySelector(".mm-arrow"),
-        { x: 8, scale: 1.08, duration: 0.2 },
-        "<"
-      );
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        id: `header-card-hover-${el.dataset.index}`,
+        defaults: { ease: "power2.out" },
+      });
 
-    // Loop background gradient subtly while hovered
-    const loop = gsap.to(el.querySelector(".mm-bg"), {
-      xPercent: 5,
-      yPercent: -5,
-      rotation: 2,
-      duration: 2,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-    });
-    cardMotion.current.set(el, loop);
+      tl.to(el, {
+        scale: 0.92,
+        duration: 0.2,
+      })
+        .to(
+          el.querySelector(".mm-overlay"),
+          { autoAlpha: 1, duration: 0.2 },
+          "<"
+        )
+        .to(
+          el.querySelector(".mm-bg"),
+          { x: 12, y: -12, scale: 1.05, duration: 0.4 },
+          "<"
+        )
+        .to(
+          el.querySelector(".mm-icon"),
+          { scale: 1.08, rotate: 6, duration: 0.25 },
+          "<"
+        )
+        .to(
+          el.querySelector(".mm-arrow"),
+          { x: 8, scale: 1.08, duration: 0.2 },
+          "<"
+        );
+
+      // Loop background with unique ID
+      const loop = gsap.to(el.querySelector(".mm-bg"), {
+        id: `header-bg-loop-${el.dataset.index}`,
+        xPercent: 5,
+        yPercent: -5,
+        rotation: 2,
+        duration: 2,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+
+      cardMotion.current.set(el, loop);
+    }, el);
+
+    return () => ctx.revert();
   }, []);
 
   const onCardLeave = useCallback((el) => {
@@ -178,7 +196,10 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       cardMotion.current.delete(el);
     }
 
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    const tl = gsap.timeline(
+      { id: "header" },
+      { defaults: { ease: "power2.out" } }
+    );
     tl.to(el, {
       scale: 1,
       y: 0,
@@ -261,7 +282,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
   const getNavClasses = () => {
     const baseClasses =
-      "flex items-center justify-between h-16 lg:h-22 px-8 transition-transform duration-500";
+      "flex items-center justify-between h-16 lg:h-22 px-4 md:px-8 mx-2 md:mx-0 transition-transform duration-500";
 
     if (isDropdownVisible) {
       return `${baseClasses}`;
@@ -399,6 +420,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             return (
               <a
                 key={`card-${i}`}
+                data-index={i} // Add index for unique GSAP IDs
                 href={card.href}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
@@ -486,6 +508,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
             return (
               <a
                 key={`card-${i}`}
+                data-index={i} // Add index for unique GSAP IDs
                 href={card.href}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
@@ -611,7 +634,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
 
         <a
           href="http://wa.me/6285128004772"
-          className="fixed top-11 md:top-14 right-[5%] md:right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
+          className="fixed top-[47px] md:top-14 right-[5%] md:right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
         >
           Chat Sekarang
         </a>

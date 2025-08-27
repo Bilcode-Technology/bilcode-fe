@@ -3,39 +3,10 @@ import {
   Smartphone,
   Paintbrush,
   Cloud,
-  CreditCard,
-  HeartPulse,
-  GraduationCap,
-  Store,
-  Landmark,
-  Truck,
-  Building2,
   Folder,
   Rocket,
   ShoppingCart,
-  BarChart3,
-  BookOpen,
-  Users,
-  Briefcase,
-  Handshake,
-  Award,
-  FileText,
-  Layers,
-  Shield,
-  PenTool,
   Server,
-  BookMarked,
-  FileSearch,
-  Languages,
-  ChevronDown,
-  Plane,
-  Building,
-  Code,
-  Palette,
-  LayoutTemplate,
-  Library,
-  Phone,
-  Mail,
 } from "lucide-react";
 
 export const navItems = [
@@ -91,6 +62,7 @@ export const navItems = [
       cards: [
         {
           icon: <Folder />,
+          image: "/public/logo/pln.png",
           title: "PLN",
           description:
             "Browse our complete showcase with detailed case studies and client testimonials.",
@@ -175,14 +147,14 @@ export const navItems = [
   //     },
   //   },
   // },
-  {
-    label: "Karir",
-    type: "link",
-  },
-  {
-    label: "Harga",
-    type: "link",
-  },
+  // {
+  //   label: "Karir",
+  //   type: "link",
+  // },
+  // {
+  //   label: "Harga",
+  //   type: "link",
+  // },
   // {
   //   label: "Language",
   //   type: "dropdown",
