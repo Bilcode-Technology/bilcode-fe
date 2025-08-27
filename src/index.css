@@ -27,3 +27,14 @@
 .tracking-tightest {
   letter-spacing: -0.02em;
 }
+
+.carousel-container .swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-container .swiper-slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}

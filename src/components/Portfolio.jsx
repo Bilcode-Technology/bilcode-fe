@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -6,8 +6,61 @@ import "swiper/css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const portfolioSlides = [
+  {
+    image: "/portfolio/Macbook Pro - Carbon Trade.jpg",
+    alt: "Carbon Trade Project",
+    title: "Djangjo - Carbon Trade",
+    description:
+      "Platform perdagangan karbon berbasis digital untuk mendukung masa depan hijau dan berkelanjutan.",
+  },
+  {
+    image: "/portfolio/Macbook Pro - Kandidatpro.jpg",
+    alt: "Kandidat Pro Project",
+    title: "Kandidat Pro",
+    description:
+      "Solusi rekrutmen digital modern yang mempertemukan perusahaan dengan profesional IT terbaik.",
+  },
+  {
+    image: "/portfolio/Macbook Pro - PLN.jpg",
+    alt: "PLN Project",
+    title: "PLN - Strategic Navigation Flighdeck",
+    description:
+      "Sistem navigasi cerdas yang dirancang untuk meningkatkan efisiensi armada PLN secara menyeluruh.",
+  },
+  {
+    image: "/portfolio/Macbook Pro - Govita.jpg",
+    alt: "Travel Project",
+    title: "Govita Handling Travel",
+    description:
+      "Platform pemesanan travel premium dengan layanan handal untuk perjalanan nyaman dan terpercaya.",
+  },
+  {
+    image: "/portfolio/Macbook Pro - Kuliatul.jpg",
+    alt: "Kuliatul Haram University Project",
+    title: "Kuliatul Haram University",
+    description:
+      "Portal akademik digital yang modern untuk mendukung sistem pendidikan Islam berkelas dunia.",
+  },
+  {
+    image: "/portfolio/Macbook Pro - Qurbanku.jpg",
+    alt: "Qurbanku Project",
+    title: "Qurbanku",
+    description:
+      "Platform digital qurban terpercaya yang memudahkan layanan hewan qurban cepat, aman, dan amanah.",
+  },
+];
+
 const Portfolio = () => {
   const containerRef = useRef(null);
+
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const totalImages = portfolioSlides.length;
+
+  // Add loading handler
+  const handleImageLoad = () => {
+    setImagesLoaded((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -83,23 +136,50 @@ const Portfolio = () => {
     //     </div>
     //   </div>
     // </section>
-    <div ref={containerRef} className="carousel-container">
-      <Swiper slidesPerView={1} spaceBetween={0}>
-        <SwiperSlide>
-          <div className="slide bg-red-400 h-screen flex items-center justify-center text-white text-4xl">
-            Slide 1
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide bg-blue-400 h-screen flex items-center justify-center text-white text-4xl">
-            Slide 2
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide bg-green-400 h-screen flex items-center justify-center text-white text-4xl">
-            Slide 3
-          </div>
-        </SwiperSlide>
+    <div
+      ref={containerRef}
+      className="carousel-container relative w-full h-screen"
+    >
+      {imagesLoaded < totalImages && (
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+      <Swiper slidesPerView={1} spaceBetween={0} className="h-full">
+        {portfolioSlides.map((slide, index) => (
+          <SwiperSlide key={index} className="h-full">
+            <div className="relative w-full h-full overflow-hidden">
+              <img
+                onLoad={handleImageLoad}
+                src={slide.image}
+                srcSet={`
+                  ${slide.image} 768w,
+                  ${slide.image} 1024w,
+                  ${slide.image} 1920w
+                `}
+                sizes="100vw"
+                alt={slide.alt}
+                className="absolute inset-0 w-full h-full object-cover object-center"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center">
+                <div className="container mx-auto px-6 max-w-7xl flex items-start justify-between">
+                  <div className="w-1/2">
+                    <h2 className="text-white text-5xl font-bold">
+                      {slide.title}
+                    </h2>
+                  </div>
+                  <div className="text-end w-1/3">
+                    <p className="text-white text-xl font-medium">
+                      {slide.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
