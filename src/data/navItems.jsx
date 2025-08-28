@@ -147,14 +147,14 @@ export const navItems = [
   //     },
   //   },
   // },
-  // {
-  //   label: "Karir",
-  //   type: "link",
-  // },
-  // {
-  //   label: "Harga",
-  //   type: "link",
-  // },
+  {
+    label: "Karir",
+    type: "link",
+  },
+  {
+    label: "Harga",
+    type: "link",
+  },
   // {
   //   label: "Language",
   //   type: "dropdown",

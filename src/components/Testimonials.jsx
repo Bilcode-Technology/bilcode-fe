@@ -202,8 +202,8 @@ const Card = ({ data, onVideoHover, onVideoHoverOut, index }) => {
       className="testimonial-card w-60 h-80 md:w-72 md:h-96 rounded-3xl overflow-hidden flex-shrink-0 mx-4 cursor-pointer transition-transform duration-500 ease-out group"
     >
       <div
-        className={`w-full h-full p-6 flex flex-col justify-center relative overflow-hidden text-white`}
-        style={{ backgroundColor: cardColor }}
+        className={`w-full h-full p-6 flex flex-col justify-center relative overflow-hidden bg-[#f8f9fa] `}
+        // style={{ backgroundColor: cardColor }}
       >
         <div className="relative z-10">
           <Quote size={32} className={`mb-4 `} />
@@ -221,7 +221,7 @@ const Card = ({ data, onVideoHover, onVideoHoverOut, index }) => {
           </p>
           <div className="flex items-center mt-8">
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center border`}
+              className={`w-14 h-14 rounded-full flex items-center justify-center bg-gray-200`}
             >
               <span className=" font-bold text-xl">
                 {initials ||
