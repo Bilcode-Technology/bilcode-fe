@@ -23,6 +23,15 @@ const SECTION_NAMES = {
 
 const TEXT = "bilcode.id";
 
+// fungsi debounce manual (untuk ganti gsap.utils.debounce)
+const debounce = (fn, delay = 200) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+};
+
 function App() {
   const [isSplashing, setIsSplashing] = useState(true);
   const [isContentVisible, setIsContentVisible] = useState(false);
@@ -159,11 +168,7 @@ function App() {
   useLayoutEffect(() => {
     if (!isContentVisible) return;
 
-    const handleResize = () => {
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 100);
-    };
+    const handleResize = debounce(() => ScrollTrigger.refresh(), 200);
 
     // Initial refresh setelah beberapa saat
     const timeouts = [

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -64,7 +63,7 @@ const Portfolio = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const sections = gsap.utils.toArray(".swiper-slide");
+      const sections = gsap.utils.toArray("swiper-slide");
 
       gsap.to(sections, {
         xPercent: -100 * (sections.length - 1),
@@ -145,19 +144,13 @@ const Portfolio = () => {
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       )}
-      <Swiper slidesPerView={1} spaceBetween={0} className="h-full">
+      <swiper-container slides-per-view="1" space-between="0" class="h-full">
         {portfolioSlides.map((slide, index) => (
-          <SwiperSlide key={index} className="h-full">
+          <swiper-slide key={index} class="h-full">
             <div className="relative w-full h-full overflow-hidden">
               <img
                 onLoad={handleImageLoad}
                 src={slide.image}
-                srcSet={`
-                  ${slide.image} 768w,
-                  ${slide.image} 1024w,
-                  ${slide.image} 1920w
-                `}
-                sizes="100vw"
                 alt={slide.alt}
                 className="absolute inset-0 w-full h-full object-cover object-center"
                 loading="lazy"
@@ -178,9 +171,9 @@ const Portfolio = () => {
                 </div>
               </div>
             </div>
-          </SwiperSlide>
+          </swiper-slide>
         ))}
-      </Swiper>
+      </swiper-container>
     </div>
   );
 };
