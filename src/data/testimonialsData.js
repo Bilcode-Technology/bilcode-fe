@@ -2,7 +2,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Layanan cepat dan hasil memuaskan!",
-    initials: "BP",
+    initials: "BU",
     name: "Budi",
     location: "Jakarta",
     rating: 5,
@@ -17,7 +17,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Timnya profesional dan komunikatif.",
-    initials: "AW",
+    initials: "AH",
     name: "Ahmad",
     location: "Surabaya",
     rating: 5,
@@ -25,7 +25,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Sangat terbantu dengan solusi digitalnya.",
-    initials: "RH",
+    initials: "RI",
     name: "Rini",
     location: "Yogyakarta",
     rating: 5,
@@ -33,7 +33,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Website jadi lebih modern dan responsif.",
-    initials: "DP",
+    initials: "DE",
     name: "Dewi",
     location: "Semarang",
     rating: 5,
@@ -41,7 +41,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Support selalu cepat tanggap.",
-    initials: "AS",
+    initials: "AD",
     name: "Adi",
     location: "Riau",
     rating: 5,
@@ -49,7 +49,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Desain aplikasinya elegan dan user friendly.",
-    initials: "JS",
+    initials: "JO",
     name: "Joko",
     location: "Cikarang",
     rating: 5,
@@ -57,7 +57,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Hasil melampaui ekspektasi kami.",
-    initials: "LW",
+    initials: "LI",
     name: "Linda",
     location: "Malang",
     rating: 5,
@@ -65,7 +65,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Partner teknologi yang bisa diandalkan.",
-    initials: "TH",
+    initials: "TA",
     name: "Taufik",
     location: "Riau",
     rating: 5,
@@ -73,7 +73,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Sangat puas dengan kinerja tim.",
-    initials: "RG",
+    initials: "RI",
     name: "Rina",
     location: "Pontianak",
     rating: 5,
@@ -81,7 +81,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Proses pengerjaan rapi dan terstruktur.",
-    initials: "DK",
+    initials: "DI",
     name: "Dian",
     location: "Pontianak",
     rating: 5,
@@ -97,7 +97,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Harga sebanding dengan kualitas premium.",
-    initials: "NA",
+    initials: "NI",
     name: "Nina",
     location: "Cirebon",
     rating: 5,
@@ -105,7 +105,7 @@ export const testimonialsData = [
   {
     type: "text",
     quote: "Timnya punya ide-ide kreatif luar biasa.",
-    initials: "HS",
+    initials: "HE",
     name: "Hendra",
     location: "Bekasi",
     rating: 5,
