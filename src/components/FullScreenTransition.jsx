@@ -6,7 +6,7 @@ const FullScreenTransition = forwardRef(({ textRefs, text = "bilcode.id" }, ref)
       ref={ref}
       className="fixed inset-0 bg-white flex justify-center items-center z-50"
     >
-      <h1 className="text-4xl font-bold text-black">
+      <h1 className="text-5xl md:text-7xl font-extrabold text-black tracking-widest">
         {text.split("").map((char, i) => (
           <span
             key={i}

@@ -25,6 +25,7 @@ const TEXT = "bilcode.id";
 
 function App() {
   const [isSplashing, setIsSplashing] = useState(true);
+  const [isContentVisible, setIsContentVisible] = useState(false);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   // Refs
@@ -35,6 +36,26 @@ function App() {
 
   const onSplashComplete = useCallback(() => {
     setIsSplashing(false);
+    // Animasi untuk menampilkan konten setelah splash selesai
+    setTimeout(() => {
+      if (contentWrapperRef.current) {
+        gsap.to(contentWrapperRef.current, {
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          onComplete: () => {
+            // Delay tambahan untuk memastikan layout stabil
+            setTimeout(() => {
+              setIsContentVisible(true);
+              // Multiple refresh untuk memastikan posisi yang akurat
+              setTimeout(() => {
+                ScrollTrigger.refresh();
+              }, 100);
+            }, 100);
+          }
+        });
+      }
+    }, 100);
   }, []);
 
   // Splash screen
@@ -48,7 +69,8 @@ function App() {
    * Dropdown overlay animation
    */
   useLayoutEffect(() => {
-    if (!overlayRef.current) return;
+    if (!overlayRef.current || !isContentVisible) return;
+    
     const ctx = gsap.context(() => {
       gsap.to(overlayRef.current, {
         autoAlpha: isDropdownVisible ? 1 : 0,
@@ -57,62 +79,115 @@ function App() {
       });
     });
     return () => ctx.revert();
-  }, [isDropdownVisible]);
+  }, [isDropdownVisible, isContentVisible]);
 
   /**
    * Scroll overlay animation (section transition text)
    */
   useLayoutEffect(() => {
-    if (isSplashing) return;
-    if (!whiteOverlayRef.current) return;
+    if (!isContentVisible || !whiteOverlayRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const whiteOverlay = whiteOverlayRef.current;
-      const overlayText = whiteOverlay.querySelector(".overlay-text");
+    // Delay untuk memastikan DOM sudah stabil
+    const timeoutId = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        const whiteOverlay = whiteOverlayRef.current;
+        const overlayText = whiteOverlay.querySelector(".overlay-text");
 
-      gsap.set(whiteOverlay, { autoAlpha: 0 });
-      let activeTween = null;
+        gsap.set(whiteOverlay, { autoAlpha: 0 });
+        let activeTween = null;
 
-      const sections = gsap.utils.toArray(".scroll-section");
-
-      sections.forEach((section) => {
-        const sectionName = SECTION_NAMES[section.dataset.section];
-        if (!sectionName) {
-          return; // No transition for sections without a name
+        // Pastikan semua section sudah di-render
+        const sections = gsap.utils.toArray(".scroll-section");
+        
+        if (sections.length === 0) {
+          console.warn("No sections found, retrying...");
+          return;
         }
 
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top 70%",
-          end: "bottom 30%",
-          onToggle: (self) => {
-            if (self.isActive) {
-              // Entered the zone, from top or bottom
-              if (activeTween) {
-                activeTween.kill();
-              }
-              overlayText.textContent = sectionName;
-              activeTween = gsap.to(whiteOverlay, {
-                autoAlpha: 1,
-                duration: 0.3,
-              });
-            } else {
-              // Left the zone, from top or bottom
-              if (activeTween) {
-                activeTween.kill();
-              }
-              activeTween = gsap.to(whiteOverlay, {
-                autoAlpha: 0,
-                duration: 0.3,
-              });
-            }
-          },
-        });
-      });
-    });
+        sections.forEach((section, index) => {
+          const sectionName = SECTION_NAMES[section.dataset.section];
+          if (!sectionName) {
+            return; // No transition for hero & contact
+          }
 
-    return () => ctx.revert();
-  }, [isSplashing]);
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top 75%", // Lebih toleran untuk trigger awal
+            end: "bottom 25%",
+            refreshPriority: -1, // Lower priority untuk refresh
+            onToggle: (self) => {
+              console.log(`Section ${sectionName}: ${self.isActive ? 'active' : 'inactive'}`);
+              
+              if (self.isActive) {
+                if (activeTween) activeTween.kill();
+                overlayText.textContent = sectionName;
+                activeTween = gsap.to(whiteOverlay, {
+                  autoAlpha: 1,
+                  duration: 0.3,
+                });
+              } else {
+                if (activeTween) activeTween.kill();
+                activeTween = gsap.to(whiteOverlay, {
+                  autoAlpha: 0,
+                  duration: 0.3,
+                });
+              }
+            },
+            onRefresh: () => {
+              console.log(`ScrollTrigger refreshed for ${sectionName}`);
+            }
+          });
+        });
+
+        // Force refresh setelah semua trigger dibuat
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 50);
+      });
+
+      return () => ctx.revert();
+    }, 200);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isContentVisible]);
+
+  /**
+   * Additional ScrollTrigger refresh on window resize and after content is visible
+   */
+  useLayoutEffect(() => {
+    if (!isContentVisible) return;
+
+    const handleResize = () => {
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+    };
+
+    // Initial refresh setelah beberapa saat
+    const timeouts = [
+      setTimeout(() => ScrollTrigger.refresh(), 300),
+      setTimeout(() => ScrollTrigger.refresh(), 600),
+      setTimeout(() => ScrollTrigger.refresh(), 1000)
+    ];
+
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [isContentVisible]);
+
+  /**
+   * Cleanup ScrollTriggers on unmount
+   */
+  useLayoutEffect(() => {
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
 
   return (
     <div className="App">
@@ -129,19 +204,28 @@ function App() {
       <div
         ref={whiteOverlayRef}
         className="fixed inset-0 bg-white pointer-events-none flex items-center justify-center z-40"
+        style={{ visibility: isContentVisible ? 'visible' : 'hidden' }}
       >
         <div className="overlay-text text-4xl md:text-6xl font-bold text-gray-800 tracking-wider uppercase"></div>
       </div>
 
       {/* Content */}
-      <div ref={contentWrapperRef} style={{ opacity: 0 }}>
+      <div 
+        ref={contentWrapperRef} 
+        style={{ opacity: 0 }}
+        className="min-h-screen"
+      >
         <Header
           isDropdownVisible={isDropdownVisible}
           onDropdownToggle={setDropdownVisible}
         />
 
         {/* Dropdown Overlay */}
-        <div ref={overlayRef} className="fixed inset-0 bg-black/30 z-30" />
+        <div 
+          ref={overlayRef} 
+          className="fixed inset-0 bg-black/30 z-30"
+          style={{ visibility: isContentVisible ? 'visible' : 'hidden' }}
+        />
 
         <main className="relative z-20">
           <section className="scroll-section" data-section="hero">
