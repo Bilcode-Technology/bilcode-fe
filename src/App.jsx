@@ -15,12 +15,10 @@ import FullScreenTransition from "./components/FullScreenTransition";
 gsap.registerPlugin(ScrollTrigger);
 
 const SECTION_NAMES = {
-  hero: "Home",
   services: "Services",
   portfolio: "Portfolio",
   team: "Our Team",
   testimonials: "Testimonials",
-  contact: "Contact",
 };
 
 const TEXT = "bilcode.id";
