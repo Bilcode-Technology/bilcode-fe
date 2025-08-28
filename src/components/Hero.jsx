@@ -17,8 +17,8 @@ const Hero = () => {
       {/* Announcement Banner */}
       <div className="bg-gray-100 px-4 py-1 rounded-full mb-4 text-xs md:text-base md:mb-6 md:mt-[100px]">
         <span className=" text-gray-700">
-          <span className="font-semibold">Unggulan:</span> Solusi Web & Aplikasi
-          End-to-End{" "}
+          <span className="font-semibold text-[#3852F7]">Unggulan:</span> Solusi
+          Web & Aplikasi End-to-End{" "}
           {/* <a href="#" className="text-[#3852F7] hover:underline font-medium">
             Pelajari lebih lanjut
           </a> */}

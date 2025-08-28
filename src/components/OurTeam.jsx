@@ -4,6 +4,21 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const images = [
+  {
+    src: "/member2.jpeg",
+    w: "w-[30vw] md:w-[20vw]",
+    h: "h-[20vh] md:h-[45vh]",
+    align: "items-end",
+  }, // kiri
+  {
+    src: "/member1.jpeg",
+    w: "w-[40vw] md:w-[30vw]",
+    h: "h-[30vh] md:h-[65vh]",
+    align: "items-start",
+  }, // kanan
+];
+
 const OurTeam = () => {
   const sectionRef = useRef(null);
   const imagesRef = useRef([]);
@@ -41,21 +56,6 @@ const OurTeam = () => {
     return () => ctx.revert();
   }, []);
 
-  const images = [
-    {
-      src: "/member1.jpg",
-      w: "w-[30vw] md:w-[20vw]",
-      h: "h-[20vh] md:h-[45vh]",
-      align: "items-end",
-    }, // kiri
-    {
-      src: "/member1.jpg",
-      w: "w-[40vw] md:w-[30vw]",
-      h: "h-[30vh] md:h-[65vh]",
-      align: "items-start",
-    }, // kanan
-  ];
-
   return (
     <section
       ref={sectionRef}
@@ -63,10 +63,10 @@ const OurTeam = () => {
     >
       {/* Background tetap */}
       <div className="container mx-auto px-4 relative z-10">
+        <p className="text-[11px] md:text-xs tracking-[0.25em] uppercase text-blue-500 mb-10 text-center">
+          [ Kenali para pemainnya ]
+        </p>
         <div className="text-center">
-          <p className="text-[11px] md:text-xs tracking-[0.25em] uppercase text-blue-500 mb-10">
-            [ Kenali para pemainnya ]
-          </p>
           <div className="mb-6">
             <span className="text-xl md:text-2xl font-extrabold text-black font-anta">
               The
