@@ -1,5 +1,10 @@
 export const academyNavItems = [
   {
+    label: "Academy",
+    type: "link",
+    href: "/academy",
+  },
+  {
     label: "Kursus",
     type: "link",
     href: "/academy/courses",
@@ -10,13 +15,11 @@ export const academyNavItems = [
     href: "/blog",
   },
   {
-    label: "Langganan",
-    type: "link",
-    href: "/academy",
-  },
-  {
-    label: "Tentang Kami",
-    type: "link",
-    href: "/about",
+    label: "Lainnya",
+    type: "dropdown",
+    items: [
+      { title: "Instruktur", href: "/academy/instructors" },
+      { title: "Bantuan", href: "/academy/help" },
+    ],
   },
 ];

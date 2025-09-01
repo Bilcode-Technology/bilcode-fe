@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { courses } from '../data/courses.jsx';
 import Testimonials from "../../../components/Testimonials";
-import CTA from '../components/CTA';
+import Subscription from '../components/Subscription';
+
 import { ArrowRight } from 'lucide-react';
 
 const AcademyPage = () => {
@@ -103,31 +104,11 @@ const AcademyPage = () => {
       {/* Testimonials Section */}
       <Testimonials />
 
-      {/* CTA Section */}
-      <div className="bg-white border-t border-gray-100">
-          <div className="container mx-auto px-4 py-16 text-center">
-            <h2 className="text-4xl font-bold mb-4 text-gray-900">Ready to Start Learning?</h2>
-            <p className="text-lg text-gray-600 mb-8">
-              Sign up for our newsletter to get the latest updates on new courses and promotions.
-            </p>
-            <div className="max-w-md mx-auto">
-                <form className="flex items-center">
-                    <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400"
-                    required
-                    />
-                    <button
-                    type="submit"
-                    className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-r-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors duration-300"
-                    >
-                    Subscribe
-                    </button>
-                </form>
-            </div>
-          </div>
-      </div>
+      {/* Subscription Section */}
+      <Subscription 
+        title="Ready to Start Learning?"
+        description="Sign up for our newsletter to get the latest updates on new courses and promotions."
+      />
     </div>
   );
 };

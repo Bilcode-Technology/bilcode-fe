@@ -3,8 +3,10 @@ import MainLayout from "./layouts/MainLayout";
 import LandingPage from "./features/landing/pages/LandingPage";
 import AcademyPage from "./features/academy/pages/AcademyPage";
 import BlogPage from "./features/academy/pages/BlogPage";
-import SubscriptionPage from "./features/academy/pages/SubscriptionPage";
+import BlogPostPage from "./features/academy/pages/BlogPostPage";
 import CoursesPage from "./features/academy/pages/CoursesPage";
+import InstructorsPage from "./features/academy/pages/InstructorsPage";
+import HelpPage from "./features/academy/pages/HelpPage";
 import { navItems } from "./data/navItems.jsx";
 import { academyNavItems } from "./features/academy/data/academyNavItems.js";
 
@@ -19,8 +21,10 @@ function App() {
         <Route index element={<LandingPage />} />
         <Route path="academy" element={<AcademyPage />} />
         <Route path="academy/courses" element={<CoursesPage />} />
+        <Route path="academy/instructors" element={<InstructorsPage />} />
+        <Route path="academy/help" element={<HelpPage />} />
         <Route path="blog" element={<BlogPage />} />
-        <Route path="subscribe" element={<SubscriptionPage />} />
+        <Route path="blog/:postId" element={<BlogPostPage />} />
       </Route>
     </Routes>
   );

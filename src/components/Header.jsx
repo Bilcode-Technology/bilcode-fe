@@ -418,7 +418,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
             {item.label}
           </button>
 
-          {isActiveMega && (
+          {isActiveLink && (
             <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
               {item.items.map((subItem, subIndex) => (
                 <a
