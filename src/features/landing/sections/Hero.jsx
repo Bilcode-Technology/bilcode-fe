@@ -1,4 +1,4 @@
-import SponsorsRotator from "./SponsorsRotator";
+import SponsorsRotator from "../components/SponsorsRotator";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 

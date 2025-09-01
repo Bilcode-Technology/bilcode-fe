@@ -21,6 +21,30 @@ This repository contains the frontend application for Bilcode, built with React 
 *   **React Router DOM**: For declarative routing in React applications.
 *   **ESLint**: For code linting.
 
+## Project Structure
+
+This project follows a feature-based (or domain-based) architecture to ensure modularity, scalability, and ease of maintenance. Each feature is self-contained within its own directory, promoting a clean separation of concerns.
+
+-   **`src/`**: Main source directory.
+    -   **`components/`**: Contains global, reusable React components that are shared across multiple features (e.g., `Header`, `Footer`, `Button`).
+    -   **`data/`**: Holds global static data, constants, or mock data used throughout the application.
+    -   **`features/`**: The core of the architecture. Each subdirectory is a self-contained feature.
+        -   **`landing/`**: The main company landing page.
+            -   `pages/`: Page components for this feature.
+            -   `sections/`: Large, section-based components that make up a page (e.g., `Hero`, `Portfolio`).
+            -   `components/`: Smaller, reusable components specific to this feature.
+            -   `data/`: Data specific to this feature.
+        -   **`academy/`**: The online learning platform feature.
+            -   `pages/`: Page components for the academy (e.g., `CoursesPage`, `BlogPage`).
+            -   `components/`: Components specific to the academy.
+            -   `data/`: Data specific to the academy.
+        -   **`joki/`**: (Scaffold) For the freelance/contract work feature.
+        -   **`templates/`**: (Scaffold) For the template marketplace feature.
+    -   **`hooks/`**: Global custom React hooks.
+    -   **`layouts/`**: High-level layout components that wrap pages (e.g., `MainLayout`).
+    -   **`services/`**: Global API clients and functions for interacting with backend services.
+    -   **`utils/`**: Global utility and helper functions.
+
 ## Getting Started
 
 Follow these steps to get the project up and running on your local machine.

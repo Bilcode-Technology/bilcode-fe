@@ -1,9 +1,9 @@
-import Hero from "../components/Hero";
-import Services from "../components/Services";
-import Portfolio from "../components/Portfolio";
-import OurTeam from "../components/OurTeam";
-import Testimonials from "../components/Testimonials";
-import Contact from "../components/Contact";
+import Hero from "../sections/Hero";
+import Services from "../sections/Services";
+import Portfolio from "../sections/Portfolio";
+import OurTeam from "../sections/OurTeam";
+import Testimonials from "../../../components/Testimonials";
+import Contact from "../sections/Contact";
 
 const LandingPage = () => {
   return (

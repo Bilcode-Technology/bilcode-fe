@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { courses } from '../data/courses.jsx';
-import Testimonials from '../components/Testimonials';
+import Testimonials from "../../../components/Testimonials";
 import CTA from '../components/CTA';
 import { ArrowRight } from 'lucide-react';
 
-const Academy = () => {
+const AcademyPage = () => {
   const featuredCourses = courses.slice(0, 3);
 
   const getLevelColor = (level) => {
@@ -132,4 +132,4 @@ const Academy = () => {
   );
 };
 
-export default Academy;
+export default AcademyPage;
