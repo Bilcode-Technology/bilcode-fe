@@ -22,7 +22,7 @@ export const navItems = [
           description:
             "End-to-end solutions for modern web apps with cutting-edge technologies and best practices.",
           bgColor: "bg-[#F7A338]",
-          href: "/#services",
+          href: "/academy",
           fullWidth: true,
         },
         {
@@ -30,28 +30,32 @@ export const navItems = [
           title: "Mobile Development",
           description: "Native and cross-platform mobile apps.",
           bgColor: "bg-[#6A38F7]",
-          href: "/#services",
+          href: "/academy",
         },
         {
           icon: <Paintbrush />,
           title: "UI/UX Design",
           description: "Intuitive and beautiful user interfaces.",
           bgColor: "bg-[#F73838]",
-          href: "/#services",
+          href: "/academy",
         },
         {
           icon: <Cloud />,
           title: "AI & Automation",
           description: "Intelligent automation for business growth.",
           bgColor: "bg-[#3852F7]",
-          href: "/#services",
+          href: "/academy",
         },
       ],
       whatsNew: {
         title: "Produk Kami",
-        items: ["Bilcode Academy", "Bilcode Joki", "Kandidat Pro"],
+        items: [
+          { label: "Bilcode Academy", href: "/academy" },
+          { label: "Bilcode Joki", href: "/joki" },
+          { label: "Kandidat Pro", href: "/kandidat-pro" },
+        ],
         buttonText: "Semua Layanan",
-        buttonHref: "/#services",
+        buttonHref: "/academy",
       },
     },
   },
@@ -105,14 +109,14 @@ export const navItems = [
     type: "link",
     href: "/academy",
   },
- 
   {
     label: "Karir",
     type: "link",
+    href: "/career",
   },
   {
     label: "Harga",
     type: "link",
+    href: "/pricelist",
   },
- 
 ];

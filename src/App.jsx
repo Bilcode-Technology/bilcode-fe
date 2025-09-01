@@ -7,7 +7,10 @@ import BlogPostPage from "./features/academy/pages/BlogPostPage";
 import CoursesPage from "./features/academy/pages/CoursesPage";
 import InstructorsPage from "./features/academy/pages/InstructorsPage";
 import HelpPage from "./features/academy/pages/HelpPage";
-import { navItems } from "./data/navItems.jsx";
+import JokiPage from "./features/joki/pages/JokiPage.jsx";
+import CareerPage from "./features/landing/pages/CareerPage.jsx";
+import PricelistPage from "./features/landing/pages/PricelistPage.jsx";
+import { navItems } from   "./data/navItems.jsx";
 import { academyNavItems } from "./features/academy/data/academyNavItems.js";
 
 function App() {
@@ -25,6 +28,9 @@ function App() {
         <Route path="academy/help" element={<HelpPage />} />
         <Route path="blog" element={<BlogPage />} />
         <Route path="blog/:postId" element={<BlogPostPage />} />
+        <Route path="joki" element={<JokiPage />} />
+        <Route path="career" element={<CareerPage />} />
+        <Route path="pricelist" element={<PricelistPage />} />
       </Route>
     </Routes>
   );

@@ -575,16 +575,35 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
                 {activeMenu.whatsNew?.title}
               </h3>
               <ul className="space-y-2 mb-6 lg:mb-8 flex-grow relative z-10 overflow-y-hidden">
-                {activeMenu.whatsNew?.items.map((item, i) => (
-                  <li
-                    key={`new-${i}`}
-                    className="mm-card flex items-start space-x-3 group cursor-pointer"
-                  >
-                    <span className="text-gray-700 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 text-sm lg:text-base leading-relaxed">
-                      {item}
-                    </span>
-                  </li>
-                ))}
+                {activeMenu.whatsNew?.items.map((item, i) => {
+                  if (typeof item === 'string') {
+                    return (
+                      <li
+                        key={`new-${i}`}
+                        className="mm-card flex items-start space-x-3 group cursor-pointer"
+                      >
+                        <span className="text-gray-700 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 text-sm lg:text-base leading-relaxed">
+                          {item}
+                        </span>
+                      </li>
+                    );
+                  } else if (typeof item === 'object' && item.label && item.href) {
+                    return (
+                      <li key={`new-${i}`} className="mm-card">
+                        <a
+                          href={item.href}
+                          onClick={(e) => handleNavClick(e, item.href)}
+                          className="flex items-start space-x-3 group cursor-pointer"
+                        >
+                          <span className="text-gray-700 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300 text-sm lg:text-base leading-relaxed">
+                            {item.label}
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  }
+                  return null; // Fallback for unexpected types
+                })}
               </ul>
               <div className="mm-card">
                 <a className=" cursor-pointer inline-flex items-center justify-center font-medium px-4 md:px-10 py-3 lg:py-3 rounded-full text-sm md:text-lg bg-gray-200 z-10 hover:scale-110 transition-all duration-300 group">

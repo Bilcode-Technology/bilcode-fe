@@ -4,8 +4,11 @@ This repository contains the frontend application for Bilcode, built with React 
 
 ## Features
 
-*   **Multi-page Application**: Implemented routing to separate the landing page, Academy, and Blog sections.
-*   **Dynamic Navigation**: Navbar content changes dynamically based on the current page (e.g., different links for the landing page vs. Academy/Blog pages).
+*   **Multi-page Application**: Implemented routing to separate the landing page, Academy, Blog, Joki, Career, and Pricelist sections.
+*   **Dynamic Navigation**: Navbar content changes dynamically based on the current page (e.g., different links for the landing page vs. Academy/Blog pages), with enhanced rendering logic for mega-menus.
+*   **Joki Page**: A dedicated section for coding assignment services.
+*   **Career Page**: A page outlining career opportunities and company culture.
+*   **Pricelist Page**: A detailed page showcasing service packages and pricing.
 *   **Academy Page**: A dedicated section offering open courses with categorized classes (Frontend, Backend, Mobile, UI/UX).
 *   **Blog Page**: A separate page for blog content, including a subscription section.
 *   **Smooth Scrolling**: Enhanced navigation with smooth scroll effects to different sections within a page.
@@ -38,7 +41,7 @@ This project follows a feature-based (or domain-based) architecture to ensure mo
             -   `pages/`: Page components for the academy (e.g., `CoursesPage`, `BlogPage`).
             -   `components/`: Components specific to the academy.
             -   `data/`: Data specific to the academy.
-        -   **`joki/`**: (Scaffold) For the freelance/contract work feature.
+        -   **`joki/`**: For the freelance/contract work feature.
         -   **`templates/`**: (Scaffold) For the template marketplace feature.
     -   **`hooks/`**: Global custom React hooks.
     -   **`layouts/`**: High-level layout components that wrap pages (e.g., `MainLayout`).
