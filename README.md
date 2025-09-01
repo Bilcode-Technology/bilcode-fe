@@ -2,12 +2,23 @@
 
 This repository contains the frontend application for Bilcode, built with React and Vite. It utilizes Tailwind CSS for styling and GSAP for animations.
 
+## Features
+
+*   **Multi-page Application**: Implemented routing to separate the landing page, Academy, and Blog sections.
+*   **Dynamic Navigation**: Navbar content changes dynamically based on the current page (e.g., different links for the landing page vs. Academy/Blog pages).
+*   **Academy Page**: A dedicated section offering open courses with categorized classes (Frontend, Backend, Mobile, UI/UX).
+*   **Blog Page**: A separate page for blog content, including a subscription section.
+*   **Smooth Scrolling**: Enhanced navigation with smooth scroll effects to different sections within a page.
+*   **Splash Screen Animation**: Engaging introductory animation on application load.
+*   **Responsive Design**: Built with Tailwind CSS to ensure a seamless experience across various devices.
+
 ## Technologies Used
 
 *   **React 19**: A JavaScript library for building user interfaces.
 *   **Vite**: A fast build tool that provides a lightning-fast development experience.
 *   **Tailwind CSS**: A utility-first CSS framework for rapidly building custom designs.
 *   **GSAP (GreenSock Animation Platform)**: A robust JavaScript animation library.
+*   **React Router DOM**: For declarative routing in React applications.
 *   **ESLint**: For code linting.
 
 ## Getting Started

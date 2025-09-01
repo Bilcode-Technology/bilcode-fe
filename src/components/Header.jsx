@@ -5,10 +5,10 @@ import {
   useCallback,
   useLayoutEffect,
 } from "react";
-import { navItems } from "../data/navItems";
+import { useNavigate, useLocation } from "react-router-dom";
 import gsap from "gsap";
 
-const Header = ({ isDropdownVisible, onDropdownToggle }) => {
+const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
   // State management
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -24,6 +24,9 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   const timeoutRef = useRef(null);
   // Store per-card motion controllers (quickTo) active while hovered
   const cardMotion = useRef(new WeakMap());
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // GSAP animations for mega menu panel & cards
   useLayoutEffect(() => {
@@ -204,8 +207,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       scale: 1,
       y: 0,
       duration: 0.2,
-      // boxShadow:
-      //   "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
     })
       .to(el.querySelector(".mm-overlay"), { autoAlpha: 0, duration: 0.2 }, "<")
       .to(
@@ -226,13 +227,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
   }, []);
 
   // Mobile menu handlers
-  const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen((prev) => {
-      const newState = !prev;
-      document.body.style.overflow = newState ? "hidden" : "";
-      return newState;
-    });
-  }, []);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -310,11 +304,47 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
       return `${baseClasses}`;
     }
 
-    // if (scrolled) {
-    //   return `${baseClasses} opacity-0 `;
-    // }
-
     return `${baseClasses}  `;
+  };
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+
+    if (!href) {
+      return;
+    }
+
+    const isExternal = href.startsWith('http');
+    if (isExternal) {
+      window.open(href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    const [path, hash] = href.split('#');
+
+    if (path === location.pathname || (path === '' && location.pathname === '/')) {
+      // Same page navigation
+      if (hash) {
+        const targetElement = document.getElementById(hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // On same page, scroll to top
+        window.scrollTo(0, 0);
+      }
+    } else {
+      // Cross-page navigation
+      navigate(path || '/');
+      if (hash) {
+        setTimeout(() => {
+          const targetElement = document.getElementById(hash);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100); // a small delay to allow the page to render
+      }
+    }
   };
 
   // Render navigation item
@@ -338,6 +368,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
         <a
           key={index}
           href={item.href}
+          onClick={(e) => handleNavClick(e, item.href)}
           onMouseEnter={() => setHoveredItem2(index)}
           onMouseLeave={() => setHoveredItem2(null)}
           className={`cursor-pointer px-4 py-6 font-medium rounded-md transition-colors duration-200 ease-in-out ${getTextColor()}`}
@@ -422,13 +453,11 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 key={`card-${i}`}
                 data-index={i} // Add index for unique GSAP IDs
                 href={card.href}
+                onClick={(e) => handleNavClick(e, card.href)}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
                 className={`mm-card group relative rounded-xl text-white ${card.bgColor} flex flex-col overflow-hidden p-4 lg:p-6 w-full max-w-full h-40 lg:h-44`}
               >
-                {/* Background gradient overlay */}
-                {/* <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
-                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div> */}
 
                 {/* Animated background particles */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
@@ -467,6 +496,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               <a
                 key={`ind-card-${i}`}
                 href={card.href}
+                onClick={(e) => handleNavClick(e, card.href)}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
                 className={`mm-card group relative rounded-xl text-white ${
@@ -477,9 +507,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                     : "sm:col-span-1"
                 }`}
               >
-                {/* Subtle background effects */}
-                <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-0 pointer-events-none"></div>
-                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div>
 
                 <div className="relative z-10 flex flex-col h-full justify-center items-center text-center">
                   <div className="mm-icon flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 text-xl lg:text-2xl text-white flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-xl mb-3">
@@ -510,13 +537,11 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 key={`card-${i}`}
                 data-index={i} // Add index for unique GSAP IDs
                 href={card.href}
+                onClick={(e) => handleNavClick(e, card.href)}
                 onMouseEnter={(e) => onCardEnter(e.currentTarget)}
                 onMouseLeave={(e) => onCardLeave(e.currentTarget)}
                 className={`mm-card group relative rounded-xl ${card.bgColor} flex flex-col overflow-hidden p-4 lg:p-6 w-full max-w-full h-40 lg:h-44 hover:bg-black hover:text-white`}
               >
-                {/* Background gradient overlay */}
-                {/* <div className="mm-overlay absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 pointer-events-none"></div>
-                <div className="mm-bg absolute -inset-6 rounded-2xl opacity-60 pointer-events-none bg-[radial-gradient(120%_120%_at_10%_0%,rgba(255,255,255,0.35),rgba(255,255,255,0)_60%)]"></div> */}
 
                 {/* Animated background particles */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
@@ -587,11 +612,16 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
               {/* Logo */}
               <div className="flex-shrink-0">
                 <a
-                  href="#home"
+                  href="/"
+                  onClick={(e) => handleNavClick(e, '/')}
                   className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-2 -m-2"
                 >
                   <div className="text-2xl lg:text-3xl font-bold text-black">
-                    Bilcode
+                    {navItems.some(item => item.label === 'Kursus') ? (
+                      <>
+                        <span className="block">Academy</span>
+                      </>
+                    ) : 'Bilcode'}
                   </div>
                 </a>
               </div>
@@ -601,34 +631,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                 {navItems.map((item, index) => renderNavItem(item, index))}
               </nav>
             </div>
-
-            {/* Mobile Menu Button */}
-            {/* <div className="flex items-center">
-              <button
-                onClick={toggleMobileMenu}
-                className="lg:hidden p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-                aria-label="Toggle mobile menu"
-                aria-expanded={isMobileMenuOpen}
-              >
-                <div className="w-6 h-5 relative flex flex-col justify-center space-y-1">
-                  <span
-                    className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${
-                      isMobileMenuOpen ? "rotate-45 translate-y-1" : ""
-                    }`}
-                  ></span>
-                  <span
-                    className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${
-                      isMobileMenuOpen ? "opacity-0" : ""
-                    }`}
-                  ></span>
-                  <span
-                    className={`block w-full h-0.5 bg-gray-600 transition-all duration-300 ${
-                      isMobileMenuOpen ? "-rotate-45 -translate-y-1" : ""
-                    }`}
-                  ></span>
-                </div>
-              </button>
-            </div> */}
           </div>
         </div>
 
@@ -636,7 +638,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
           href="http://wa.me/6285128004772"
           className="fixed top-[47px] md:top-14 right-[5%] md:right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
         >
-          Chat Sekarang
+          {navItems.some(item => item.label === 'Kursus') ? 'Daftar Sekarang' : 'Chat Sekarang'}
         </a>
 
         {/* Mega Menu Dropdown */}
@@ -645,9 +647,6 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
           style={{
             visibility: "hidden",
             opacity: 0,
-            // transform: "translateY(-20px)",
-            // transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            // backdropFilter: "blur(0px)",
           }}
           className="absolute left-0 w-full top-full z-40 bg-white h-[420px] lg:h-[480px] rounded-b-3xl overflow-hidden overflow-x-clip"
           onMouseEnter={keepMegaMenuOpen}
@@ -678,7 +677,10 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                       <a
                         key={idx}
                         href={item.href}
-                        onClick={closeMobileMenu}
+                        onClick={(e) => {
+                          handleNavClick(e, item.href);
+                          closeMobileMenu();
+                        }}
                         className="block font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200"
                       >
                         {item.label}
@@ -696,7 +698,10 @@ const Header = ({ isDropdownVisible, onDropdownToggle }) => {
                               <a
                                 key={`mobile-card-${i}`}
                                 href={card.href}
-                                onClick={closeMobileMenu}
+                                onClick={(e) => {
+                                  handleNavClick(e, card.href);
+                                  closeMobileMenu();
+                                }}
                                 className="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
                               >
                                 <div
