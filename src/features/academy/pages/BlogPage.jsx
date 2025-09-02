@@ -76,7 +76,7 @@ const BlogPage = () => {
         {filteredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {filteredPosts.map((post) => (
-              <Link to={`/blog/${post.id}`} key={post.id} className="block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out group">
+              <Link to={`/academy/blog/${post.id}`} key={post.id} className="block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out group">
                 <div className="relative">
                   <img src={post.imageUrl} alt={post.title} className="w-full h-56 object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-all duration-300"></div>

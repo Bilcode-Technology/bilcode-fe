@@ -7,6 +7,7 @@ import BlogPostPage from "./features/academy/pages/BlogPostPage";
 import CourseDetailPage from "./features/academy/pages/CourseDetailPage";
 import CommunityPage from "./features/academy/pages/CommunityPage";
 import PricingPage from "./features/academy/pages/PricingPage";
+import InstructorsPage from "./features/academy/pages/InstructorsPage";
 import JokiPage from "./features/joki/pages/JokiPage.jsx";
 import CareerPage from "./features/landing/pages/CareerPage.jsx";
 import PricelistPage from "./features/landing/pages/PricelistPage.jsx";
@@ -26,7 +27,10 @@ function App() {
       <Route path="/" element={<MainLayout navItems={currentNavItems} />}>
         <Route index element={<LandingPage />} />
         <Route path="academy" element={<AcademyPage />} />
+        <Route path="academy/blog" element={<BlogPage />} />
+        <Route path="academy/blog/:postId" element={<BlogPostPage />} />
         <Route path="academy/community" element={<CommunityPage />} />
+        <Route path="academy/instructors" element={<InstructorsPage />} />
         <Route path="academy/pricing" element={<PricingPage />} />
         <Route path="academy/course/:courseId" element={<CourseDetailPage />} />
         <Route path="blog" element={<BlogPage />} />

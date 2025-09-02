@@ -53,7 +53,7 @@ const BlogPostPage = () => {
       <div className="bg-white pt-40 pb-20 text-center">
         <h1 className="text-4xl font-bold text-slate-800">404 - Post Not Found</h1>
         <p className="text-lg text-slate-600 mt-4">The blog post you are looking for does not exist.</p>
-        <Link to="/blog" className="mt-8 inline-block text-blue-600 hover:underline">
+        <Link to="/academy/blog" className="mt-8 inline-block text-blue-600 hover:underline">
           &larr; Back to Blog
         </Link>
       </div>
@@ -91,7 +91,7 @@ const BlogPostPage = () => {
           <div className="mt-16 border-t pt-8 space-y-8">
             <SocialShare url={window.location.href} title={post.title} />
             <div className="text-center">
-              <Link to="/blog" className="text-blue-600 hover:underline font-semibold">
+              <Link to="/academy/blog" className="text-blue-600 hover:underline font-semibold">
                 &larr; Back to All Posts
               </Link>
             </div>
