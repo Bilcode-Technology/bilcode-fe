@@ -39,4 +39,23 @@ export const blogPosts = [
       <p>Jika Anda menyukai fleksibilitas dan ingin membangun pemahaman mendalam tentang bagaimana berbagai bagian aplikasi bekerja bersama, React adalah pilihan yang bagus. Jika Anda ingin memulai dengan cepat dan menyukai pendekatan yang lebih terstruktur dengan “batteries-included”, Vue mungkin lebih cocok untuk Anda. Keduanya memiliki permintaan tinggi di pasar kerja, jadi tidak ada pilihan yang salah!</p>
     `,
   },
-];
+  {
+    id: '3',
+    title: 'Pentingnya UI/UX dalam Pengembangan Aplikasi',
+    summary: 'Desain User Interface (UI) dan User Experience (UX) adalah dua komponen krusial yang menentukan keberhasilan sebuah aplikasi. Artikel ini membahas mengapa investasi pada UI/UX yang baik adalah langkah strategis.',
+    author: 'Peter Jones',
+    date: '2025-09-15',
+    tags: ['UI/UX', 'Desain', 'Development'],
+    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=800&auto=format&fit=crop',
+    content: `
+      <p>Dalam dunia pengembangan aplikasi yang kompetitif, fungsionalitas saja tidak cukup untuk memenangkan hati pengguna. Desain User Interface (UI) dan User Experience (UX) telah menjadi faktor penentu yang membedakan produk sukses dari yang gagal.</p>
+      <h3 class="text-2xl font-bold my-4">Apa itu UI dan UX?</h3>
+      <p>Secara sederhana, <strong>UI (User Interface)</strong> adalah tentang bagaimana tampilan visual sebuah produk. Ini mencakup warna, tipografi, layout, dan semua elemen visual yang berinteraksi dengan pengguna. Sementara itu, <strong>UX (User Experience)</strong> adalah tentang bagaimana perasaan pengguna saat menggunakan produk tersebut. Apakah mudah digunakan? Apakah efisien? Apakah memberikan solusi atas masalah mereka?</p>
+      <h3 class="text-2xl font-bold my-4">Meningkatkan Kepuasan dan Retensi Pengguna</h3>
+      <p>Aplikasi dengan UX yang baik membuat pengguna merasa nyaman dan tidak kesulitan saat bernavigasi. Pengalaman yang positif akan meningkatkan kepuasan dan membuat mereka kembali lagi. Sebaliknya, UX yang buruk akan membuat pengguna frustrasi dan kemungkinan besar akan meninggalkan aplikasi Anda untuk selamanya.</p>
+      <h3 class="text-2xl font-bold my-4">Dampak pada Bisnis</h3>
+      <p>Investasi pada UI/UX yang solid bukanlah sekadar biaya, melainkan investasi strategis. UI/UX yang baik dapat meningkatkan konversi, memperkuat brand loyalty, dan mengurangi biaya dukungan pelanggan karena produk yang intuitif akan menghasilkan lebih sedikit pertanyaan atau keluhan.</p>
+      <h3 class="text-2xl font-bold my-4">Kesimpulan</h3>
+      <p>Mengintegrasikan desain UI/UX sejak awal proses pengembangan adalah kunci untuk menciptakan produk yang tidak hanya fungsional tetapi juga dicintai oleh penggunanya. Ini adalah jembatan antara teknologi dan manusia, dan membangun jembatan itu dengan baik adalah resep untuk kesuksesan jangka panjang.</p>
+    `,
+  ];

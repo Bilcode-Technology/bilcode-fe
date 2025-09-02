@@ -51,6 +51,7 @@ function App() {
         <Route path="academy" element={<AcademyPage />} />
         <Route path="academy/blog" element={<BlogPage />} />
         <Route path="academy/blog/:postId" element={<BlogPostPage />} />
+        
         <Route path="academy/community" element={<CommunityPage />} />
         <Route path="academy/instructors" element={<InstructorsPage />} />
         <Route path="academy/pricing" element={<PricingPage />} />
@@ -58,7 +59,7 @@ function App() {
         {/* Blog Standalone Routes */}
         <Route path="blog" element={<BlogPage />} />
         <Route path="blog/:postId" element={<BlogPostPage />} />
-
+        
         {/* Joki Routes */}
         <Route path="joki" element={<JokiPage />} />
 

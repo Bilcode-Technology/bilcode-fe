@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { blogPosts } from '../data/blogPosts.js';
+import { blogPosts } from '../data/blogPosts.jsx';
 import { Twitter, Facebook, Linkedin } from 'lucide-react';
 
 const SocialShare = ({ url, title }) => {

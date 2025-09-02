@@ -366,7 +366,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
     if (item.type === "link") {
       return (
         <a
-          key={index}
+          key={`${item.type}-${item.label}-${index}`}
           href={item.href}
           onClick={(e) => handleNavClick(e, item.href)}
           onMouseEnter={() => setHoveredItem2(index)}
@@ -381,7 +381,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
     if (item.type === "mega-menu") {
       return (
         <div
-          key={index}
+          key={`${item.type}-${item.label}-${index}`}
           className="relative"
           onMouseEnter={() => {
             showMegaMenu(item.megaMenuContent, index);
@@ -406,7 +406,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
     if (item.type === "dropdown") {
       return (
         <div
-          key={index}
+          key={`${item.type}-${item.label}-${index}`}
           className="relative"
           onMouseEnter={() => setHoveredItem2(index)}
           onMouseLeave={() => setHoveredItem2(null)}
@@ -694,7 +694,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
                   if (item.type === "link") {
                     return (
                       <a
-                        key={idx}
+                        key={`${item.type}-${item.label}-${idx}`}
                         href={item.href}
                         onClick={(e) => {
                           handleNavClick(e, item.href);
@@ -707,7 +707,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
                     );
                   } else if (item.type === "mega-menu") {
                     return (
-                      <div key={idx} className="space-y-4">
+                      <div key={`${item.type}-${item.label}-${idx}`} className="space-y-4">
                         <h3 className="font-semibold text-gray-900">
                           {item.label}
                         </h3>
@@ -744,7 +744,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
                     );
                   } else if (item.type === "dropdown") {
                     return (
-                      <div key={idx} className="space-y-4">
+                      <div key={`${item.type}-${item.label}-${idx}`} className="space-y-4">
                         <h3 className="text-base font-semibold text-gray-900 flex items-center">
                           {item.icon && (
                             <span className="mr-2 flex-shrink-0">

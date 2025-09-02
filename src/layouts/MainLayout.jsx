@@ -1,5 +1,5 @@
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { gsap } from "gsap";
 import { useSplashAnimation } from "../hooks/useSplashAnimation";
 import Header from "../components/Header";
@@ -9,6 +9,10 @@ import FullScreenTransition from "../components/FullScreenTransition";
 const TEXT = "bilcode.id";
 
 const MainLayout = ({ navItems }) => {
+  const location = useLocation();
+  const isBlogPostPage = location.pathname.match(/^\/(academy\/)?blog\/[^/]+$/);
+  const shouldShowFooter = !isBlogPostPage;
+
   const [isSplashing, setIsSplashing] = useState(() => !sessionStorage.getItem('hasVisited'));
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
@@ -67,7 +71,7 @@ const MainLayout = ({ navItems }) => {
 
         <Outlet />
 
-        <Footer />
+        {shouldShowFooter && <Footer />}
       </div>
     </div>
   );
