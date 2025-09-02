@@ -9,7 +9,7 @@ This repository contains the frontend application for Bilcode, built with React 
 *   **Joki Page**: A dedicated section for coding assignment services.
 *   **Career Page**: A page outlining career opportunities and company culture.
 *   **Pricelist Page**: A detailed page showcasing service packages and pricing.
-*   **Academy Page**: A dedicated section offering open courses with categorized classes (Frontend, Backend, Mobile, UI/UX).
+*   **Academy Page**: A dedicated section offering open courses, displaying a limited number of featured courses with an option to view all available courses.
 *   **Blog Page**: A separate page for blog content, including a subscription section.
 *   **Smooth Scrolling**: Enhanced navigation with smooth scroll effects to different sections within a page.
 *   **Splash Screen Animation**: Engaging introductory animation on application load.
@@ -38,7 +38,7 @@ This project follows a feature-based (or domain-based) architecture to ensure mo
             -   `components/`: Smaller, reusable components specific to this feature.
             -   `data/`: Data specific to this feature.
         -   **`academy/`**: The online learning platform feature.
-            -   `pages/`: Page components for the academy (e.g., `CoursesPage`, `BlogPage`).
+            -   `pages/`: Page components for the academy (e.g., `AcademyPage`, `BlogPage`, `BlogPostPage`, `CommunityPage`, `CourseDetailPage`, `PricingPage`).
             -   `components/`: Components specific to the academy.
             -   `data/`: Data specific to the academy.
         -   **`joki/`**: For the freelance/contract work feature.
