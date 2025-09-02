@@ -5,6 +5,7 @@ export const blogPosts = [
     summary: 'Dunia web development menawarkan jenjang karir yang menjanjikan. Bagi Anda yang baru memulai, berikut adalah lima tips praktis untuk membantu Anda membangun fondasi yang kuat dan melangkah dengan percaya diri.',
     author: 'Jane Doe',
     date: '2025-09-10',
+    tags: ['Career', 'Web Development'],
     imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d1469c98?q=80&w=800&auto=format&fit=crop',
     content: `
       <p>Memasuki dunia web development bisa terasa menantang sekaligus menyenangkan. Dengan begitu banyak teknologi dan jalur karir yang tersedia, penting untuk memiliki strategi yang tepat. Berikut adalah lima tips yang dapat membantu Anda memulai perjalanan Anda:</p>
@@ -26,6 +27,7 @@ export const blogPosts = [
     summary: 'React dan Vue adalah dua framework JavaScript paling populer saat ini. Keduanya memiliki kelebihan dan kekurangan masing-masing. Artikel ini akan membantu Anda memutuskan mana yang lebih cocok untuk memulai perjalanan coding Anda.',
     author: 'John Smith',
     date: '2025-09-05',
+    tags: ['React', 'Vue', 'Web Development'],
     imageUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop',
     content: `
       <p>Memilih framework pertama bisa menjadi keputusan yang sulit. React dan Vue adalah pilihan yang sangat baik, tetapi mereka memiliki filosofi yang sedikit berbeda.</p>

@@ -1,5 +1,6 @@
 import SponsorsRotator from "../components/SponsorsRotator";
 import { useEffect, useRef } from "react";
+import { Link } from 'react-router-dom';
 import { gsap } from "gsap";
 
 const Hero = () => {
@@ -19,33 +20,38 @@ const Hero = () => {
         <span className=" text-gray-700">
           <span className="font-semibold text-[#3852F7]">Unggulan:</span> Solusi
           Web & Aplikasi End-to-End{" "}
-          {/* <a href="#" className="text-[#3852F7] hover:underline font-medium">
-            Pelajari lebih lanjut
-          </a> */}
         </span>
       </div>
 
       {/* Main Heading */}
-      <h1 className="font-marker text-4xl md:text-[80px] font-bold leading-tight md:leading-[70px] text-black mb-4 md:mb-8 max-w-4xl">
-        Solusi Cepat & Handal
+      <h1 className="font-marker text-4xl md:text-[80px] font-bold leading-tight md:leading-[70px] text-black mb-4 md:mb-8 max-w-5xl">
+        Transformasi Digital & 
         <br />
-        untuk Bisnis Anda
+        Peningkatan Skill Anda
       </h1>
 
-      {/* CTA Button */}
-      <a
-        href="http://wa.me/6285128004772"
-        className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-sm md:text-lg px-4 py-2 md:px-8 md:py-4 rounded-full mb-6 md:mb-16 cursor-pointer transition-all duration-300"
-      >
-        Dapatkan Konsultasi Gratis
-      </a>
+      {/* CTA Buttons */}
+      <div className="flex items-center gap-4 mb-6 md:mb-16">
+        <a
+          href="http://wa.me/6285128004772"
+          className="bg-[#3852F7] hover:scale-110 text-white font-semibold text-sm md:text-lg px-4 py-2 md:px-8 md:py-4 rounded-full cursor-pointer transition-all duration-300"
+        >
+          Dapatkan Konsultasi Gratis
+        </a>
+        <Link 
+          to="/academy"
+          className="border border-[#3852F7] text-[#3852F7] hover:bg-[#3852F7] hover:text-white font-semibold text-sm md:text-lg px-4 py-2 md:px-8 md:py-4 rounded-full cursor-pointer transition-all duration-300"
+        >
+          Jelajahi Academy
+        </Link>
+      </div>
 
       {/* Stats Text */}
       <p className="mb-8 md:mb-12 max-w-2xl">
         <span className="font-medium">
           Lebih dari 20+ klien mempercayai Bilcode
         </span>{" "}
-        untuk membangun produk digital mereka.
+        untuk membangun produk digital dan meningkatkan skill tim mereka.
       </p>
 
       {/* Sponsors Rotator with ref */}
