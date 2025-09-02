@@ -1,7 +1,12 @@
 import { useLayoutEffect, useMemo, createRef, useState } from "react";
 import { gsap } from "gsap";
 
-export const useSplashAnimation = (refs, onComplete, text = "bilcode.id") => {
+export const useSplashAnimation = (
+  refs,
+  onComplete,
+  text = "bilcode.id",
+  enabled = true
+) => {
   const { transitionRef, contentWrapperRef } = refs || {};
   const [error, setError] = useState(null);
 
@@ -11,6 +16,16 @@ export const useSplashAnimation = (refs, onComplete, text = "bilcode.id") => {
   );
 
   useLayoutEffect(() => {
+    if (!enabled) {
+      if (contentWrapperRef.current) {
+        gsap.set(contentWrapperRef.current, { autoAlpha: 1 });
+      }
+      if (transitionRef.current) {
+        gsap.set(transitionRef.current, { autoAlpha: 0 });
+      }
+      return;
+    }
+
     if (!transitionRef?.current || !contentWrapperRef?.current) {
       return;
     }
@@ -78,7 +93,7 @@ export const useSplashAnimation = (refs, onComplete, text = "bilcode.id") => {
       console.error("Error in useSplashAnimation:", err);
       setError(err);
     }
-  }, [text, transitionRef, contentWrapperRef, onComplete, textRefs]);
+  }, [text, transitionRef, contentWrapperRef, onComplete, textRefs, enabled]);
 
   return { textRefs, error };
 };

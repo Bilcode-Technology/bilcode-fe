@@ -9,7 +9,7 @@ import FullScreenTransition from "../components/FullScreenTransition";
 const TEXT = "bilcode.id";
 
 const MainLayout = ({ navItems }) => {
-  const [isSplashing, setIsSplashing] = useState(true);
+  const [isSplashing, setIsSplashing] = useState(() => !sessionStorage.getItem('hasVisited'));
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   // Refs
@@ -19,13 +19,15 @@ const MainLayout = ({ navItems }) => {
 
   const onSplashComplete = useCallback(() => {
     setIsSplashing(false);
+    sessionStorage.setItem('hasVisited', 'true');
   }, []);
 
   // Splash screen
   const { textRefs } = useSplashAnimation(
     { transitionRef, contentWrapperRef },
     onSplashComplete,
-    TEXT
+    TEXT,
+    isSplashing
   );
 
   /**
@@ -46,13 +48,11 @@ const MainLayout = ({ navItems }) => {
   return (
     <div className="App">
       {/* Splash Transition */}
-      {isSplashing && textRefs && (
-        <FullScreenTransition
-          ref={transitionRef}
-          textRefs={textRefs}
-          text={TEXT}
-        />
-      )}
+      <FullScreenTransition
+        ref={transitionRef}
+        textRefs={textRefs}
+        text={TEXT}
+      />
 
       {/* Content */}
       <div ref={contentWrapperRef} style={{ opacity: 0 }}>
