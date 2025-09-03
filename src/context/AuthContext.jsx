@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { courses as allCourses } from '../features/academy/data/courses.jsx';
+import { badges } from '../features/academy/data/badges.jsx';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +12,8 @@ export const AuthProvider = ({ children }) => {
   const [userCourses, setUserCourses] = useState([]);
 
   const login = (userData) => {
-    setUser(userData);
+    // Initialize user with an empty array for earned badges
+    setUser({ ...userData, earnedBadges: [] });
     // Simulate fetching user's enrolled courses
     setUserCourses(initialCourses);
   };
@@ -19,6 +21,27 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setUserCourses([]);
+  };
+
+  const awardBadge = (badgeId) => {
+    // If no user, or badge already earned, do nothing.
+    if (!user || user.earnedBadges.includes(badgeId)) {
+      return null;
+    }
+
+    const badge = badges[badgeId];
+    if (!badge) {
+      console.warn(`Attempted to award non-existent badge: ${badgeId}`);
+      return null;
+    }
+
+    setUser(prevUser => ({
+      ...prevUser,
+      earnedBadges: [...prevUser.earnedBadges, badgeId],
+    }));
+    
+    // Return the badge object so the UI can show a notification
+    return badge;
   };
 
   const updateCourseProgress = (courseId, newProgress, newCompletedTopics) => {
@@ -58,7 +81,8 @@ export const AuthProvider = ({ children }) => {
     logout,
     courses: userCourses,
     updateCourseProgress,
-    addReview, // Add the new function to the context value
+    addReview,
+    awardBadge, // Expose the new function
     isAuthenticated: !!user,
   };
 
