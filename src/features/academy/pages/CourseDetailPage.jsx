@@ -1,57 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronLeft, Menu, BookOpen, Clock, BarChart, CheckCircle, Search, Command } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ChevronLeft, Menu, BookOpen, Clock, BarChart, CheckCircle, Search, Command, PlayCircle } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
+import { courses as allCoursesData } from '../data/courses'; // Assuming this is the source of all courses
+import Quiz from '../components/Quiz'; // Import the Quiz component
+import Reviews from '../components/Reviews'; // Import the Reviews component
+import ReviewForm from '../components/ReviewForm'; // Import the ReviewForm component
 
-// Mock data
-const course = {
-  title: 'Belajar Full-stack Dengan React Router v7',
-  bab: 2,
-  pelajaran: 19,
-  duration: '2 Jam',
-  level: 'Beginner',
-  shortDescription: 'React Router v7 memungkinkan kita untuk membangun aplikasi full-stack berbasis React.js.',
-  author: 'Muhamad Nauval Azhar',
-  price: 'Gratis',
-  image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=1470&q=80',
-  description: 'React Router v7 memungkinkan kita untuk membangun aplikasi full-stack berbasis React.js.',
-  learnings: [
-    'Memahami fundamental React Router v7',
-    'Memahami fitur data loading dan actions',
-    'Implementasi sistem autentikasi',
-    'Menangani error di aplikasi',
-  ],
-  prerequisites: ['Fundamental pengembangan web', 'Fundamental React'],
-  curriculum: [
+// Mock Quiz Data
+const quizData = {
+  title: "Kuis Singkat: Fundamental React Router",
+  questions: [
     {
-      section: '00 Prolog',
-      topics: ['Pendahuluan', 'Kenapa React Router v7?'],
+      question: "Manakah hook yang digunakan untuk navigasi programmatic di React Router?",
+      choices: ["useState", "useEffect", "useNavigate", "useContext"],
+      correctAnswer: 2
     },
     {
-      section: '01 Pembahasan',
-      topics: [
-        'Instalasi',
-        'Pengenalan Direktori',
-        'Routing Basic',
-        'Routing Nested',
-        'Routing Dynamic Segments',
-        'Routing Prefix',
-        'Routing Layout',
-        'Styling',
-        'Meta Tags',
-        'Navigasi',
-        'Data Loading',
-        'Actions',
-        'Autentikasi',
-        'Resource Routes',
-        'Streaming',
-        'Error Handling',
-      ],
+      question: "Komponen apa yang digunakan untuk merender UI dari sebuah rute yang cocok?",
+      choices: ["<Route>", "<Link>", "<Outlet>", "<Switch>"],
+      correctAnswer: 0
     },
-  ],
+    {
+      question: "Bagaimana cara menangkap segmen dinamis dari URL, seperti ID produk?",
+      choices: ["useParams()", "useLocation()", "useHistory()", "useRouteMatch()"],
+      correctAnswer: 0
+    }
+  ]
 };
 
+// This page now gets course data from router params and context
+
 const CourseDetailPage = () => {
+  const { courseId } = useParams();
+  const { user, courses, updateCourseProgress, addReview, isAuthenticated } = useAuth();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeTopic, setActiveTopic] = useState({ sectionIndex: 0, topicIndex: 0 });
+
+  // Find the specific course from the context or all courses data
+  const course = useMemo(() => 
+    courses.find(c => c.href.endsWith(courseId)) || allCoursesData.find(c => c.href.endsWith(courseId)), 
+    [courses, courseId]
+  );
+
+  // Mock curriculum if not present in course data
+  const curriculum = useMemo(() => course?.curriculum || [
+    { section: '00 Prolog', topics: ['Pendahuluan', 'Kenapa React Router v7?'] },
+    { section: 'Kuis Bab 1', topics: [{ type: 'quiz', title: 'Kuis Prolog' }] },
+    { section: '01 Pembahasan', topics: ['Instalasi', 'Pengenalan Direktori', 'Routing Basic', 'Routing Nested', 'Routing Dynamic Segments', 'Routing Prefix', 'Routing Layout', 'Styling', 'Meta Tags', 'Navigasi', 'Data Loading', 'Actions', 'Autentikasi', 'Resource Routes', 'Streaming', 'Error Handling'] },
+  ], [course]);
+
+  const completedTopics = useMemo(() => new Set(course?.completedTopics || []), [course]);
+
+  const totalTopics = useMemo(() => 
+    curriculum.reduce((acc, section) => acc + section.topics.length, 0),
+    [curriculum]
+  );
+
+  const progress = useMemo(() => 
+    totalTopics > 0 ? (completedTopics.size / totalTopics) * 100 : 0,
+    [completedTopics.size, totalTopics]
+  );
+
+  const handleToggleComplete = (sectionIndex, topicIndex) => {
+    if (!isAuthenticated) return; // Or prompt to login
+    const topicId = `${sectionIndex}-${topicIndex}`;
+    const newCompleted = new Set(completedTopics);
+    if (newCompleted.has(topicId)) {
+      newCompleted.delete(topicId);
+    } else {
+      newCompleted.add(topicId);
+    }
+    const newProgress = totalTopics > 0 ? (newCompleted.size / totalTopics) * 100 : 0;
+    updateCourseProgress(course.id, newProgress, Array.from(newCompleted));
+  };
+
+  const handleNavigation = (direction) => {
+    let { sectionIndex, topicIndex } = activeTopic;
+    if (direction === 'next') {
+      topicIndex++;
+      if (topicIndex >= curriculum[sectionIndex].topics.length) {
+        topicIndex = 0;
+        sectionIndex++;
+      }
+    } else { // prev
+      topicIndex--;
+      if (topicIndex < 0) {
+        sectionIndex--;
+        if (sectionIndex >= 0) {
+          topicIndex = curriculum[sectionIndex].topics.length - 1;
+        }
+      }
+    }
+    if (sectionIndex >= 0 && sectionIndex < curriculum.length) {
+      setActiveTopic({ sectionIndex, topicIndex });
+    }
+  };
+
+  const isFirstTopic = activeTopic.sectionIndex === 0 && activeTopic.topicIndex === 0;
+  const isLastTopic = activeTopic.sectionIndex === curriculum.length - 1 && activeTopic.topicIndex === curriculum[activeTopic.sectionIndex].topics.length - 1;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
@@ -61,6 +109,7 @@ const CourseDetailPage = () => {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
+  // If course data is not found
   if (!course) {
     return (
       <div className="bg-white text-black pt-40 pb-20 text-center">
@@ -72,16 +121,18 @@ const CourseDetailPage = () => {
     );
   }
 
+  const currentTopicObject = curriculum[activeTopic.sectionIndex].topics[activeTopic.topicIndex];
+  const currentTopic = typeof currentTopicObject === 'object' ? currentTopicObject.title : currentTopicObject;
+  const isQuiz = typeof currentTopicObject === 'object' && currentTopicObject.type === 'quiz';
+
   return (
     <div className="bg-white text-gray-800 font-sans">
       <div className="flex min-h-screen">
         {/* Sidebar */}
         <aside
-          className={`bg-gray-50 border-r border-gray-200 transition-all duration-300 ease-in-out overflow-hidden ${
-            isSidebarOpen ? 'w-72 p-6' : 'w-0 p-0'
-          }`}
+          className={`bg-gray-50 border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col ${isSidebarOpen ? 'w-80 p-6' : 'w-0 p-0'}`}
         >
-          <div className="w-60">
+          <div className={`w-68 flex-grow overflow-y-auto ${!isSidebarOpen && 'hidden'}`}>
             <div className="flex items-center mb-8">
               <div className="w-10 h-10 bg-blue-100 rounded-full mr-3"></div>
               <span className="font-semibold text-gray-900">User Name</span>
@@ -99,20 +150,35 @@ const CourseDetailPage = () => {
             </div>
             <nav>
               <ul>
-                {course.curriculum.map((item, index) => (
-                  <li key={index} className="mb-6">
-                    <h3 className="text-gray-500 text-sm font-bold mb-3">{item.section}</h3>
+                {curriculum.map((item, sectionIndex) => (
+                  <li key={sectionIndex} className="mb-6">
+                    <h3 className="text-gray-500 text-sm font-bold mb-3 px-3">{item.section}</h3>
                     <ul>
-                      {item.topics.map((topic, topicIndex) => (
-                        <li key={topicIndex}>
-                          <a
-                            href="#"
-                            className="block py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 whitespace-nowrap"
-                          >
-                            {topic}
-                          </a>
-                        </li>
-                      ))}
+                      {item.topics.map((topic, topicIndex) => {
+                        const topicId = `${sectionIndex}-${topicIndex}`;
+                        const isCompleted = completedTopics.has(topicId);
+                        const isActive = activeTopic.sectionIndex === sectionIndex && activeTopic.topicIndex === topicIndex;
+                        const topicTitle = typeof topic === 'object' ? topic.title : topic;
+                        return (
+                          <li key={topicIndex}>
+                            <div
+                              onClick={() => setActiveTopic({ sectionIndex, topicIndex })}
+                              className={`flex items-center justify-between py-2 px-3 rounded-lg cursor-pointer transition-colors duration-200 whitespace-nowrap ${
+                                isActive ? 'bg-blue-100 text-blue-700' : 'hover:bg-blue-50'
+                              }`}
+                            >
+                              <span className={`mr-2 ${isCompleted ? 'line-through text-gray-500' : ''}`}>{topicTitle}</span>
+                              <input 
+                                type="checkbox" 
+                                checked={isCompleted}
+                                onChange={() => handleToggleComplete(sectionIndex, topicIndex)}
+                                className="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                onClick={(e) => e.stopPropagation()} // Prevent topic selection when clicking checkbox
+                              />
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </li>
                 ))}
@@ -124,7 +190,7 @@ const CourseDetailPage = () => {
         {/* Main Content */}
         <main className="flex-1 bg-white">
           {/* Header */}
-          <header className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+          <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-20">
             <div className="flex items-center">
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -135,7 +201,10 @@ const CourseDetailPage = () => {
               <Link to="/academy" className="p-2 rounded-full hover:bg-gray-100">
                 <ChevronLeft size={20} />
               </Link>
-              <span className="font-semibold hidden md:block ml-4 text-gray-900">{course.title}</span>
+              <div className="ml-4">
+                <span className="font-semibold hidden md:block text-gray-900">{course.title}</span>
+                <span className="text-sm text-gray-500">Progres: {progress.toFixed(0)}%</span>
+              </div>
             </div>
             <div className="flex items-center">
               <button className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
@@ -143,79 +212,53 @@ const CourseDetailPage = () => {
               </button>
             </div>
           </header>
+          
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 h-2">
+            <div className="bg-blue-600 h-2" style={{ width: `${progress}%` }}></div>
+          </div>
 
           <div className="p-6 md:p-12">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              <div className="lg:col-span-2">
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{course.title}</h1>
-                <div className="flex items-center space-x-6 text-gray-600 mb-6 flex-wrap">
-                  <div className="flex items-center mb-2">
-                    <BookOpen size={16} className="mr-2 text-blue-600" />
-                    <span>
-                      {course.bab} Bab, {course.pelajaran} Pelajaran
-                    </span>
+            <div className="max-w-4xl mx-auto">
+              {isQuiz ? (
+                <Quiz quizData={quizData} />
+              ) : (
+                <>
+                  <div className="bg-gray-900 aspect-video rounded-2xl mb-6 flex items-center justify-center">
+                    <PlayCircle className="w-20 h-20 text-white/70" />
                   </div>
-                  <div className="flex items-center mb-2">
-                    <Clock size={16} className="mr-2 text-blue-600" />
-                    <span>{course.duration}</span>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <BarChart size={16} className="mr-2 text-blue-600" />
-                    <span>{course.level}</span>
-                  </div>
-                </div>
-                <p className="text-lg mb-12 text-gray-700">{course.shortDescription}</p>
-
-                <section className="mb-12">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Deskripsi</h2>
-                  <p className="text-gray-700">{course.description}</p>
-                </section>
-
-                <section className="mb-12">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Apa yang akan kamu pelajari</h2>
-                  <ul className="space-y-3">
-                    {course.learnings.map((item, index) => (
-                      <li key={index} className="flex items-center">
-                        <CheckCircle size={20} className="text-blue-600 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Prasyarat</h2>
-                  <ul className="space-y-2 list-disc list-inside text-gray-700">
-                    {course.prerequisites.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{currentTopic}</h1>
+                  <p className="text-lg text-gray-700 mb-8">
+                    Ini adalah deskripsi untuk pelajaran "{currentTopic}". Konten video dan materi pendukung akan ditampilkan di sini.
+                  </p>
+                </>
+              )}
+              
+              <div className="flex justify-between items-center mt-12 border-t pt-6">
+                 <button 
+                   onClick={() => handleNavigation('prev')} 
+                   disabled={isFirstTopic}
+                   className="bg-gray-200 text-gray-800 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+                   Pelajaran Sebelumnya
+                 </button>
+                 <button 
+                   onClick={() => handleNavigation('next')} 
+                   disabled={isLastTopic}
+                   className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+                   Pelajaran Selanjutnya
+                 </button>
               </div>
 
-              {/* Floating Card */}
-              <div className="lg:col-span-1">
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-lg sticky top-24">
-                  <img src={course.image} alt={course.title} className="w-full h-40 object-cover rounded-t-2xl" />
-                  <div className="p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{course.title}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{course.shortDescription}</p>
-                    <div className="flex items-center mb-4">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full mr-3"></div>
-                      <span className="text-sm font-semibold text-gray-900">{course.author}</span>
-                    </div>
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{course.price}</div>
-                    <div className="flex items-center text-sm text-gray-600 mb-6">
-                      <CheckCircle size={18} className="mr-2 text-green-500" />
-                      Akses Seumur Hidup
-                    </div>
-                    <button className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                      <BookOpen size={18} className="mr-2" />
-                      Mulai Belajar
-                    </button>
-                  </div>
-                </div>
-              </div>
+              {/* Reviews Section */}
+              <section className="mt-16 pt-8 border-t">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Ulasan Siswa ({course.reviews?.length || 0})</h2>
+                <Reviews reviews={course.reviews} />
+                {isAuthenticated && progress === 100 && !course.reviews?.some(r => r.name === user.name) && (
+                  <ReviewForm onSubmit={(reviewData) => addReview(course.id, reviewData)} />
+                )}
+              </section>
             </div>
           </div>
         </main>

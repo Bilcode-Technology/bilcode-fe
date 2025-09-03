@@ -10,8 +10,13 @@ export const courses = [
     price: 89,
     originalPrice: 129,
     score: 4.9,
+    reviews: [
+      { id: 1, name: 'Ahmad', rating: 5, comment: 'Kursus yang luar biasa! Penjelasannya sangat mudah diikuti.' },
+      { id: 2, name: 'Budi', rating: 4, comment: 'Materi lengkap, tapi akan lebih baik jika ada lebih banyak studi kasus.' },
+    ],
     students: 2847,
     duration: "12 jam",
+    releaseDate: "2025-08-15",
     specialOffer: true,
   },
   {
@@ -25,8 +30,12 @@ export const courses = [
     price: 99,
     originalPrice: 149,
     score: 5,
+    reviews: [
+      { id: 1, name: 'Citra', rating: 5, comment: 'Sangat direkomendasikan! Instruktur menjelaskan konsep-konsep sulit dengan cara yang sederhana.' },
+    ],
     students: 3421,
     duration: "15 jam",
+    releaseDate: "2025-09-01",
     specialOffer: true,
   },
   {
@@ -40,8 +49,10 @@ export const courses = [
     price: 99,
     originalPrice: 149,
     score: 5,
+    reviews: [],
     students: 2150,
     duration: "18 jam",
+    releaseDate: "2025-07-20",
     specialOffer: true,
   },
   {
@@ -55,8 +66,13 @@ export const courses = [
     price: 79,
     originalPrice: 119,
     score: 4.8,
+    reviews: [
+      { id: 1, name: 'Dewi', rating: 5, comment: 'Penjelasan yang sangat baik tentang Flutter.' },
+      { id: 2, name: 'Eka', rating: 4, comment: 'Bagus untuk pemula, tapi butuh lebih banyak contoh lanjutan.' },
+    ],
     students: 1589,
     duration: "10 jam",
+    releaseDate: "2025-08-05",
     specialOffer: false,
   },
   {
@@ -70,8 +86,10 @@ export const courses = [
     price: 69,
     originalPrice: 99,
     score: 4.8,
+    reviews: [],
     students: 1923,
     duration: "8 jam",
+    releaseDate: "2025-09-05",
     specialOffer: true,
   },
 ];

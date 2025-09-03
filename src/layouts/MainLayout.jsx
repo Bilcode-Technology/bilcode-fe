@@ -1,7 +1,7 @@
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { gsap } from "gsap";
-import { useSplashAnimation } from "../hooks/useSplashAnimation";
+import { useSplashAnimation } from "../hooks/useSplashAnimation.js";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FullScreenTransition from "../components/FullScreenTransition";

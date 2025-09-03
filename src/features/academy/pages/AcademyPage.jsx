@@ -1,11 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowRight, Search, X, Play, Users, Clock, Star, BookOpen, Award, Zap } from 'lucide-react';
+import StarRating from '../components/StarRating';
 
 import { courses } from '../data/courses.jsx';
 
 const AcademyPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('Semua');
+  const [sortBy, setSortBy] = useState('popularity'); // popularity, rating, newest
+  const [priceFilter, setPriceFilter] = useState('all'); // all, paid, free
   const [isVisible, setIsVisible] = useState(false);
 
   const levels = ['Semua', 'Pemula', 'Menengah', 'Lanjutan'];
@@ -45,15 +48,45 @@ const AcademyPage = () => {
   }, []);
 
   const filteredCourses = useMemo(() => {
-    return courses
-      .filter(course => {
-        if (selectedLevel === 'Semua') return true;
-        return course.level === selectedLevel;
-      })
-      .filter(course => 
+    let filtered = [...courses];
+
+    // Filter by Level
+    if (selectedLevel !== 'Semua') {
+      filtered = filtered.filter(course => course.level === selectedLevel);
+    }
+
+    // Filter by Price
+    if (priceFilter !== 'all') {
+      filtered = filtered.filter(course => {
+        if (priceFilter === 'free') return course.price === 0 || course.price === 'Gratis';
+        if (priceFilter === 'paid') return course.price > 0;
+        return true;
+      });
+    }
+
+    // Filter by Search Query
+    if (searchQuery) {
+      filtered = filtered.filter(course => 
         course.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  }, [searchQuery, selectedLevel]);
+    }
+
+    // Sort results
+    switch (sortBy) {
+      case 'rating':
+        filtered.sort((a, b) => b.score - a.score);
+        break;
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+        break;
+      case 'popularity':
+      default:
+        filtered.sort((a, b) => b.students - a.students);
+        break;
+    }
+
+    return filtered;
+  }, [searchQuery, selectedLevel, sortBy, priceFilter]);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -147,7 +180,7 @@ const AcademyPage = () => {
           </div>
 
           {/* Search & Filter */}
-          <div className="flex flex-col md:flex-row gap-6 mb-12">
+          <div className="flex flex-col md:flex-row gap-6 mb-8">
             <div className="relative flex-grow">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400" />
               <input 
@@ -158,27 +191,49 @@ const AcademyPage = () => {
                 className="w-full pl-16 pr-6 py-4 bg-white border-2 border-slate-200 rounded-2xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 text-lg shadow-sm"
               />
             </div>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
-              {levels.map(level => (
-                <button 
-                  key={level}
-                  onClick={() => setSelectedLevel(level)}
-                  className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-1 ${
-                    selectedLevel === level 
-                    ? 'bg-blue-600 text-white shadow-lg' 
-                    : 'bg-white text-slate-700 hover:bg-slate-50 shadow-md border border-slate-200'
-                  }`}>
-                  {level}
-                </button>
-              ))}
-              {(searchQuery || selectedLevel !== 'Semua') &&
-                <button 
-                  onClick={() => { setSearchQuery(''); setSelectedLevel('Semua'); }} 
-                  className="p-3 bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-full shadow-md hover:-translate-y-1 transition-all duration-300">
-                  <X className="h-5 w-5" />
-                </button>
-              }
+            <div className="flex items-center gap-4">
+              <select 
+                value={priceFilter} 
+                onChange={e => setPriceFilter(e.target.value)}
+                className="bg-white border-2 border-slate-200 rounded-2xl px-4 py-4 text-lg shadow-sm focus:outline-none focus:border-blue-500"
+              >
+                <option value="all">Semua Harga</option>
+                <option value="paid">Berbayar</option>
+                <option value="free">Gratis</option>
+              </select>
+              <select 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value)}
+                className="bg-white border-2 border-slate-200 rounded-2xl px-4 py-4 text-lg shadow-sm focus:outline-none focus:border-blue-500"
+              >
+                <option value="popularity">Popularitas</option>
+                <option value="rating">Rating</option>
+                <option value="newest">Terbaru</option>
+              </select>
             </div>
+          </div>
+
+          {/* Level Filter Buttons */}
+          <div className="flex items-center justify-center gap-3 flex-wrap mb-12">
+            {levels.map(level => (
+              <button 
+                key={level}
+                onClick={() => setSelectedLevel(level)}
+                className={`px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-1 ${
+                  selectedLevel === level 
+                  ? 'bg-blue-600 text-white shadow-lg' 
+                  : 'bg-white text-slate-700 hover:bg-slate-50 shadow-md border border-slate-200'
+                }`}>
+                {level}
+              </button>
+            ))}
+            {(searchQuery || selectedLevel !== 'Semua' || priceFilter !== 'all') &&
+              <button 
+                onClick={() => { setSearchQuery(''); setSelectedLevel('Semua'); setPriceFilter('all'); }}
+                className="p-3 bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-full shadow-md hover:-translate-y-1 transition-all duration-300">
+                <X className="h-5 w-5" />
+              </button>
+            }
           </div>
 
           {/* Grid Kursus */}
@@ -215,8 +270,9 @@ const AcademyPage = () => {
                           {course.level}
                         </span>
                         <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-blue-500 fill-current" />
-                          <span className="text-sm font-semibold text-slate-700">{course.score}</span>
+                          <StarRating rating={course.score} />
+                          <span className="text-sm font-semibold text-slate-700 ml-1">{course.score}</span>
+                          <span className="text-sm text-slate-500">({course.reviews?.length || 0})</span>
                         </div>
                       </div>
                       

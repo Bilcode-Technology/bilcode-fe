@@ -5,8 +5,10 @@ import {
   useCallback,
   useLayoutEffect,
 } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import gsap from "gsap";
+import { useAuth } from "../context/AuthContext";
+import { User } from "lucide-react";
 
 const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
   // State management
@@ -25,8 +27,15 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
   // Store per-card motion controllers (quickTo) active while hovered
   const cardMotion = useRef(new WeakMap());
 
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isAuthRelevantPage = location.pathname.startsWith('/academy') || location.pathname.startsWith('/joki');
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   // GSAP animations for mega menu panel & cards
   useLayoutEffect(() => {
@@ -653,12 +662,41 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
           </div>
         </div>
 
-        <a
-          href="http://wa.me/6285128004772"
-          className="fixed top-[47px] md:top-14 right-[5%] md:right-[18%] z-[60] cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
-        >
-          {navItems.some(item => item.label === 'Kursus') ? 'Daftar Sekarang' : 'Chat Sekarang'}
-        </a>
+        <div className="fixed top-[47px] md:top-14 right-[5%] md:right-[18%] z-[60]">
+          {isAuthRelevantPage ? (
+            user ? (
+              <div className="relative" onMouseEnter={() => setHoveredItem2('user-menu')} onMouseLeave={() => setHoveredItem2(null)}>
+                <Link 
+                  to="/dashboard"
+                  className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-4 py-3 rounded-full transition-all duration-300 flex items-center gap-2"
+                >
+                  <User size={20} />
+                  <span>{user.name.split(' ')[0]}</span>
+                </Link>
+                {hoveredItem2 === 'user-menu' && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Dasbor</Link>
+                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Logout</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link 
+                to="/login"
+                className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
+              >
+                Daftar / Masuk
+              </Link>
+            )
+          ) : (
+            <a 
+              href="http://wa.me/6285128004772"
+              className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-8 py-3 rounded-full transition-all duration-300"
+            >
+              Chat Sekarang
+            </a>
+          )}
+        </div>
 
         {/* Mega Menu Dropdown */}
         <div
@@ -771,6 +809,16 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
                   return null;
                 })}
               </nav>
+            </div>
+            <div className="px-6 pb-6 mt-auto">
+              {user ? (
+                <div className="space-y-4">
+                  <Link to="/dashboard" onClick={closeMobileMenu} className="block w-full text-center bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-700">Dasbor</Link>
+                  <button onClick={() => { handleLogout(); closeMobileMenu(); }} className="block w-full text-center bg-slate-100 text-slate-700 px-4 py-3 rounded-lg font-semibold hover:bg-slate-200">Logout</button>
+                </div>
+              ) : (
+                <Link to="/login" onClick={closeMobileMenu} className="block w-full text-center bg-black text-white px-4 py-3 rounded-lg font-semibold hover:bg-gray-800">Daftar / Masuk</Link>
+              )}
             </div>
           </div>
         </div>

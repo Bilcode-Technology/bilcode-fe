@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Twitter, Linkedin, ExternalLink, Award, BookOpen, Users } from 'lucide-react';
 import { instructors } from '../data/instructors';
 
@@ -24,9 +25,10 @@ const InstructorsPage = () => {
         {/* Instructors Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
           {instructors.map((instructor) => (
-            <div 
+            <Link 
+              to={`/academy/instructors/${instructor.id}`}
               key={instructor.id} 
-              className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl border border-slate-100 overflow-hidden transform hover:-translate-y-3 transition-all duration-500 ease-out hover:border-blue-200"
+              className="block group bg-white rounded-3xl shadow-lg hover:shadow-2xl border border-slate-100 overflow-hidden transform hover:-translate-y-3 transition-all duration-500 ease-out hover:border-blue-200"
             >
               {/* Profile Image */}
               <div className="relative overflow-hidden">
@@ -77,7 +79,7 @@ const InstructorsPage = () => {
                   </a>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

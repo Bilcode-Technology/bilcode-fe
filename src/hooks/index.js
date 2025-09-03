@@ -1,2 +1,2 @@
 // Re-export all hooks for cleaner imports
-export * from './useSplashAnimation';
+export * from './useSplashAnimation.js';
