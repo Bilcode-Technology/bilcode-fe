@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Menu, BookOpen, Clock, BarChart, CheckCircle, Search, Command, PlayCircle } from 'lucide-react';
+import { ChevronLeft, Menu, BookOpen, Clock, BarChart, CheckCircle, Search, Command, PlayCircle, Lock } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { courses as allCoursesData } from '../data/courses'; // Assuming this is the source of all courses
 import Quiz from '../components/Quiz'; // Import the Quiz component
 import Reviews from '../components/Reviews'; // Import the Reviews component
 import ReviewForm from '../components/ReviewForm'; // Import the ReviewForm component
+import QnASection from '../components/QnASection';
+import { qnaData } from '../data/qnaData';
+import BadgeNotification from '../components/BadgeNotification';
 
 // Mock Quiz Data
 const quizData = {
@@ -33,10 +36,13 @@ const quizData = {
 
 const CourseDetailPage = () => {
   const { courseId } = useParams();
-  const { user, courses, updateCourseProgress, addReview, isAuthenticated } = useAuth();
+  // Get awardBadge function from context
+  const { user, courses, updateCourseProgress, addReview, isAuthenticated, awardBadge, login, logout } = useAuth();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeTopic, setActiveTopic] = useState({ sectionIndex: 0, topicIndex: 0 });
+  // State to hold the badge for the notification
+  const [newlyAwardedBadge, setNewlyAwardedBadge] = useState(null);
 
   // Find the specific course from the context or all courses data
   const course = useMemo(() => 
@@ -64,16 +70,38 @@ const CourseDetailPage = () => {
   );
 
   const handleToggleComplete = (sectionIndex, topicIndex) => {
-    if (!isAuthenticated) return; // Or prompt to login
+    if (!isAuthenticated || !awardBadge) return; // Or prompt to login
     const topicId = `${sectionIndex}-${topicIndex}`;
     const newCompleted = new Set(completedTopics);
-    if (newCompleted.has(topicId)) {
-      newCompleted.delete(topicId);
-    } else {
+
+    // Only award badges when completing a topic, not un-completing
+    if (!newCompleted.has(topicId)) {
       newCompleted.add(topicId);
+
+      // Check for badge criteria
+      if (newCompleted.size === 1) {
+        const badge = awardBadge('FIRST_STEP');
+        if (badge) setNewlyAwardedBadge(badge);
+      }
+      if (newCompleted.size === 5) {
+        const badge = awardBadge('FIVE_TOPICS');
+        if (badge) setNewlyAwardedBadge(badge);
+      }
+      
+      const newProgress = totalTopics > 0 ? (newCompleted.size / totalTopics) * 100 : 0;
+      if (newProgress >= 100) {
+        const badge = awardBadge('COURSE_COMPLETE');
+        if (badge) setNewlyAwardedBadge(badge);
+      }
+      
+      updateCourseProgress(course.id, newProgress, Array.from(newCompleted));
+
+    } else {
+      // Logic for un-completing a topic
+      newCompleted.delete(topicId);
+      const newProgress = totalTopics > 0 ? (newCompleted.size / totalTopics) * 100 : 0;
+      updateCourseProgress(course.id, newProgress, Array.from(newCompleted));
     }
-    const newProgress = totalTopics > 0 ? (newCompleted.size / totalTopics) * 100 : 0;
-    updateCourseProgress(course.id, newProgress, Array.from(newCompleted));
   };
 
   const handleNavigation = (direction) => {
@@ -127,6 +155,7 @@ const CourseDetailPage = () => {
 
   return (
     <div className="bg-white text-gray-800 font-sans">
+      <BadgeNotification badge={newlyAwardedBadge} />
       <div className="flex min-h-screen">
         {/* Sidebar */}
         <aside
@@ -134,8 +163,8 @@ const CourseDetailPage = () => {
         >
           <div className={`w-68 flex-grow overflow-y-auto ${!isSidebarOpen && 'hidden'}`}>
             <div className="flex items-center mb-8">
-              <div className="w-10 h-10 bg-blue-100 rounded-full mr-3"></div>
-              <span className="font-semibold text-gray-900">User Name</span>
+              <img src={user?.avatar || 'https://i.pravatar.cc/150?u=guest'} alt={user?.name || 'Guest'} className="w-10 h-10 rounded-full mr-3" />
+              <span className="font-semibold text-gray-900">{user?.name || 'Guest'}</span>
             </div>
             <div className="relative mb-8">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -206,11 +235,7 @@ const CourseDetailPage = () => {
                 <span className="text-sm text-gray-500">Progres: {progress.toFixed(0)}%</span>
               </div>
             </div>
-            <div className="flex items-center">
-              <button className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                Login
-              </button>
-            </div>
+            
           </header>
           
           {/* Progress Bar */}
@@ -218,49 +243,81 @@ const CourseDetailPage = () => {
             <div className="bg-blue-600 h-2" style={{ width: `${progress}%` }}></div>
           </div>
 
-          <div className="p-6 md:p-12">
-            <div className="max-w-4xl mx-auto">
-              {isQuiz ? (
-                <Quiz quizData={quizData} />
-              ) : (
-                <>
-                  <div className="bg-gray-900 aspect-video rounded-2xl mb-6 flex items-center justify-center">
-                    <PlayCircle className="w-20 h-20 text-white/70" />
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{currentTopic}</h1>
-                  <p className="text-lg text-gray-700 mb-8">
-                    Ini adalah deskripsi untuk pelajaran "{currentTopic}". Konten video dan materi pendukung akan ditampilkan di sini.
-                  </p>
-                </>
-              )}
-              
-              <div className="flex justify-between items-center mt-12 border-t pt-6">
-                 <button 
-                   onClick={() => handleNavigation('prev')} 
-                   disabled={isFirstTopic}
-                   className="bg-gray-200 text-gray-800 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                 >
-                   Pelajaran Sebelumnya
-                 </button>
-                 <button 
-                   onClick={() => handleNavigation('next')} 
-                   disabled={isLastTopic}
-                   className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                 >
-                   Pelajaran Selanjutnya
-                 </button>
-              </div>
-
-              {/* Reviews Section */}
-              <section className="mt-16 pt-8 border-t">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Ulasan Siswa ({course.reviews?.length || 0})</h2>
-                <Reviews reviews={course.reviews} />
-                {isAuthenticated && progress === 100 && !course.reviews?.some(r => r.name === user.name) && (
-                  <ReviewForm onSubmit={(reviewData) => addReview(course.id, reviewData)} />
+          {isAuthenticated ? (
+            <div className="p-6 md:p-12">
+              <div className="max-w-4xl mx-auto">
+                {isQuiz ? (
+                  <Quiz quizData={quizData} />
+                ) : (
+                  <>
+                    <div className="bg-gray-900 aspect-video rounded-2xl mb-6 flex items-center justify-center">
+                      <PlayCircle className="w-20 h-20 text-white/70" />
+                    </div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{currentTopic}</h1>
+                    <p className="text-lg text-gray-700 mb-8">
+                      Ini adalah deskripsi untuk pelajaran \"{currentTopic}\". Konten video dan materi pendukung akan ditampilkan di sini.
+                    </p>
+                  </>
                 )}
-              </section>
+                
+                <div className="flex justify-between items-center mt-12 border-t pt-6">
+                   <button 
+                     onClick={() => handleNavigation('prev')} 
+                     disabled={isFirstTopic}
+                     className="bg-gray-200 text-gray-800 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                   >
+                     Pelajaran Sebelumnya
+                   </button>
+                   <button 
+                     onClick={() => handleNavigation('next')} 
+                     disabled={isLastTopic}
+                     className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                   >
+                     Pelajaran Selanjutnya
+                   </button>
+                </div>
+
+                <section className="mt-16 pt-8 border-t">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Ulasan Siswa ({course.reviews?.length || 0})</h2>
+                  <Reviews reviews={course.reviews} />
+                  {isAuthenticated && progress === 100 && !course.reviews?.some(r => r.name === user.name) && (
+                    <ReviewForm onSubmit={(reviewData) => addReview(course.id, reviewData)} />
+                  )}
+                </section>
+
+                <section className="mt-16 pt-8 border-t">
+                  <QnASection qnaData={qnaData} />
+                </section>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="relative p-6 md:p-12">
+              <div className="max-w-4xl mx-auto filter blur-sm pointer-events-none">
+                <div className="bg-gray-900 aspect-video rounded-2xl mb-6 flex items-center justify-center">
+                  <PlayCircle className="w-20 h-20 text-white/70" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{currentTopic}</h1>
+                <p className="text-lg text-gray-700 mb-8">
+                  Konten pelajaran hanya tersedia untuk anggota terdaftar.
+                </p>
+              </div>
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10">
+                <div className="text-center bg-white p-10 rounded-2xl shadow-2xl border max-w-md">
+                  <Lock className="w-12 h-12 mx-auto text-blue-500 mb-4" />
+                  <h2 className="text-2xl font-bold text-slate-800 mb-3">Akses Konten Eksklusif</h2>
+                  <p className="text-slate-600 mb-8">Untuk melanjutkan pembelajaran dan mengakses semua fitur, silakan masuk atau daftar terlebih dahulu.</p>
+                  <div className="flex gap-4">
+                    <Link to="/login" className="flex-1 bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                      Masuk
+                    </Link>
+                    <Link to="/register" className="flex-1 bg-slate-200 text-slate-800 font-semibold px-6 py-3 rounded-lg hover:bg-slate-300 transition">
+                      Daftar Sekarang
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
