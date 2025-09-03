@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { CheckCircle, Zap, Shield, Award, MessageSquare, DollarSign, ArrowRight, Code, Star } from 'lucide-react';
 
 const JokiPage = () => {
@@ -89,25 +90,23 @@ const JokiPage = () => {
           </p>
           
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link
+              to="/joki/order"
+              className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+            >
+              <Zap className="mr-3 group-hover:animate-pulse" size={24} />
+              Pesan Layanan Sekarang
+              <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={24} />
+            </Link>
             <a
               href="https://wa.me/6281234567890?text=Halo%20Bilcode,%20saya%20tertarik%20dengan%20layanan%20joki%20coding."
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+              className="group inline-flex items-center justify-center px-10 py-5 bg-white text-gray-800 font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200"
             >
-              <MessageSquare className="mr-3 group-hover:animate-pulse" size={24} />
-              Konsultasi Gratis via WhatsApp
-              <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" size={24} />
+              <MessageSquare className="mr-3" size={24} />
+              Konsultasi via WhatsApp
             </a>
-            
-            <div className="flex items-center text-gray-600">
-              <div className="flex -space-x-2 mr-3">
-                {[1,2,3,4,5].map(i => (
-                  <Star key={i} size={20} className="text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <span className="font-medium">4.9/5 dari 200+ review</span>
-            </div>
           </div>
         </div>
       </section>

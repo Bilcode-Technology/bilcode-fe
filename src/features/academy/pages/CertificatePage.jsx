@@ -1,22 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { courses as allCoursesData } from '../data/courses';
+import { getCourseBySlug } from '../api';
 import { Award, Printer } from 'lucide-react';
 
 const CertificatePage = () => {
-  const { courseId } = useParams();
+  const { courseSlug } = useParams();
   const { user } = useAuth();
+  const [course, setCourse] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // In a real app, you'd fetch course data, but here we find it from our mock data.
-  // We use the end of the href as a stand-in for a slug/id.
-  const course = allCoursesData.find(c => c.href.endsWith(courseId));
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (!courseSlug) {
+        setError('ID Kursus tidak ditemukan di URL.');
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const courseData = await getCourseBySlug(courseSlug);
+        setCourse(courseData);
+      } catch (err) {
+        setError('Sertifikat tidak valid atau kursus tidak ditemukan.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCourse();
+  }, [courseSlug]);
 
-  if (!user || !course) {
+  const handlePrint = () => {
+    window.print();
+  };
+
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-4">
-        <h1 className="text-3xl font-bold text-slate-800">Sertifikat Tidak Valid</h1>
-        <p className="text-slate-600 mt-2">Kami tidak dapat menemukan detail untuk sertifikat ini.</p>
+        <p className="text-slate-600">Memuat data sertifikat...</p>
+      </div>
+    );
+  }
+  
+  if (error || !user || !course) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 p-4">
+        <h1 className="text-3xl font-bold text-slate-800">{error || 'Sertifikat Tidak Valid'}</h1>
+        <p className="text-slate-600 mt-2">Kami tidak dapat menemukan detail untuk sertifikat ini atau Anda belum masuk.</p>
         <Link to="/dashboard" className="mt-8 inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
           Kembali ke Dasbor
         </Link>
@@ -26,10 +57,6 @@ const CertificatePage = () => {
 
   const completionDate = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
   const certificateId = `UC-${course.id}-${user.name.replace(/\s+/g, '').toUpperCase()}`;
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   return (
     <div className="bg-slate-200 min-h-screen flex items-center justify-center p-4 print:bg-white print:p-0">

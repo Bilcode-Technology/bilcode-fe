@@ -1,21 +1,27 @@
-import React, { useMemo } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { learningPaths } from '../data/learningPaths';
-import { courses as allCourses } from '../data/courses';
+import { getLearningPathById } from '../api';
 import { useAuth } from '../../../context/AuthContext';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 
 const LearningPathDetailPage = () => {
   const { pathId } = useParams();
   const { courses: userCourses } = useAuth();
+  const [path, setPath] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const path = learningPaths.find(p => p.id === pathId);
+  useEffect(() => {
+    getLearningPathById(pathId).then(data => {
+      setPath(data);
+      setIsLoading(false);
+    });
+  }, [pathId]);
 
   const pathCourses = useMemo(() => {
     if (!path) return [];
-    return path.courses.map(courseId => {
-      const userCourseData = userCourses.find(uc => uc.id === courseId);
-      const courseInfo = allCourses.find(c => c.id === courseId);
+    return path.courses.map(courseInfo => {
+      const userCourseData = userCourses.find(uc => uc.id === courseInfo.id);
       return { ...courseInfo, ...userCourseData };
     });
   }, [path, userCourses]);
@@ -26,13 +32,15 @@ const LearningPathDetailPage = () => {
     return total / pathCourses.length;
   }, [pathCourses]);
 
+  if (isLoading) {
+    return <div className="text-center py-40">Memuat...</div>;
+  }
+
   if (!path) {
     return (
       <div className="bg-white pt-40 pb-20 text-center">
         <h1 className="text-4xl font-bold text-slate-800">404 - Jalur Belajar Tidak Ditemukan</h1>
-        <Link to="/academy/paths" className="mt-8 inline-block text-blue-600 hover:underline">
-          &larr; Kembali ke Daftar Jalur Belajar
-        </Link>
+        <Link to="/academy/paths" className="mt-8 inline-block text-blue-600 hover:underline">&larr; Kembali</Link>
       </div>
     );
   }
@@ -41,20 +49,13 @@ const LearningPathDetailPage = () => {
     <div className="bg-slate-50 min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4 max-w-4xl">
         <header className="mb-12">
-          <Link to="/academy/paths" className="flex items-center text-blue-600 hover:underline mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Kembali ke semua jalur
-          </Link>
+          <Link to="/academy/paths" className="flex items-center text-blue-600 hover:underline mb-4"><ArrowLeft className="w-4 h-4 mr-2" /> Kembali</Link>
           <h1 className="text-5xl font-extrabold text-slate-900 tracking-tight">{path.title}</h1>
           <p className="mt-4 text-xl text-slate-600">{path.description}</p>
-          
           <div className="mt-6">
             <p className="font-semibold text-slate-700">Progres Keseluruhan:</p>
             <div className="w-full bg-slate-200 rounded-full h-4 mt-2">
-              <div 
-                className="bg-blue-600 h-4 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                style={{ width: `${totalProgress.toFixed(0)}%` }}
-              >
+              <div className="bg-blue-600 h-4 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ width: `${totalProgress.toFixed(0)}%` }}>
                 {totalProgress.toFixed(0)}%
               </div>
             </div>
@@ -72,9 +73,7 @@ const LearningPathDetailPage = () => {
                   <div className="bg-green-500 h-2.5 rounded-full" style={{ width: `${course.progress || 0}%` }}></div>
                 </div>
               </div>
-              {course.progress === 100 && (
-                <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" />
-              )}
+              {course.progress === 100 && <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" />}
             </Link>
           ))}
         </main>

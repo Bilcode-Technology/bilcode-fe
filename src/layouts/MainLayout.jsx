@@ -8,7 +8,7 @@ import FullScreenTransition from "../components/FullScreenTransition";
 
 const TEXT = "bilcode.id";
 
-const MainLayout = ({ navItems }) => {
+const MainLayout = ({ navItems, userNavItems }) => {
   const location = useLocation();
   const isBlogPostPage = location.pathname.match(/^\/(academy\/)?blog\/[^/]+$/);
   const shouldShowFooter = !isBlogPostPage;
@@ -64,6 +64,7 @@ const MainLayout = ({ navItems }) => {
           isDropdownVisible={isDropdownVisible}
           onDropdownToggle={setDropdownVisible}
           navItems={navItems}
+          userNavItems={userNavItems}
         />
 
         {/* Dropdown Overlay */}

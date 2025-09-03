@@ -2,14 +2,35 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 
+// Import mock data for demonstration purposes
+import { COURSES as courses } from '../../academy/api/mockData.jsx';
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Simulasi login dengan data pengguna dummy
-    login({ name: 'User', email: 'user@example.com' });
+    
+    // --- REFACTORED: Simulate a full login payload ---
+    // This is the correct data structure expected by AuthContext
+    const loginData = {
+      user: {
+        id: 'user-123-xyz',
+        name: 'Rizky',
+        email: 'rizky@example.com',
+        avatar: 'https://i.pravatar.cc/150?u=rizky',
+        earnedBadges: ['FIRST_STEP'], // Example of existing badges
+      },
+      // Simulate user having enrolled in the first two courses
+      enrolledCourses: courses.slice(0, 2).map(course => ({
+        ...course,
+        progress: Math.floor(Math.random() * 60) + 10, // Give some random progress
+        completedTopics: [],
+      }))
+    };
+
+    login(loginData);
     navigate('/dashboard');
   };
 
@@ -26,7 +47,7 @@ const LoginPage = () => {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">Alamat Email</label>
-              <input id="email-address" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Alamat Email" defaultValue="user@example.com" />
+              <input id="email-address" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Alamat Email" defaultValue="rizky@example.com" />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">Kata Sandi</label>

@@ -9,8 +9,9 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import gsap from "gsap";
 import { useAuth } from "../context/AuthContext";
 import { User } from "lucide-react";
+import NotificationCenter from "../features/users/components/NotificationCenter";
 
-const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
+const Header = ({ isDropdownVisible, onDropdownToggle, navItems, userNavItems = [] }) => {
   // State management
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -30,7 +31,7 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isAuthRelevantPage = location.pathname.startsWith('/academy') || location.pathname.startsWith('/joki');
+  const isAuthRelevantPage = location.pathname.startsWith('/academy') || location.pathname.startsWith('/joki') || location.pathname.startsWith('/profile') || location.pathname.startsWith('/dashboard');
 
   const handleLogout = () => {
     logout();
@@ -665,20 +666,40 @@ const Header = ({ isDropdownVisible, onDropdownToggle, navItems }) => {
         <div className="fixed top-[47px] md:top-14 right-[5%] md:right-[18%] z-[60]">
           {isAuthRelevantPage ? (
             user ? (
-              <div className="relative" onMouseEnter={() => setHoveredItem2('user-menu')} onMouseLeave={() => setHoveredItem2(null)}>
-                <Link 
-                  to="/dashboard"
-                  className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-4 py-3 rounded-full transition-all duration-300 flex items-center gap-2"
-                >
-                  <User size={20} />
-                  <span>{user.name.split(' ')[0]}</span>
-                </Link>
-                {hoveredItem2 === 'user-menu' && (
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
-                    <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Dasbor</Link>
-                    <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Logout</button>
-                  </div>
-                )}
+              <div className="flex items-center gap-2">
+                <NotificationCenter />
+                <div className="relative" onMouseEnter={() => setHoveredItem2('user-menu')} onMouseLeave={() => setHoveredItem2(null)}>
+                  <Link 
+                    to="/dashboard"
+                    className="cursor-pointer bg-black hover:scale-110 text-lg font-medium text-white px-4 py-3 rounded-full transition-all duration-300 flex items-center gap-2"
+                  >
+                    <User size={20} />
+                    <span>{user.name.split(' ')[0]}</span>
+                  </Link>
+                  {hoveredItem2 === 'user-menu' && (
+                    <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                      {userNavItems.map((item) =>
+                        item.action === "logout" ? (
+                          <button
+                            key={item.label}
+                            onClick={handleLogout}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            {item.label}
+                          </button>
+                        ) : (
+                          <Link
+                            key={item.label}
+                            to={item.href}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            {item.label}
+                          </Link>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <Link 

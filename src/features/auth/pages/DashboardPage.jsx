@@ -56,9 +56,9 @@ const DashboardPage = () => {
                           <span className="text-sm font-semibold text-slate-600">{course.progress.toFixed(0)}%</span>
                         </div>
                       </div>
-                      <a href={course.href} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
+                      <Link to={course.href} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
                         Lanjutkan
-                      </a>
+                      </Link>
                     </div>
                   ))}
                 </div>

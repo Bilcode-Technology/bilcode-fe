@@ -1,108 +1,92 @@
 # Bilcode Frontend
 
-This repository contains the frontend application for Bilcode, built with React and Vite. It utilizes Tailwind CSS for styling and GSAP for animations.
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 
-## Features
+Repository ini berisi kode sumber untuk frontend aplikasi **Bilcode**, sebuah platform multifungsi yang dirancang untuk edukasi teknologi dan penyediaan jasa pengembangan perangkat lunak.
 
-*   **Multi-page Application**: Implemented routing to separate the landing page, Academy, Blog, Joki, Career, and Pricelist sections.
-*   **Dynamic Navigation**: Navbar content changes dynamically based on the current page (e.g., different links for the landing page vs. Academy/Blog pages), with enhanced rendering logic for mega-menus.
-*   **Joki Page**: A dedicated section for coding assignment services.
-*   **Career Page**: A page outlining career opportunities and company culture.
-*   **Pricelist Page**: A detailed page showcasing service packages and pricing.
-*   **Academy Page**: A dedicated section offering open courses, displaying a limited number of featured courses with an option to view all available courses.
-*   **Blog Page**: A separate page for blog content, including a subscription section.
-*   **Smooth Scrolling**: Enhanced navigation with smooth scroll effects to different sections within a page.
-*   **Splash Screen Animation**: Engaging introductory animation on application load.
-*   **Responsive Design**: Built with Tailwind CSS to ensure a seamless experience across various devices.
+## ✨ Fitur Utama
 
-## Technologies Used
+Aplikasi ini terbagi menjadi beberapa fitur utama yang saling terintegrasi untuk memberikan pengalaman pengguna yang lengkap.
 
-*   **React 19**: A JavaScript library for building user interfaces.
-*   **Vite**: A fast build tool that provides a lightning-fast development experience.
-*   **Tailwind CSS**: A utility-first CSS framework for rapidly building custom designs.
-*   **GSAP (GreenSock Animation Platform)**: A robust JavaScript animation library.
-*   **React Router DOM**: For declarative routing in React applications.
-*   **ESLint**: For code linting.
+### 🎓 Academy
+Pusat pembelajaran online dengan berbagai fitur untuk mendukung siswa dan instruktur.
+- **Katalog Kursus**: Menampilkan semua kursus dengan fitur pencarian, filter (level, harga), dan pengurutan (popularitas, rating, terbaru).
+- **Halaman Belajar Interaktif**: Halaman khusus untuk belajar dengan konten video, kuis, dan pelacakan progres per topik melalui checkbox.
+- **Gamifikasi**:
+    - **Papan Peringkat (Leaderboard)**: Menampilkan peringkat siswa berdasarkan poin yang didapat.
+    - **Halaman Pencapaian (Badges)**: Pengguna dapat melihat lencana yang telah mereka peroleh dan yang masih terkunci.
+- **Jalur Belajar (Learning Paths)**: Kurikulum terstruktur yang terdiri dari beberapa kursus untuk mencapai tujuan karir tertentu.
+- **Komunitas**: Forum diskusi dan tautan ke grup Discord untuk interaksi antara siswa dan instruktur.
+- **Blog**: Artikel dan wawasan seputar dunia teknologi dengan sistem filter berdasarkan tag.
+- **Profil Instruktur**: Halaman detail untuk setiap instruktur, menampilkan biografi dan kursus yang mereka ajar.
+- **Sistem Notifikasi**: Pusat notifikasi di header untuk memberitahu pengguna tentang pembaruan penting.
 
-## Project Structure
+### 🛠️ Jasa "Joki"
+Fitur untuk memesan layanan pengembangan perangkat lunak secara profesional.
+- **Sistem Pemesanan Multi-Langkah**: Alur pemesanan yang terstruktur untuk memudahkan pengguna:
+    1.  **Pemilihan Layanan**: Memilih dari berbagai layanan yang ditawarkan (e.g., Pembuatan Website, Desain UI/UX).
+    2.  **Detail Proyek**: Mengisi formulir rinci tentang kebutuhan proyek.
+    3.  **Konfirmasi**: Meninjau kembali pesanan sebelum dikirim.
+- **Halaman Konfirmasi**: Halaman yang memberitahukan bahwa pesanan telah berhasil dikirim.
 
-This project follows a feature-based (or domain-based) architecture to ensure modularity, scalability, and ease of maintenance. Each feature is self-contained within its own directory, promoting a clean separation of concerns.
+### 👤 Pengguna & Autentikasi
+- **Dasbor Pengguna**: Halaman pusat bagi pengguna untuk mengakses kursus mereka, melihat progres, dan mengelola profil.
+- **Manajemen Akun**: Proses registrasi dan login pengguna.
 
--   **`src/`**: Main source directory.
-    -   **`components/`**: Contains global, reusable React components that are shared across multiple features (e.g., `Header`, `Footer`, `Button`).
-    -   **`data/`**: Holds global static data, constants, or mock data used throughout the application.
-    -   **`features/`**: The core of the architecture. Each subdirectory is a self-contained feature.
-        -   **`landing/`**: The main company landing page.
-            -   `pages/`: Page components for this feature.
-            -   `sections/`: Large, section-based components that make up a page (e.g., `Hero`, `Portfolio`).
-            -   `components/`: Smaller, reusable components specific to this feature.
-            -   `data/`: Data specific to this feature.
-        -   **`academy/`**: The online learning platform feature.
-            -   `pages/`: Page components for the academy (e.g., `AcademyPage`, `BlogPage`, `BlogPostPage`, `CommunityPage`, `CourseDetailPage`, `PricingPage`).
-            -   `components/`: Components specific to the academy.
-            -   `data/`: Data specific to the academy.
-        -   **`joki/`**: For the freelance/contract work feature.
-        -   **`templates/`**: (Scaffold) For the template marketplace feature.
-    -   **`hooks/`**: Global custom React hooks.
-    -   **`layouts/`**: High-level layout components that wrap pages (e.g., `MainLayout`).
-    -   **`services/`**: Global API clients and functions for interacting with backend services.
-    -   **`utils/`**: Global utility and helper functions.
+## 🚀 Tumpukan Teknologi (Tech Stack)
 
-## Getting Started
+- **Framework**: [React](https://reactjs.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Routing**: [React Router DOM](https://reactrouter.com/)
+- **Animasi**: [GSAP (GreenSock Animation Platform)](https://greensock.com/gsap/)
+- **Ikon**: [Lucide React](https://lucide.dev/)
+- **Manajemen State (Konteks)**: React Context API
 
-Follow these steps to get the project up and running on your local machine.
+## 📂 Struktur Proyek
 
-### Prerequisites
+Struktur kode diatur berdasarkan fitur untuk menjaga modularitas dan skalabilitas.
+```
+src/
+├── components/     # Komponen UI global (Header, Footer)
+├── context/        # React Context (e.g., AuthContext)
+├── features/       # Direktori utama untuk semua fitur aplikasi
+│   ├── academy/    # Fitur e-learning (kursus, blog, event, dll)
+│   ├── auth/       # Fitur autentikasi (login, register, dasbor)
+│   ├── joki/       # Fitur pemesanan jasa
+│   └── landing/    # Halaman utama dan halaman statis lainnya
+├── hooks/          # Custom React Hooks
+└── layouts/        # Komponen layout utama
+```
 
-Make sure you have Node.js installed (version 18 or higher is recommended).
+## ⚙️ Menjalankan Proyek Secara Lokal
 
-### Installation
+Untuk menjalankan proyek ini di lingkungan pengembangan lokal Anda, ikuti langkah-langkah berikut.
 
-1.  Clone the repository:
+### Prasyarat
+- [Node.js](https://nodejs.org/) (versi 18.x atau lebih tinggi direkomendasikan)
+- [npm](https://www.npmjs.com/) (biasanya terinstal bersama Node.js)
+
+### Instalasi
+1.  Clone repository ini ke mesin lokal Anda:
     ```bash
-    git clone https://github.com/rizky28eka/bilcode-fe.git
-    ```
-2.  Navigate into the project directory:
-    ```bash
+    git clone https://github.com/username/bilcode-fe.git
     cd bilcode-fe
     ```
-3.  Install the dependencies:
+2.  Instal semua dependensi yang diperlukan:
     ```bash
     npm install
     ```
 
-### Running the Development Server
+### Menjalankan Server Pengembangan
+- Untuk memulai server pengembangan Vite, jalankan perintah berikut:
+  ```bash
+  npm run dev
+  ```
+- Buka browser Anda dan kunjungi `http://localhost:5173` (atau port lain yang ditampilkan di terminal Anda).
 
-To start the development server with hot-reloading:
+## 🤝 Kontribusi
 
-```bash
-npm run dev
-```
-
-This will typically run the application on `http://localhost:5173`.
-
-### Building for Production
-
-To build the application for production:
-
-```bash
-npm run build
-```
-
-This command will generate a `dist` directory with the production-ready optimized build.
-
-### Linting
-
-To run ESLint to check for code quality issues:
-
-```bash
-npm run lint
-```
-
-### Preview Production Build
-
-To preview the production build locally:
-
-```bash
-npm run preview
-```
+Kontribusi untuk proyek ini sangat kami hargai. Jika Anda ingin berkontribusi, silakan buat *fork* dari repository ini dan ajukan *pull request*.
